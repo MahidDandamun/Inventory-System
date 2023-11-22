@@ -25,30 +25,30 @@ function DashboardPage() {
   const tableContents = [
     {
       tableHeader: "Name",
-      name: "Joseph stan",
+      name: "	Mike Ross",
       status: "Paid",
-      date:"11/12/2023",
+      date:"Jan/01/2023",
       amount:"P340"
     },
     {
       tableHeader: "Status",
-      name: "Carl jones",
+      name: "James Smith",
       status: "Pending",
-      date:"11/05/2023",
+      date:"Mar/02/2023",
       amount:"P500"
     },
     {
       tableHeader: "Date",
-      name: "McLean daniels",
+      name: "Luke Cage",
       status: "Paid",
-      date:"11/15/2023",
+      date:"Sept/18/2023",
       amount:"P3045"
     },
     {
       tableHeader: "Amount",
-      name: "Clark angelo",
+      name: "Aaron Davis",
       status: "Cancelled",
-      date:"11/01/2023",
+      date:"Aug/16/2023",
       amount:"P1504"
     },
   ]
@@ -132,7 +132,7 @@ function DashboardPage() {
                           <p className="mb-3 text-sm font-normal text-gray-500 dark:text-white">
                             <span className='text-gray-500 dark:text-green-600'>
                               {item.items}
-                            </span> items
+                            </span> orders
                           </p>
                         </div>
 

@@ -75,10 +75,10 @@ function OrdersPage() {
               border-gray-300 rounded-lg  w-36 sm:w-80 bg-gray-50 focus:ring-blue-500 
                 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
                 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                placeholder="Search product"/>
+                placeholder="Search order"/>
                 
             </div>
-            <Link href={"orders/add"}> <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New </button></Link>
+           <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600' disabled>Add New </button>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
