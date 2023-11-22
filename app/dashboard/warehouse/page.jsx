@@ -1,5 +1,7 @@
  import Image from "next/image";
- import Pagination from '@/app/ui/dashboard/pagination/pagination';
+import Pagination from '@/app/ui/dashboard/pagination/pagination';
+import Link from "next/link";
+ 
 function WarehousePage() {
   const tableHeaders = ["Location", "Status", "Action"]
   const warehouses = [{
@@ -37,7 +39,9 @@ return (
               placeholder="Search for Warehouse"/>
               
           </div>
-          <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+            <Link href={"/dashboard/warehouse/add"}>
+              <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+            </Link> 
       </div>
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

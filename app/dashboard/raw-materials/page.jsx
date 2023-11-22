@@ -1,10 +1,10 @@
  import Pagination from '@/app/ui/dashboard/pagination/pagination';
  
-import product1 from '../../../images/products/candle-1.jpg';
-import product2 from '../../../images/products/candle-2.jpg';
-import product3 from '../../../images/products/candle-3.jpg';
-import product4 from '../../../images/products/candle-4.jpg';
+import rawMaterial1 from '../../../images/raw-materials/rawMaterial-1.png';
+import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';
+import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
  
+import Link from 'next/link';
 import Image from 'next/image';
 
 function RawMaterialsPage() {
@@ -12,40 +12,32 @@ function RawMaterialsPage() {
   
   const rawMaterials = [
     {   
-        image:product1,
-        name: "Autumn Glow",
-        price: "P 100",
-        quantity: "95",
+        image:rawMaterial1,
+        name: "Soy wax ",
+        price: "P220 / 1kg",
+        quantity: "200kg",
         supplier:"candle supplier1",
         warehouse: "Santa Rosa",
     },
 
     {
-        image:product2,
-        name: "Passion Flicker",
-        price: "P 130",
-        quantity: "45",
+        image:rawMaterial2,
+        name: "Candle wicks ",
+        price: "P 80 / 1pack(10pcs of wick and 6 inches each wick)",
+        quantity: "200pcs",
         supplier:"candle supplier2",
         warehouse: "Santa Ana",
     },
 
     {   
-        image:product3,
-        name: "Heritage Flame",
-        price: "P 150",
-        quantity: "75",
+        image:rawMaterial3,
+        name: "Vanilla extract ",
+        price: "P 100 / bottle of 120ml ",
+        quantity: "100pcs",
         supplier:"candle supplier3",
         warehouse: "Santa Mesa",
     },
 
-    {
-      image:product4,
-      name: "Nightowl Flame",
-      price: "P 100",
-      quantity: "85",
-      supplier:"candle supplier4",
-      warehouse: "Santa Ana",
-    }
   ]
   
   return (
@@ -69,8 +61,10 @@ function RawMaterialsPage() {
                 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 placeholder="Search raw materials"/>
                 
-            </div>
-            <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+              </div>
+              <Link href={"raw-materials/add"}>
+                <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+              </Link>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -87,7 +81,7 @@ function RawMaterialsPage() {
               {rawMaterials.map((material, index) => (
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
                     <th scope="row" className="flex items-center px-1 sm:px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                        <Image src={material.image} className='w-12 h-12' width="0" height="0" alt="product image"></Image>
+                        <Image src={material.image} className='w-12 h-12 rounded-md' width="0" height="0" alt="product image"></Image>
                   </th>
                   
  
@@ -114,8 +108,7 @@ function RawMaterialsPage() {
                     </td>
                     <td className="px-1 sm:px-6 py-4">
                         <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3">Edit </button>
-                        <button className="font-medium text-white bg-red-500 p-1 rounded-md w-16  dark:text-blue-500 hover:bg-red-600 mr-2">Delete </button>
-      
+                        <button className="font-medium text-white bg-red-500 p-1 rounded-md w-16  dark:text-blue-500 hover:bg-red-600 mr-2">Delete </button>    
                     </td>
                   </tr>
               ))}

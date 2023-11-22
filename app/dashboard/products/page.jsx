@@ -6,7 +6,8 @@ import product3 from '../../../images/products/candle-3.jpg';
 import product4 from '../../../images/products/candle-4.jpg';
  
 import Image from 'next/image';
-
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 function ProductsPage() {
   const tableHeaders = ["Image", "Sku", "Name", "Price", "Quantity", "Warehouse", "Action"]
   
@@ -14,34 +15,34 @@ function ProductsPage() {
     {   
         image:product1,
         sku: "123456789",
-        name: "Autumn Glow",
+        name: "Passion Flicker",
         price: "P 100",
         quantity: "95",
-        warehouse: "Santa Rosa",
+        warehouse: "Makati City",
     },
     {
         image:product2,
         sku: "123243789", 
-        name: "Passion Flicker",
+        name: "Heritage Flame",
         price: "P 130",
         quantity: "45",
-        warehouse: "Santa Ana",
+        warehouse: "Taguig City",
     },
     {   
       image:product3,
         sku: "123456789",
-        name: "Heritage Flame",
+        name: "Nightowl Flame",
         price: "P 150",
         quantity: "75",
-        warehouse: "Santa Mesa",
+        warehouse: "Manadaluyong City",
     },
     {
       image:product4,
       sku: "123456789",
-      name: "Nightowl Flame",
+      name: "Autumn Glow",
       price: "P 100",
       quantity: "85",
-      warehouse: "Santa Ana",
+      warehouse: "Taguig City ",
     }
   ]
   
@@ -67,12 +68,11 @@ function ProductsPage() {
                 placeholder="Search product"/>
                 
             </div>
-            <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+            <Link href={"products/add"}> <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New </button></Link>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-
                   {tableHeaders.map((header, index) => (
                       <th scope="col" className="px-6 py-3" key={index}>
                           {header}
@@ -85,7 +85,7 @@ function ProductsPage() {
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
                     <th scope="row" className="flex items-center px-1 sm:px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                         <Image src={product.image} className='w-12 h-12' width="0" height="0" alt="product image"></Image>
-                  </th>
+                    </th>
                   
                     <td className='px-1 sm:px-6 py-4'>
                          {product.sku}
@@ -111,7 +111,6 @@ function ProductsPage() {
                     <td className="px-1 sm:px-6 py-4">
                         <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3">Edit </button>
                         <button className="font-medium text-white bg-red-500 p-1 rounded-md w-16  dark:text-blue-500 hover:bg-red-600 mr-2">Delete </button>
-      
                     </td>
                   </tr>
               ))}

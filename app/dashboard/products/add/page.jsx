@@ -1,4 +1,7 @@
+import Link from 'next/link';
+import {usePathname} from 'next/navigation';
 function AddProduct() {
+ 
   return (
    <>
    
@@ -22,8 +25,8 @@ function AddProduct() {
           </div>
           
           <div className="relative z-0 w-full mb-5 group">
-            <label for="number-input" class="block mb-2  peer-focus:font-medium text-sm font-medium text-gray-500 dark:text-gray-400">Add a price</label>
-            <input type="number" id="number-input" aria-describedby="helper-text-explanation" data-input-counter data-input-counter-min="1"  defaultValue="1" data-input-counter-max="5000" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Value in Pesos" required/>
+            <label htmlFor="number-input" className="block mb-2  peer-focus:font-medium text-sm font-medium text-gray-500 dark:text-gray-400">Add a price</label>
+            <input type="number" id="number-input" aria-describedby="helper-text-explanation" data-input-counter data-input-counter-min="1"  defaultValue="1" data-input-counter-max="5000" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Value in Pesos" required/>
           </div>
 
 
@@ -35,7 +38,7 @@ function AddProduct() {
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
                         </svg>
                     </button>
-                    <input type="text" id="quantity-input" data-input-counter data-input-counter-min="1" data-input-counter-max="3" aria-describedby="helper-text-explanation" className="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999" value="1" required/>
+                    <input type="text" id="quantity-input" data-input-counter data-input-counter-min="1" data-input-counter-max="3" aria-describedby="helper-text-explanation" className="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999"  required/>
                     <button type="button" id="increment-button" data-input-counter-increment="quantity-input" className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                         <svg className="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
@@ -43,10 +46,7 @@ function AddProduct() {
                     </button>
                 </div>              
             </div>
-            
-                          
-    
-              
+                                   
             <div className="flex flex-col items-center w-full mb-5">
               <p className="text-start peer-focus:font-medium text-sm font-medium text-gray-500 dark:text-gray-400">Insert the product image</p>
               <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
@@ -58,11 +58,17 @@ function AddProduct() {
                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                   </div>
-                  <input id="dropzone-file" type="file" className="hidden" required />
+                  <input id="dropzone-file" type="file" className="hidden"/>
               </label>
-          </div> 
+            </div> 
+            <div className="flex justify-between">
+              <Link href="/dashboard/products">
+                <button className="text-white bg-gray-500 hover:bg-gray-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-400 dark:hover:bg-gray-500 dark:focus:ring-gray-500"> Return
+                </button>
+              </Link>
 
-            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+              <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+            </div>
         </form>
       </div>
     </div >

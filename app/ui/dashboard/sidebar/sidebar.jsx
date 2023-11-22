@@ -51,32 +51,32 @@ function Sidebar() {
       // {
       //    title: "Analytics",
       //    list: [
-      //       {
-      //          title: "Revenue",
-      //          path: "dashboard/revenue",
-      //          icon:<MdWork/>
-      //       },
-      //       {
-      //          title: "Reports",
-      //          path: "dashboard/reports",
-      //          icon:<MdAnalytics/>
-      //       }
+      //       // {
+      //       //    title: "Revenue",
+      //       //    path: "dashboard/revenue",
+      //       //    icon:<MdWork/>
+      //       // },
+      //       // {
+      //       //    title: "Reports",
+      //       //    path: "dashboard/reports",
+      //       //    icon:<MdAnalytics/>
+      //       // }
       //    ]
 
       // },
       {
          title: "User",
          list: [
-            {
-               title: "Settings",
-               path: "dashboard/settings",
-               icon:<MdOutlineSettings/>
-            },
-            {
-               title: "Help",
-               path: "dashboard/help",
-               icon:<MdHelpCenter/>
-            },
+            // {
+            //    title: "Settings",
+            //    path: "dashboard/settings",
+            //    icon:<MdOutlineSettings/>
+            // },
+            // {
+            //    title: "Help",
+            //    path: "dashboard/help",
+            //    icon:<MdHelpCenter/>
+            // },
             {
                title: "Logout",
                path: "dashboard/logout",
@@ -110,6 +110,7 @@ function Sidebar() {
                      </li> 
                   ))}
                </ul>
+
             </div>
          </div>
           

@@ -7,17 +7,17 @@ function DashboardPage() {
   const cardItems = [
     {
       title: "To be packed",
-      icon: <PiPackage className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mr-5" />,
+      icon: <PiPackage className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items:"4"
     },
     {
       title: "To be shipped",
-      icon: <RiShip2Fill className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mr-5" />,
+      icon: <RiShip2Fill className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items:"4"
     },
     {
       title: "To be delivered",
-      icon:<TbTruckDelivery className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mr-5"/>,
+      icon:<TbTruckDelivery className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5"/>,
       items: "4"
     }
   ]
@@ -26,28 +26,28 @@ function DashboardPage() {
     {
       tableHeader: "Name",
       name: "Joseph stan",
-      status: "paid",
+      status: "Paid",
       date:"11/12/2023",
       amount:"P340"
     },
     {
       tableHeader: "Status",
       name: "Carl jones",
-      status: "pending",
+      status: "Pending",
       date:"11/05/2023",
       amount:"P500"
     },
     {
       tableHeader: "Date",
       name: "McLean daniels",
-      status: "paid",
+      status: "Paid",
       date:"11/15/2023",
       amount:"P3045"
     },
     {
       tableHeader: "Amount",
       name: "Clark angelo",
-      status: "cancelled",
+      status: "Cancelled",
       date:"11/01/2023",
       amount:"P1504"
     },
@@ -56,12 +56,12 @@ function DashboardPage() {
   const cardItems2 = [
     {
       title: "Paid Orders",
-      icon: <GiCash className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mr-5" />,
+      icon: <GiCash className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items: "6"
     },
     {
       title: "Unpaid Orders",
-      icon: <TbCashBanknoteOff className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mr-5" />,
+      icon: <TbCashBanknoteOff className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items:"7"
     }
   ]
@@ -69,9 +69,9 @@ function DashboardPage() {
     <>
       <div className="p-4 sm:ml-64">
         <div className="p-4 rounded-lg   dark:border-gray-700 mt-14 overflow-y-auto">         
-          <div className="grid sm:grid-cols-3 gap-4 mb-5">
+          <div className="grid sm:grid-cols-3 gap-4 mb-5 ">
                 {cardItems.map((item, index) => (
-                      <div className="min-w-full sm:max-w-full p-6 flex text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      <div className="min-w-full sm:max-w-full p-6 flex justify-center text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group">
                           {item.icon}
                           <div className='flex flex-col'>
                             <h5 className="text-md sm:text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{item.title}</h5>
@@ -87,7 +87,7 @@ function DashboardPage() {
 
             <div>
               <div className="relative p-4 sm:p-6 overflow-x-auto dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-5">
-                  <h1 className='font-normal text-2xl mb-5'>Latest Transactions</h1>
+                  <h1 className='font-normal text-md sm:text-xl md:text-2xl mb-5'>Latest Transactions</h1>
                   <table className="w-full text-sm text-left rtl:text-right ">
                       <thead className="text-xs text-gray-900 uppercase dark:text-gray-400">
                           <tr>
@@ -105,7 +105,7 @@ function DashboardPage() {
                             {item.name}
                           </th>
                           <td className="px-1 sm:px-6 py-4" >
-                            <p className={`inline-block text-white ${item.status === "paid" ? "bg-green-500" : item.status === "pending" ? "bg-yellow-400" : "bg-red-500"} rounded-md p-2`}>
+                            <p className={` text-white flex justify-center w-20 ${item.status === "Paid" ? "bg-green-500" : item.status === "Pending" ? "bg-yellow-400" : "bg-red-500"} rounded-md p-2`}>
                             {item.status}
                             </p>
                           </td>
@@ -124,7 +124,8 @@ function DashboardPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               {cardItems2.map((item, index) => (
-                    <div className="min-w-full sm:max-w-full p-6 flex text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <div className="min-w-full sm:max-w-full p-6 flex text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800      
+                     dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group">
                         {item.icon}
                         <div className='flex flex-col'>
                           <h5 className="text-md sm:text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{item.title}</h5>
@@ -132,7 +133,7 @@ function DashboardPage() {
                             <span className='text-gray-500 dark:text-green-600'>
                               {item.items}
                             </span> items
-                        </p>
+                          </p>
                         </div>
 
                     </div>

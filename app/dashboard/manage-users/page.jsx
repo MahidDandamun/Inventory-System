@@ -1,6 +1,7 @@
 import Pagination from '@/app/ui/dashboard/pagination/pagination';
 import image from '../../../images/Avatar.png';
 import Image from 'next/image';
+import Link from 'next/link';
 function ManageUsers() {
 
     const tableHeaders = ["Name", "Email","Username","Password", "User Level", "Action"]
@@ -49,7 +50,7 @@ function ManageUsers() {
                 placeholder="Search for users"/>
                 
             </div>
-            <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button>
+            <Link href='/dashboard/manage-users/add'><button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New</button></Link>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -68,8 +69,7 @@ function ManageUsers() {
                     <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                         <Image className="w-10 h-10 rounded-full" src={image} alt="Jese image"></Image>
                         <div className="ps-3">
-                              <div className="text-base font-semibold">{user.name}</div>
-                      
+                           <div className="text-base font-semibold">{user.name}</div>
                         </div>  
                     </th>
                     <td className="px-6 py-4">
