@@ -1,11 +1,11 @@
-import Pagination from '@/app/ui/dashboard/pagination/pagination';
+"use client";
+import Pagination from "../../ui/dashboard/pagination/pagination";
 import product1 from '../../../images/products/candle-1.jpg';
 import product2 from '../../../images/products/candle-2.jpg';
 import product3 from '../../../images/products/candle-3.jpg';
 // import product4 from '../../../images/products/candle-4.jpg';
 import Image from 'next/image';
 import Link from 'next/link';
- 
 function OrdersPage() {
   const tableHeaders = ["ProductImage", "DateOfSalesOrder", "Customer", "Product", "Quantity", "TotalCost", "Discounts","DeliveryStatus", "AdditionalCharges","Actions"]
   
@@ -78,12 +78,11 @@ function OrdersPage() {
                 placeholder="Search order"/>
                 
             </div>
-           <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600' disabled>Add New </button>
+           <Link href={"orders/add"}><button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add Order </button></Link>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-
                   {tableHeaders.map((header, index) => (
                       <th scope="col" className="px-6 py-3" key={index}>
                           {header}

@@ -1,4 +1,6 @@
- import Pagination from '@/app/ui/dashboard/pagination/pagination';
+"use client";
+
+import Pagination from "../../ui/dashboard/pagination/pagination";
  
 import rawMaterial1 from '../../../images/raw-materials/rawMaterial-1.png';
 import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';

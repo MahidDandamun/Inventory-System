@@ -1,22 +1,25 @@
- import Image from "next/image";
-import Pagination from '@/app/ui/dashboard/pagination/pagination';
+"use client";
+
+import Image from "next/image";
+import Pagination from "../../ui/dashboard/pagination/pagination";
 import Link from "next/link";
- 
 function WarehousePage() {
-  const tableHeaders = ["Location", "Status", "Action"]
-  const warehouses = [{
-      location: "Mandaluyong City ",
+  const tableHeaders = ["Location", "Status", "Action"];
+  const warehouses = [
+    {
+      location: "Mandaluyong City",
       status: "Half Full",
-  },
-  {
+    },
+    {
       location: "Makati City",
       status: "Empty",
-  },
-  {
+    },
+    {
       location: "Taguig City",
       status: "Full",
-  }
-  ]
+    },
+  ];
+  
 return (
   <>
     <div className="p-4 sm:ml-64 flex flex-col">

@@ -15,7 +15,7 @@ function Navbar() {
                         </svg>
                      </button>
                   <a className="flex ms-2 md:me-24">
-                     <Image src={logo} className="me-8" width="45" height="45" alt="Theiapollo Logo"></Image> 
+                     <Image src={logo} className="me-8 rounded-full w-12 h-12"   alt="Theiapollo Logo"></Image> 
                      <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Theiapollo</span>
                   </a>
                  </div>
@@ -25,7 +25,7 @@ function Navbar() {
                         <div>
                            <button type="button" className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                               <span className="sr-only">Open user menu</span>
-                              <Image className="rounded-full" width="35" height="" src={image} alt="user photo"></Image>
+                              <Image className="rounded-full" width="35" height="35" src={image} alt="user photo"></Image>
                            </button>
                         </div>
                         <div className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">

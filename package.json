@@ -11,7 +11,6 @@
   "dependencies": {
     "apexcharts": "^3.44.0",
     "flowbite": "^2.2.0",
-    "flowbite-react": "^0.6.4",
     "i": "^0.3.7",
     "next": "14.0.3",
     "react": "^18",
@@ -20,8 +19,11 @@
     "sass": "^1.69.5"
   },
   "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.38",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.3.2"
   }
 }

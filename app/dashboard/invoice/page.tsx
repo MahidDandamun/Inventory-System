@@ -1,4 +1,5 @@
-import Pagination from '@/app/ui/dashboard/pagination/pagination';
+"use client";
+import Pagination from "../../ui/dashboard/pagination/pagination";
  
 import product1 from '../../../images/products/candle-1.jpg';
 import product2 from '../../../images/products/candle-2.jpg';
@@ -7,43 +8,52 @@ import product4 from '../../../images/products/candle-4.jpg';
  
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-function ProductsPage() {
-  const tableHeaders = ["Image", "Sku", "Name", "Price", "Quantity", "Warehouse", "Action"]
+ 
+function InvoicePage() {
+  const tableHeaders = ["Name", "Address", "Item", "Qty", "PricePerItem", "GrandTotal", "PaymentMethod", "PaymentStatus", "Action"]
   
-  const products = [
+  const Invoices = [
     {   
-        image:product1,
-        sku: "123456789",
-        name: "Passion Flicker",
-        price: "P 100",
-        quantity: "95",
-        warehouse: "Makati City",
-    },
-    {
-        image:product2,
-        sku: "123243789", 
-        name: "Heritage Flame",
-        price: "P 130",
-        quantity: "45",
-        warehouse: "Taguig City",
+      Name:"Mike Ross",
+      Address: "Western Bicutan Taguig City",
+      Item: "Passion Flicker",
+      Qty: "2",
+      PricePerItem: "95",
+      GrandTotal: "P200",
+      PaymentMethod: "Gcash",
+      PaymentStatus:"Paid",
     },
     {   
-      image:product3,
-        sku: "123456789",
-        name: "Nightowl Flame",
-        price: "P 150",
-        quantity: "75",
-        warehouse: "Manadaluyong City",
+      Name:"James Smith",
+      Address: "Cembo Makati City",
+      Item: "Nightowl Flame",
+      Qty: "15",
+      PricePerItem: "95",
+      GrandTotal: "	P6500",
+      PaymentMethod: "COD",
+      PaymentStatus:"Pending",
     },
-    {
-      image:product4,
-      sku: "123456789",
-      name: "Autumn Glow",
-      price: "P 100",
-      quantity: "85",
-      warehouse: "Taguig City ",
-    }
+    {   
+      Name:"Aaron Davis",
+      Address: "Manadaluyong City",
+      Item: "Heritage Flame",
+      Qty: "12",
+      PricePerItem: "95",
+      GrandTotal: "	P1560",
+      PaymentMethod: "COD",
+      PaymentStatus:"Cancelled",
+    },
+    {   
+      Name:"Luke Cage",
+      Address: "Pure goold pasig city",
+      Item: "Passion Flicker",
+      Qty: "8",
+      PricePerItem: "95",
+      GrandTotal: "P800",
+      PaymentMethod: "COD",
+      PaymentStatus:"Paid",
+    },
+
   ]
   
   return (
@@ -51,7 +61,7 @@ function ProductsPage() {
       <div className="p-4 sm:ml-64">
         <div className="p-4 rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-5">
-          <h1 className="sm:text-lg py-5 md:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Products</h1>
+          <h1 className="sm:text-lg py-5 md:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Invoice</h1>
             <div className="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
             <label htmlFor="table-search" className="sr-only">Search</label>
             <div className="relative">
@@ -65,10 +75,10 @@ function ProductsPage() {
               border-gray-300 rounded-lg  w-36 sm:w-80 bg-gray-50 focus:ring-blue-500 
                 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
                 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                placeholder="Search product"/>
+                placeholder="Search invoice"/>
                 
             </div>
-            <Link href={"products/add"}> <button className='w-24 h-8 bg-green-500 rounded-md text-sm text-white hover:bg-green-600'>Add New </button></Link>
+      
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400  ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -81,36 +91,38 @@ function ProductsPage() {
                 </tr>
             </thead>
             <tbody>
-              {products.map((product, index) => (
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
-                    <th scope="row" className="flex items-center px-1 sm:px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                        <Image src={product.image} className='w-12 h-12' width="0" height="0" alt="product image"></Image>
-                    </th>
-                  
+              {Invoices.map((invoice, index) => (
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>           
                     <td className='px-1 sm:px-6 py-4'>
-                         {product.sku}
+                         {invoice.Name}
                     </td>
                     <td className="px-1 sm:px-6 py-4">
-                        {product.name}
+                        {invoice.Address}
                     </td>
                     
                     <td className="px-1 sm:px-6 py-4">
-                        {product.price}
+                        {invoice.Item}
                     </td>
                     
                     <td className="px-1 sm:px-6 py-4">
-                        {product.quantity}
+                        {invoice.Qty}
                     </td>
                     <td className="px-1 sm:px-6 py-4">
-                        <div className="flex items-center">
-                          {product.warehouse}
-        
-                       
-                        </div>
+                        {invoice.PricePerItem}
                     </td>
+                    <td className="px-1 sm:px-6 py-4">
+                        {invoice.GrandTotal}
+                    </td>
+                    <td className="px-1 sm:px-6 py-4">
+                        {invoice.PaymentMethod}
+                    </td>
+                    <td className="px-1 sm:px-6 py-4">
+                        {invoice.PaymentStatus}
+                    </td>
+ 
+
                     <td className="px-1 sm:px-6 py-4">
                         <button className="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3">Edit </button>
-                        <button className="font-medium text-white bg-red-500 p-1 rounded-md w-16  dark:text-blue-500 hover:bg-red-600 mr-2">Delete </button>
                     </td>
                   </tr>
               ))}
@@ -123,4 +135,4 @@ function ProductsPage() {
     </>
   )
 }
-export default ProductsPage;
+export default InvoicePage;

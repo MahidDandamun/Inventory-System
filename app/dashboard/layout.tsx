@@ -12,7 +12,6 @@ function Layout({ children}) {
         <Navbar />
         <div className="h-screen bg-white-400 dark:bg-gray-900">
         {children}                 
-
         </div>
       </div>
     </div>

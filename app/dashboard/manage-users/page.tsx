@@ -1,4 +1,5 @@
-import Pagination from '@/app/ui/dashboard/pagination/pagination';
+"use client";
+import Pagination from "../../ui/dashboard/pagination/pagination";
 import image from '../../../images/Avatar.png';
 import Image from 'next/image';
 import Link from 'next/link';
