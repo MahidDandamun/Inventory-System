@@ -7,17 +7,17 @@ function DashboardPage() {
   const cardItems = [
     {
       title: "To be packed",
-      icon: <PiPackage className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
+      icon: <PiPackage className="h-16 w-16 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items:"4"
     },
     {
       title: "To be shipped",
-      icon: <RiShip2Fill className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
+      icon: <RiShip2Fill className="h-16 w-16 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5" />,
       items:"4"
     },
     {
       title: "To be delivered",
-      icon:<TbTruckDelivery className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5"/>,
+      icon:<TbTruckDelivery className="h-16 w-16 sm:h-12 sm:w-12 md:h-14 md:w-14 mr-5"/>,
       items: "4"
     }
   ]
@@ -67,11 +67,11 @@ function DashboardPage() {
   ]
   return (
     <>
-      <div className="p-4 sm:ml-64">
-        <div className="p-4 rounded-lg   dark:border-gray-700 mt-14 overflow-y-auto">         
-          <div className="grid sm:grid-cols-3 gap-4 mb-5 ">
+      <div className="mt-5 p-4  sm:ml-64 sm:mt-0">
+        <div className="sm:p-4 rounded-lg   dark:border-gray-700 mt-14 overflow-y-auto">         
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5 ">
                 {cardItems.map((item, index) => (
-                      <div className="min-w-full sm:max-w-full p-6 flex justify-center text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                      <div className="min-w-full sm:max-w-full p-6 flex justify-center text-gray-900 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group" key={index}>
                           {item.icon}
                           <div className='flex flex-col'>
                             <h5 className="text-md sm:text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{item.title}</h5>
