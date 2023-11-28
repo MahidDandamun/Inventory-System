@@ -36,7 +36,6 @@ return (
             </Link>
           </div>
           <DataTable path={"warehouse"} headers={tableHeaders}  datas={warehouses} hasImage={false}/>
- 
          <Pagination/>  
         </div>
       </div>

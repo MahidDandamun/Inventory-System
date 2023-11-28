@@ -16,93 +16,33 @@ export function DateInputField({ name }) {
           <label htmlFor={name} className="block mb-2  peer-focus:font-medium text-sm font-medium text-gray-500 dark:text-gray-400">Date of Order</label>
           <div className="absolute inset-y-12 start-0 flex items-center ps-3.5 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                  <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                 </svg>
           </div>
- 
         <input datepicker-format="mm/yy" name={name} id={name} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="12/23" required/>
       </div>
     </>
   )
 }
 
-export function SelectProductField({ TextLabel, name }) { 
+ export function SelectOptionField({ name, label, options }) { 
   return (
     <>
       <div className="mb-8">
-        <label htmlFor="product" className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Select a {TextLabel}</label>
-        <select id="product" name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option >Choose a {TextLabel}</option>
-          <option value="PF">Passion Flicker</option>
-          <option value="HF">Heritage Flame</option>
-          <option value="NF">Nightowl Flame	</option>
-          <option value="AG">Autumn Glow</option>
-        </select>
-      </div>
-    </>
-  )
-}
-export function SelectAccessLevelField({ TextLabel,name }) { 
-  return (
-    <>
-      <div className="mb-8">
-        <label htmlFor="accessLevel" className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">{TextLabel}</label>
-        <select id="accessLevel" name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option >Choose a {TextLabel}</option>
-          <option value="1">Admin</option>
-          <option value="2">Secretary</option>
-          <option value="3">Employee</option>
+        <label htmlFor={name} className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">{label}</label>
+        <select id={name} name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option>Select Option</option>
+          {options.map((option, key) => (
+            <option key={key} value={option.value}>
+              {option.name}
+            </option>
+          ))}
         </select>
       </div>
     </>
   )
 }
 
-export function SelectDeliveryStatField({name}) { 
-  return (
-    <>
-      <div className="mb-8">
-        <label htmlFor="deliveryStatus" className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
-        <select id="deliveryStatus" name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option>Choose Delivery Status</option>
-          <option value="P">Packing</option>
-          <option value="S">To be shipped</option>
-          <option value="D">To be delivered</option>
-        </select>
-      </div>
-    </>
-  )
-}
-export function SelectWarehouseField({name}) { 
-  return (
-    <>
-      <div className="mb-8">
-        <label htmlFor="Warehouses" className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Warehouse</label>
-        <select id="Warehouses" name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option>Select Warehouse</option>
-          <option value="0">Makati City</option>
-          <option value="1">Taguig City</option>
-          <option value="2">Mandaluyong City</option>
-        </select>
-      </div>
-    </>
-  )
-}
-export function SelectStorageStatusField({ name }) { 
-  return (
-    <>
-      <div className="mb-8">
-        <label htmlFor="StorageStatus" className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Warehouse</label>
-        <select id="StorageStatus" name={name} defaultValue={""} className="bg-gray-50 border border-gray-300 text-gray-500 dark:text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option>Select Status</option>
-          <option value="0">Full</option>
-          <option value="1">Not Full</option>
-          <option value="2">Empty</option>
-        </select>
-      </div>
-    </>
-  )
-}
 
 
 export function FileInputField({name}) {
@@ -125,12 +65,12 @@ export function FileInputField({name}) {
   )
 }
 
-export function QuantityInputField({Label, name}) {
+export function NumberInputField({Label, name,placeholder}:{Label:string, name:string,placeholder:string}) {
   return (
     <>
       <div className="relative z-0 w-full mb-8 group">
         <label htmlFor={name} className="block mb-2  peer-focus:font-medium text-sm font-medium text-gray-500 dark:text-gray-400">{Label}</label>
-        <input type="number" name={name} id={name} aria-describedby="helper-text-explanation" data-input-counter data-input-counter-min="1"  defaultValue="1" data-input-counter-max="5000" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Value in Pesos" required/>
+        <input type="number" name={name} id={name} aria-describedby="helper-text-explanation" data-input-counter data-input-counter-min="1"  defaultValue="" data-input-counter-max="5000" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={placeholder} required/>
       </div>
     </>
   )
@@ -163,12 +103,14 @@ export function SearchInputField({name, placeholder}:{name:string, placeholder:s
               d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
         </div>
-        <input type="text" name={name} id={name} className="block w-full p-2 ps-10 text-sm text-gray-900 border
-            border-gray-300 rounded-lg sm:w-80 bg-gray-50 focus:ring-blue-500 
-              focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-              dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        <input type="text" name={name} id={name} className="block transition-all ease-in-out delay-100 w-full p-2 ps-10 text-sm text-gray-900 border
+            border-gray-300 rounded-lg sm:w-80 bg-gray-50 focus:ring-violet-500 
+              focus:border-violet-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+              dark:text-white dark:focus:ring-violet-400 dark:focus:border-violet-400"
           placeholder={placeholder} />      
       </div>
     </>
   )
 }
+
+ 

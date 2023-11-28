@@ -18,16 +18,16 @@ export default function DataTable({ datas, headers, hasImage = false, path }: { 
         </thead>
         <tbody>
           {datas.map((data, index) => (
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
               {hasImage? 
                 <>
-                <td scope="row" className="flex items-center justify-center text-gray-900 whitespace-nowrap dark:text-white">
+                <td scope="row" className="flex items-center justify-center text-gray-500 whitespace-nowrap dark:text-white">
                   <Image className="w-10 h-10 rounded" src={data.Image} alt="Jese image" width={40} height={40} />
                 </td>
                 {headers.slice(1).map((value, key) => (
-                  <td className="px-3 py-3 md:px-5 md:py-3" key={key}>
+                  <td className="px-3 py-3 md:px-5 md:py-3 text-gray-500 " key={key}>
                     {data[headers[key + 1]]}
-                    </td>))}
+                  </td>))}
                 </>
                 :
                 <>

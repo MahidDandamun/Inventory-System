@@ -51,37 +51,32 @@ function Sidebar() {
       // {
       //    title: "Analytics",
       //    list: [
-      //       // {
-      //       //    title: "Revenue",
-      //       //    path: "dashboard/revenue",
-      //       //    icon:<MdWork/>
-      //       // },
-      //       // {
-      //       //    title: "Reports",
-      //       //    path: "dashboard/reports",
-      //       //    icon:<MdAnalytics/>
-      //       // }
+      //       {
+      //          title: "Revenue",
+      //          path: "dashboard/revenue",
+      //          icon:<MdWork/>
+      //       },
+      //       {
+      //          title: "Reports",
+      //          path: "dashboard/reports",
+      //          icon:<MdAnalytics/>
+      //       }
       //    ]
 
       // },
       {
          title: "User",
          list: [
-            // {
-            //    title: "Settings",
-            //    path: "dashboard/settings",
-            //    icon:<MdOutlineSettings/>
-            // },
+            {
+               title: "Settings",
+               path: "settings",
+               icon:<MdOutlineSettings/>
+            },
             // {
             //    title: "Help",
             //    path: "dashboard/help",
             //    icon:<MdHelpCenter/>
             // },
-            {
-               title: "Logout",
-               path: "dashboard/logout",
-               icon:<MdLogout/>
-            },
          ]
       }
    ]
@@ -101,16 +96,20 @@ function Sidebar() {
                <ul className="space-y-2">
                   {menuItems.map((item, index) => (
                      <li className="relative" key={index}>
-                        <span className="pb-5  text-sm text-gray-400 dark:text-white-700 ">{item.title} </span>
+                        <span className="pb-5 text-sm text-gray-400 dark:text-white-700 ">{item.title} </span>
                         <ul className='relative'>                        
                            {item.list.map((subItem, index) => (
-                               <li><MenuLink item={subItem} key={subItem.title} /></li>                               
-                           ))}              
+                               <li><MenuLink item={subItem} key={index} /></li>                               
+                           ))}
                         </ul>
                      </li> 
                   ))}
-               </ul>
-
+                  <a className='relative cursor-pointer flex items-center mb-2 p-2 mouse-pointer
+                   text-gray-500 rounded-lg dark:text-white hover:dark:text-violet-400 hover:bg-gray-100
+                      dark:hover:bg-gray-700 group '>
+                     <MdLogout className='mr-3'/> Logout
+                  </a>
+               </ul>             
             </div>
          </div>
           

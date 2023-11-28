@@ -7,7 +7,7 @@ import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';
 import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
  
 import Link from 'next/link';
-import Image from 'next/image';
+ 
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
 import { AddButton } from "../../ui/dashboard/buttons/button";
  

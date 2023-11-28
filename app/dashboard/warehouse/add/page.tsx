@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { FormSubmitButton, SelectStorageStatusField, SelectWarehouseField, TextInputField } from "../../../ui/dashboard/inputFields/inputField";
+import { FormSubmitButton, SelectOptionField , TextInputField } from "../../../ui/dashboard/inputFields/inputField";
 
  
 function AddWarehouse() {
+  const warehouseStatus = [
+    { name:"Full", value: "F"},
+    { name:"Half-full", value: "HF"},
+    { name:"Empty", value: "E"},
+  ]
   return (
    <>
    
@@ -14,7 +19,7 @@ function AddWarehouse() {
         <form className="max-w-full sm:max-w-xl mt-26 mx-auto shadow-md sm:rounded-lg p-5" action="">
           <h1 className="text-center text-md mt-3 mb-8 sm:text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Add warehouse</h1>                 
             <TextInputField name={"warehouse_name"}type="text" TextLabel={"Warehouse Location"} />
-            <SelectStorageStatusField name={"warehouse_status"} />            
+            <SelectOptionField name={"warehouse_status"} label={"Warehouse Status"} options={warehouseStatus} />            
           <FormSubmitButton action={"Add"} path={"warehouse"}/>                       
         </form>
       </div>

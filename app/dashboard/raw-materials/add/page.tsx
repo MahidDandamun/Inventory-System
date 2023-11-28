@@ -1,8 +1,13 @@
 "use client";
 import Link from 'next/link';
-import { FileInputField, FormSubmitButton, QuantityInputField, SelectWarehouseField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
+import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
 
 function AddRawMaterials() {
+  const warehouseOptions = [
+    {name: "Makati", value: "mkt"},
+    {name: "Taguig", value: "tg"},
+    {name: "Mandaluyong", value: "mdyg"},
+    ]
   return (
    <>
    
@@ -14,10 +19,13 @@ function AddRawMaterials() {
             <TextInputField name={"rmaterial_name"} TextLabel={"Raw Material Name"}  type={"text"}/>
             <TextInputField name={"rmaterial_supplier"} TextLabel={"Supplier"}  type={"text"}/>
           </div>
-            <SelectWarehouseField name={"rmaterial_warehouse"} />
+          <div className="relative z-0 w-full mb-5 group">      
+              <SelectOptionField name={"product_warehouse"} label={"Warehouse"} options={warehouseOptions} />
+          </div>
           
           <div className="grid md:grid-cols-2 md:gap-6">
-              <QuantityInputField name={"rmaterial_quantity"} Label={"Quantity"}/>
+              <NumberInputField name={"rmaterial_quantity"} placeholder={"Material Quantity"} Label={"Quantity"}/>
+              <NumberInputField name={"rmaterial_price"} placeholder={"Raw-material Price"} Label={"Price"}/>
           </div>                            
           <FileInputField name={"rmaterial_image"} />
             <FormSubmitButton action={"action"} path={"raw-materials"} />         

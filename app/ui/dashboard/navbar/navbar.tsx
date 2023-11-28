@@ -39,8 +39,8 @@ function Navbar() {
                         <HiOutlineMenuAlt2 size='24' className='top-navigation-icon hover:text-purple-500 ease-linear duration-300' /> 
                   </button>
                   <a className="flex ms-2 md:me-24">
-                     <Image src={logo} className="hidden me-8 rounded-full w-12 h-12 sm:inline-flex bg-red-400"   alt="Theiapollo Logo"></Image> 
-                     <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Theiapollo</span>
+                     <Image src={logo} className="hidden me-8 rounded-full w-12 h-12 sm:inline-flex "   alt="Theiapollo Logo"></Image> 
+                     <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-gray-600 dark:text-white">Theiapollo</span>
                   </a>
                  </div>
                  <div>

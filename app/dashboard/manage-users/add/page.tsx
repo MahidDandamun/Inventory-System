@@ -1,12 +1,15 @@
 "use client";
 import Link from "next/link"
-import { SelectAccessLevelField, TextInputField,FileInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
+import { SelectOptionField, TextInputField,FileInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
 
 
 export default function addUser() {
-     return (
-      <>
-      
+  const accessLevelOptions = [
+    {name: "Admin", value: "admin"},
+    {name: "Employee", value: "Employee"},
+  ]
+  return (
+  <>
     <div className="p-4 sm:ml-64 bg-white dark:bg-gray-900">     
       <div className="p-4 rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">     
         <form className="max-w-full sm:max-w-xl mt-26 mx-auto shadow-md sm:rounded-lg p-5">
@@ -24,13 +27,13 @@ export default function addUser() {
             <TextInputField name={"user_password"} TextLabel={"Confirm Password"}  type={"password"}/>
           </div>
           
-          <SelectAccessLevelField name={"user_accessLevel"} TextLabel={"Access Level"}/>                                             
+          <SelectOptionField name={"user_accessLevel"} label={"Access Level"} options={accessLevelOptions} />                                             
           <FileInputField name={"user_image"}/>
           <FormSubmitButton action={"Submit"} path={"manage-users"} />
          
         </form>
       </div>
     </div >
-    </>
+  </>
   )
 }

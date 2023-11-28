@@ -1,9 +1,33 @@
 "use client"
-import Link from 'next/link';
-import { TextInputField, SelectProductField,SelectDeliveryStatField, QuantityInputField, DateInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
+ 
+import { TextInputField, NumberInputField, DateInputField, FormSubmitButton, SelectOptionField } from "../../../ui/dashboard/inputFields/inputField";
 
  
 function EditInvoicePage() {
+  const productOptions = [
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+  ]
+  const orderStatus = [
+    {name: "packing",value: "pkg"},
+    {name: "shipping",value: "shp"},
+    {name: "Delivered",value: "dvd"},
+  ]
+  const paymentStatus = [
+    { name: "Paid", value: "pd" },
+    { name: "Pending", value: "pdg" },
+    { name: "Cancelled", value:"cnl"}
+  ]
+  const paymentMethod = [
+    { name: "Cash on Delivery", value: "cod" },
+    { name: "Paypal", value: "pp" },
+    { name: "Gcash", value: "gc" },
+    { name: "Credit Card", value: "cc" },
+  ]
  
   return (
    <>
@@ -14,15 +38,24 @@ function EditInvoicePage() {
             <div className="grid md:grid-cols-2 md:gap-6">  
               <TextInputField name={"customer_fname"} TextLabel={"First Name"} type={"text"} />
               <TextInputField name={"customer_lname"} TextLabel={"Last Name"} type={"text"} />
-            </div>
-            <SelectProductField name={"ordered_product"} TextLabel={"Product"}/>
- 
+            </div> 
+            <TextInputField name={"customer_address"} TextLabel={"Address"} type={"text"} />
+            
+            <div className="grid md:grid-cols-2 md:gap-6">  
+              <SelectOptionField name={"ordered_product"} label={"Product"} options={productOptions} />
+              <NumberInputField name={"product_price"} placeholder={"Item price"} Label={"Price"}/>            
+            </div>           
+            <div className="grid md:grid-cols-2 md:gap-6">  
+              <SelectOptionField name={"payment_method"} label={"Payment Method"} options={paymentMethod} />
+              <SelectOptionField name={"payment_status"} label={"Payment Status"} options={paymentStatus} />
+                     
+            </div>           
             <div className="grid md:grid-cols-2 md:gap-6">
-              <QuantityInputField name={"ordered_quantity"} Label={"Quantity"}/>
+              <NumberInputField name={"ordered_quantity"} placeholder={"Ordered Quantity"} Label={"Quantity"}/>
               <DateInputField name={"order_date"}/>
-            </div>
-            <SelectDeliveryStatField name={"order_status"}/>                           
-            <FormSubmitButton action={"Edit"} path={"orders"} />
+            </div>                                
+            <SelectOptionField name={"order_status"} label={"Order Status"} options={orderStatus} />
+            <FormSubmitButton action={"Edit"} path={"invoice"} />
         </form>
       </div>
     </div >

@@ -1,10 +1,15 @@
 "use client";
 
-import Link from 'next/link';
-import { FileInputField, FormSubmitButton, QuantityInputField, SelectWarehouseField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
+ 
+import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
  
 function AddProduct() {
- 
+  const warehouseOptions = [
+    {name: "Makati", value: "mkt"},
+    {name: "Taguig", value: "tg"},
+    {name: "Mandaluyong", value: "mdyg"},
+    ]
+   
   return (
    <>
    
@@ -17,13 +22,14 @@ function AddProduct() {
               <TextInputField name={"product_sku"} TextLabel={"Sku (123-124-122)"}  type={"text"}/>
           </div>
           <div className="relative z-0 w-full mb-5 group">
-              <SelectWarehouseField name={"product_warehouse"} />
+            <SelectOptionField name={"product_warehouse"} label={"Warehouse"} options={warehouseOptions} />
           </div>
           <div className="grid md:grid-cols-2 md:gap-6">
-              <QuantityInputField name={"product_qty"} Label={"Quantity"}/>
+              <NumberInputField name={"product_qty"} placeholder={"Product Quantity"} Label={"Quantity"}/>
+              <NumberInputField name={"product_price"} placeholder={"Value in Peso"} Label={"Product Price"}/>
           </div>                 
           <FileInputField name={"product_image"} />
-            <FormSubmitButton action={"Edit"} path={"products"} />
+            <FormSubmitButton action={"Update"} path={"products"} />
         </form>
       </div>
     </div >

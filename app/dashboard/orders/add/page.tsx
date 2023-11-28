@@ -1,10 +1,37 @@
 "use client"
-import Link from 'next/link';
-import { TextInputField, SelectProductField,SelectDeliveryStatField, QuantityInputField, DateInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
+ 
+import { TextInputField,SelectOptionField, DateInputField, NumberInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
 
  
 function AddOrdersPage() {
- 
+  const productOptions = [
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+    {name: "Passion Flicker",value: "PF"},
+  ]
+  const orderStatus = [
+    {name: "packing",value: "pkg"},
+    {name: "shipping",value: "shp"},
+    {name: "Delivered",value: "dvd"},
+  ]
+  const paymentStatus = [
+    { name: "Paid", value: "pd" },
+    { name: "Pending", value: "pdg" },
+    { name: "Cancelled", value:"cnl"}
+  ]
+  const paymentMethod = [
+    { name: "Cash on Delivery", value: "cod" },
+    { name: "Paypal", value: "pp" },
+    { name: "Gcash", value: "gc" },
+    { name: "Credit Card", value: "cc" },
+  ]
+  const additionalServices = [
+    { name: "Gift Wrapping", value: 100 },
+    { name: "Extra Packaging", value: 50 },
+  ]
   return (
    <>
     <div className="p-4 sm:ml-64 bg-white dark:bg-gray-900">     
@@ -15,14 +42,22 @@ function AddOrdersPage() {
               <TextInputField name={"customer_fname"} TextLabel={"First Name"} type={"text"} />
               <TextInputField name={"customer_lname"} TextLabel={"Last Name"} type={"text"} />
             </div>
-            <SelectProductField name={"ordered_product"} TextLabel={"Product"}/>
- 
+            <TextInputField name={"customer_address"} TextLabel={"Address"} type={"text"} />
+            <SelectOptionField name={"ordered_product"} label={"Product"} options={productOptions} />
+            <div className="grid md:grid-cols-2 md:gap-6">              
+              <NumberInputField name={"product_discount"} placeholder={"Discount in percent e.g 20"} Label={"Discount per product"}/>         
+              <SelectOptionField name={"additional_services"} label={"Additional Services"} options={additionalServices} />                                   
+            </div>
             <div className="grid md:grid-cols-2 md:gap-6">
-              <QuantityInputField name={"ordered_quantity"} Label={"Quantity"}/>
+              <NumberInputField name={"ordered_quantity"} placeholder={"Ordered Quantity"} Label={"Quantity"}/>         
+              <SelectOptionField name={"order_status"} label={"Order Status"} options={orderStatus} />                                   
+            </div>
+            <div className="grid md:grid-cols-3 md:gap-6">                       
+              <SelectOptionField name={"payment_status"} label={"Payment Status"} options={paymentStatus} />                                   
+              <SelectOptionField name={"payment_method"} label={"Payment Method"} options={paymentMethod} />
               <DateInputField name={"order_date"}/>
             </div>
-            <SelectDeliveryStatField name={"order_status"}/>                           
-            <FormSubmitButton action={"edit"} path={"orders"} />
+            <FormSubmitButton action={"Add"} path={"orders"} />
         </form>
       </div>
     </div >

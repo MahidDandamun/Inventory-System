@@ -73,7 +73,6 @@ function OrdersPage() {
               </Link>
             </div>
             <DataTable path={"orders"} headers={tableHeaders}  datas={orders} hasImage={true}/>
-  
           <Pagination/>  
           </div>
         </div>
