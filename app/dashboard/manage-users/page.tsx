@@ -5,6 +5,7 @@ import image from '../../../images/Avatar.png';
 import Link from 'next/link';
 
 import DataTable from "../../ui/dashboard/table/table";
+import { AddButton } from "../../ui/dashboard/buttons/button";
 
 function ManageUsers() {
 
@@ -54,11 +55,7 @@ return (
             <label htmlFor="search-users" className="sr-only">Search</label>
             <SearchInputField name={"search_users"} placeholder="Search Users" />
             <Link href='/dashboard/manage-users/add'>
-              <button className='w-16 h-16 rounded-full sm:w-24 sm:h-8 fixed right-6 bottom-20 
-                sm:static
-              bg-green-500 sm:rounded-md text-sm
-              text-white hover:bg-green-600'>Add new
-              </button>
+              <AddButton/>
             </Link>
           </div>
           <DataTable path={"manage-users"} headers={tableHeaders}  datas={users} hasImage={true}/>

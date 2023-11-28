@@ -9,6 +9,7 @@ import product4 from '../../../images/products/candle-4.jpg';
  
  
 import Link from "next/link";
+import { AddButton } from "../../ui/dashboard/buttons/button";
  
 function ProductsPage() {
  
@@ -58,11 +59,7 @@ function ProductsPage() {
               <label htmlFor="search-users" className="sr-only">Search</label>
               <SearchInputField name={"search_products"} placeholder="Search Products" />
               <Link href='/dashboard/products/add'>
-                <button className='w-16 h-16 rounded-full sm:w-24 sm:h-8 fixed right-6 bottom-20 
-                  sm:static
-                bg-green-500 sm:rounded-md text-sm
-                text-white hover:bg-green-600'>Add new
-                </button>
+                <AddButton/>
               </Link>
             </div>
             <DataTable path={"products"} headers={tableHeaders} datas={products} hasImage={true}/>

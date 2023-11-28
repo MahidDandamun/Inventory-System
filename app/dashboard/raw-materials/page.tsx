@@ -9,6 +9,7 @@ import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
+import { AddButton } from "../../ui/dashboard/buttons/button";
  
 
 function RawMaterialsPage() {
@@ -53,11 +54,7 @@ function RawMaterialsPage() {
               <label htmlFor="search-users" className="sr-only">Search</label>
               <SearchInputField name={"search_raw"} placeholder="Search raw materials" />
               <Link href='/dashboard/raw-materials/add'>
-                <button className='w-16 h-16 rounded-full sm:w-24 sm:h-8 fixed right-6 bottom-20 
-                  sm:static
-                bg-green-500 sm:rounded-md text-sm
-                text-white hover:bg-green-600'>Add new
-                </button>
+                <AddButton/>
               </Link>
             </div>
             <DataTable path={"raw-materials"} headers={tableHeaders}  datas={rawMaterials} hasImage={true}/>

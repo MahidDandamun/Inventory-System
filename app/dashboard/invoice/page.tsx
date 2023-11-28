@@ -1,13 +1,5 @@
 "use client";
 import Pagination from "../../ui/dashboard/pagination/pagination";
- 
-import product1 from '../../../images/products/candle-1.jpg';
-import product2 from '../../../images/products/candle-2.jpg';
-import product3 from '../../../images/products/candle-3.jpg';
-import product4 from '../../../images/products/candle-4.jpg';
- 
-import Image from 'next/image';
-import Link from 'next/link';
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
 import DataTable from "../../ui/dashboard/table/table";
  

@@ -5,9 +5,10 @@ import product2 from '../../../images/products/candle-2.jpg';
 import product3 from '../../../images/products/candle-3.jpg';
 import product4 from '../../../images/products/candle-4.jpg';
 import DataTable from "../../ui/dashboard/table/table";
-import Image from 'next/image';
+ 
 import Link from 'next/link';
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
+import { AddButton } from "../../ui/dashboard/buttons/button";
 function OrdersPage() {
   const tableHeaders = ["ProductImage", "DateOfSalesOrder", "Customer", "Product", "Quantity", "TotalCost", "Discounts","DeliveryStatus", "AdditionalCharges"]
   
@@ -68,11 +69,7 @@ function OrdersPage() {
               <label htmlFor="search-users" className="sr-only">Search</label>
               <SearchInputField name={"search_orders"} placeholder="Search Orders" />
               <Link href='/dashboard/orders/add'>
-                <button className='w-16 h-16 rounded-full sm:w-24 sm:h-8 fixed right-6 bottom-20 
-                  sm:static
-                bg-green-500 sm:rounded-md text-sm
-                text-white hover:bg-green-600'>Add new
-                </button>
+                <AddButton/>
               </Link>
             </div>
             <DataTable path={"orders"} headers={tableHeaders}  datas={orders} hasImage={true}/>

@@ -4,6 +4,7 @@ import DataTable from "../../ui/dashboard/table/table";
 import Pagination from "../../ui/dashboard/pagination/pagination";
 import Link from "next/link";
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
+import { AddButton } from "../../ui/dashboard/buttons/button";
 function WarehousePage() {
   const tableHeaders = ["Location", "Status"];
   const warehouses = [
@@ -31,11 +32,7 @@ return (
             <label htmlFor="search-users" className="sr-only">Search</label>
             <SearchInputField name={"search_warehouse"} placeholder="Search Warehouse" />
             <Link href='/dashboard/warehouse/add'>
-              <button className='w-16 h-16 rounded-full sm:w-24 sm:h-8 fixed right-6 bottom-20 
-                sm:static
-              bg-green-500 sm:rounded-md text-sm
-              text-white hover:bg-green-600'>Add new
-              </button>
+              <AddButton/>
             </Link>
           </div>
           <DataTable path={"warehouse"} headers={tableHeaders}  datas={warehouses} hasImage={false}/>
