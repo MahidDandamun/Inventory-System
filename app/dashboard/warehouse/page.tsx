@@ -9,9 +9,10 @@ import { AddButton } from "../../ui/dashboard/buttons/button";
 import {fetchWarehouse}  from "../../lib/data";
 
 
-const WarehousePage= async ()=> {
-  const warehouses = await fetchWarehouse();
-  console.log(warehouses);
+const WarehousePage = async ({ searchParams }) => {
+  const q= searchParams?.q || "";
+  const warehouses = await fetchWarehouse(q);
+
   const tableHeaders = ["Location",  "Status"]
 return (
   <>

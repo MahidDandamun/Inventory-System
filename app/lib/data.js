@@ -2,21 +2,21 @@ import { Warehouse, User } from "./models";
 import  {connectToDB}  from "./utils";
  
 
-export const fetchWarehouse = async () => {
+export const fetchWarehouse = async (q) => {
+  const regex = new RegExp(q,"i")
   try {
-    connectToDB();
- 
-    const warehouses = await Warehouse.find();
+    const warehouses = await Warehouse.find({Location:{$regex:regex}});
     return warehouses;
   } catch (err) {
     console.log(err)
     throw new Error("Failed fetching warehouses!")
   }
 }
-export const fetchUser = async () => {
+export const fetchUser = async (q) => {
+  const regex = new RegExp(q,"i")
   try {
-    connectToDB();
-    const users = await User.find();
+ 
+    const users = await User.find({Name:{$regex:regex}});
     return users;
 
     } catch (err) {

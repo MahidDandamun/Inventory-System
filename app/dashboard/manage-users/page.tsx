@@ -5,11 +5,12 @@ import { AddButton } from "../../ui/dashboard/buttons/button";
 // import image from '../../../images/Avatar.png';
 import Link from 'next/link';
 import DataTable from "../../ui/dashboard/table/table";
-// import { fetchUsers } from "../../lib/data";
 import {fetchUser}  from "../../lib/data";
-const ManageUsers= async ()=> {
- 
-  const users = await fetchUser();
+const ManageUsers= async ({searchParams})=> {
+  const q= searchParams?.q || "";
+  const users = await fetchUser(q);
+
+
   const tableHeaders = ["Name", "Email","Username","Password", "UserLevel"]
  
 return (

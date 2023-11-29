@@ -1,5 +1,8 @@
 "use client";
+import { usePathname, useSearchParams,useRouter } from "next/navigation";
 import Link from "next/link";
+import { useDebouncedCallback } from "use-debounce";
+ 
 export function TextInputField({ TextLabel, type, name }) {
   return (
     <div className="relative z-0 w-full mb-8 group">
@@ -91,7 +94,23 @@ export function FormSubmitButton({path,action}) {
   )
 }
 
-export function SearchInputField({name, placeholder}:{name:string, placeholder:string}) {
+export function SearchInputField({ name, placeholder }: { name: string, placeholder: string }) {
+  const searchParams = useSearchParams();
+  const {replace} =useRouter();
+  const pathname = usePathname();
+ 
+  
+  const handleSearch = useDebouncedCallback((e) => {
+    const params = new URLSearchParams(searchParams);
+    if (e.target.value) {
+     e.target.value.length >2 && params.set("q", e.target.value)
+    }
+    else {
+      params.delete("q")
+    }
+ 
+    replace(`${pathname}?${params}`)
+  },300)
   return (
     <>
       <div className="relative w-full sm:w-6/12">
@@ -107,7 +126,7 @@ export function SearchInputField({name, placeholder}:{name:string, placeholder:s
             border-gray-300 rounded-lg sm:w-80 bg-gray-50 focus:ring-violet-500 
               focus:border-violet-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
               dark:text-white dark:focus:ring-violet-400 dark:focus:border-violet-400"
-          placeholder={placeholder} />      
+          placeholder={placeholder} onChange={handleSearch}/>      
       </div>
     </>
   )
