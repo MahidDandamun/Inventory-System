@@ -1,27 +1,18 @@
-"use client";
-
+ 
+// import React, { useEffect, useState } from 'react';
+ 
 import DataTable from "../../ui/dashboard/table/table";
 import Pagination from "../../ui/dashboard/pagination/pagination";
 import Link from "next/link";
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
 import { AddButton } from "../../ui/dashboard/buttons/button";
-function WarehousePage() {
-  const tableHeaders = ["Location", "Status"];
-  const warehouses = [
-    {
-      Location: "Mandaluyong City",
-      Status: "Half Full",
-    },
-    {
-      Location: "Makati City",
-      Status: "Empty",
-    },
-    {
-      Location: "Taguig City",
-      Status: "Full",
-    },
-  ];
-  
+import {fetchWarehouse}  from "../../lib/data";
+
+
+const WarehousePage= async ()=> {
+  const warehouses = await fetchWarehouse();
+  console.log(warehouses);
+  const tableHeaders = ["Location",  "Status"]
 return (
   <>
     <div className="md:p-4 sm:ml-64 bg-white dark:bg-gray-900">
@@ -36,6 +27,7 @@ return (
             </Link>
           </div>
           <DataTable path={"warehouse"} headers={tableHeaders}  datas={warehouses} hasImage={false}/>
+ 
          <Pagination/>  
         </div>
       </div>

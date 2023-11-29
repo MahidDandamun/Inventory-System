@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 const useLocalStorage = (key:any, initialValue:any) => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item) : initialValue;
+      }
+      return initialValue;
     } catch (error) {
       console.log(error);
       return initialValue;
@@ -18,7 +21,9 @@ const useLocalStorage = (key:any, initialValue:any) => {
 
       setStoredValue(valueToStore);
 
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      }
     } catch (error) {
       console.log(error);
     }
@@ -27,13 +32,13 @@ const useLocalStorage = (key:any, initialValue:any) => {
 };
 
 const useDarkMode = () => {
-  const [enabled, setEnabled] = useLocalStorage('dark-theme', false); // Fix: Added missing import for useLocalStorage
+  const [enabled, setEnabled] = useLocalStorage('dark-theme', false);
 
   useEffect(() => {
     const className = 'dark';
-    const bodyClass = window.document.body.classList;
+    const bodyClass = typeof window !== 'undefined' && window.document.body.classList;
 
-    enabled ? bodyClass.add(className) : bodyClass.remove(className); // Fix: Changed isEnabled to enabled
+    enabled ? bodyClass.add(className) : bodyClass.remove(className);
   }, [enabled]);
  
   return [enabled, setEnabled];

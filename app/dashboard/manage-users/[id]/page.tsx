@@ -26,7 +26,7 @@ export default function updateUser() {
               <TextInputField name={"user_password"} TextLabel={"Confirm Password"}  type={"password"}/>
             </div>
             <SelectOptionField name={"user_accessLevel"} label={"Access Level"} options={accessLevelOptions} />                                              
-            <FileInputField name={"user_image"}/>
+            <FileInputField name={"user_image"} label={'User'} />
             <FormSubmitButton action={"Update"} path={"manage-users"} />
           
           </form>

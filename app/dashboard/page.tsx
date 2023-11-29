@@ -74,7 +74,7 @@ function DashboardPage() {
                       <div className="min-w-full sm:max-w-full p-6 flex justify-center text-gray-500 dark:text-white bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 group" key={index}>
                           {item.icon}
                           <div className='flex flex-col'>
-                            <h5 className="text-md sm:text-lg md:text-xl font-normal tracking-tight text-gray-600 dark:text-white">{item.title}</h5>
+                            <h6 className="text-md sm:text-lg md:text-xl font-normal tracking-tight text-gray-600 dark:text-white">{item.title}</h6>
                             <p className="mb-3 text-sm font-normal text-gray-500 dark:text-white">
                               <span className='text-gray-500 text-lg font-bold dark:text-violet-400'>
                                 {item.items}

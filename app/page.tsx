@@ -1,7 +1,8 @@
 import Link from "next/link";
-
+// import  {connectToDB}  from "./lib/utils";   
  
 function Home() {
+   // connectToDB();
    return (
     <>
       <div className='flex items-center justify-center min-h-screen flex-col'>

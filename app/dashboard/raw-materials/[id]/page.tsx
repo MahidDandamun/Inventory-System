@@ -27,7 +27,7 @@ function EditRawMaterials() {
               <NumberInputField name={"rmaterial_quantity"} placeholder={"Material Quantity"} Label={"Quantity"} />
               <NumberInputField name={"product_price"} placeholder={"Raw-material Price"} Label={"Price"} />
           </div>                            
-          <FileInputField name={"rmaterial_image"} />
+          <FileInputField name={"rmaterial_image"} label={"Raw material's"} />
           <FormSubmitButton action={"Edit"} path={"raw-materials"} />         
         </form>
       </div>

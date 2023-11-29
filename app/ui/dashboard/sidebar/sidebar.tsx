@@ -53,12 +53,12 @@ function Sidebar() {
       //    list: [
       //       {
       //          title: "Revenue",
-      //          path: "dashboard/revenue",
+      //          path: "/dashboard/revenue",
       //          icon:<MdWork/>
       //       },
       //       {
       //          title: "Reports",
-      //          path: "dashboard/reports",
+      //          path: "/dashboard/reports",
       //          icon:<MdAnalytics/>
       //       }
       //    ]
@@ -69,12 +69,12 @@ function Sidebar() {
          list: [
             {
                title: "Settings",
-               path: "settings",
+               path: "/dashboard/settings",
                icon:<MdOutlineSettings/>
             },
             // {
             //    title: "Help",
-            //    path: "dashboard/help",
+            //    path: "/dashboard/help",
             //    icon:<MdHelpCenter/>
             // },
          ]
@@ -99,7 +99,7 @@ function Sidebar() {
                         <span className="pb-5 text-sm text-gray-400 dark:text-white-700 ">{item.title} </span>
                         <ul className='relative'>                        
                            {item.list.map((subItem, index) => (
-                               <li><MenuLink item={subItem} key={index} /></li>                               
+                               <li key={index}><MenuLink item={subItem}/></li>                               
                            ))}
                         </ul>
                      </li> 

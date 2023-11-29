@@ -17,8 +17,10 @@ export default function DataTable({ datas, headers, hasImage = false, path }: { 
           </tr>
         </thead>
         <tbody>
-          {datas.map((data, index) => (
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600" key={index}>
+          {datas.map((data, key) => (
+            <tr className="bg-white border-b 
+            dark:bg-gray-800 dark:border-gray-600
+             hover:bg-gray-50 dark:hover:bg-gray-600" key={key}>
               {hasImage? 
                 <>
                 <td scope="row" className="flex items-center justify-center text-gray-500 whitespace-nowrap dark:text-white">

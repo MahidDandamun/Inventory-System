@@ -1,50 +1,17 @@
-"use client";
+ 
 import Pagination from "../../ui/dashboard/pagination/pagination";
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
-import image from '../../../images/Avatar.png';
-import Link from 'next/link';
-
-import DataTable from "../../ui/dashboard/table/table";
 import { AddButton } from "../../ui/dashboard/buttons/button";
-
-function ManageUsers() {
-
-  const tableHeaders = ["Image","Name", "Email","Username","Password", "UserLevel"]
-  const users = [
-    {
-      Image: image,
-      Name: "Jese Rodriguez",
-      Email: "unknown1@yahoo.com",
-      Username: "employee1",
-      Password: "employee0001",
-      UserLevel: "Employee",
-    },
-    {
-      Image: image,
-      Name: "Jessa Rodriguez",
-      Email: "unknown2@yahoo.com",
-      Username: "employee2",
-      Password: "employee0002",
-      UserLevel: "Employee",
-    },
-    {
-      Image: image,
-      Name: "J Rodriguez",
-      Email: "unknown3@yahoo.com",
-      Username: "employee3",
-      Password: "employee0003",
-      UserLevel: "Admin",
-    },
-    { 
-      Image: image,
-      Name: "J Rodriguez",
-      Email: "unknown3@yahoo.com",
-      Username: "employee3",
-      Password: "employee0003",
-      UserLevel: "Admin",
-    },
+// import image from '../../../images/Avatar.png';
+import Link from 'next/link';
+import DataTable from "../../ui/dashboard/table/table";
+// import { fetchUsers } from "../../lib/data";
+import {fetchUser}  from "../../lib/data";
+const ManageUsers= async ()=> {
  
-  ]
+  const users = await fetchUser();
+  const tableHeaders = ["Name", "Email","Username","Password", "UserLevel"]
+ 
 return (
   <>
     <div className="md:p-4 sm:ml-64 bg-white dark:bg-gray-900">
@@ -58,7 +25,7 @@ return (
               <AddButton/>
             </Link>
           </div>
-          <DataTable path={"manage-users"} headers={tableHeaders}  datas={users} hasImage={true}/>
+          <DataTable path={"manage-users"} headers={tableHeaders}  datas={users} hasImage={false}/>
          <Pagination/>  
         </div>
       </div>

@@ -28,7 +28,7 @@ function AddProduct() {
               <NumberInputField name={"product_qty"} placeholder={"Product Quantity"} Label={"Quantity"}/>
               <NumberInputField name={"product_price"} placeholder={"Value in Peso"} Label={"Product Price"}/>
           </div>                 
-          <FileInputField name={"product_image"} />
+            <FileInputField name={"product_image"} label={"Product's"} />
             <FormSubmitButton action={"Update"} path={"products"} />
         </form>
       </div>

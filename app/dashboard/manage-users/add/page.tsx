@@ -28,7 +28,7 @@ export default function addUser() {
           </div>
           
           <SelectOptionField name={"user_accessLevel"} label={"Access Level"} options={accessLevelOptions} />                                             
-          <FileInputField name={"user_image"}/>
+            <FileInputField name={"user_image"} label={"User"} />
           <FormSubmitButton action={"Submit"} path={"manage-users"} />
          
         </form>

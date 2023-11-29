@@ -27,8 +27,8 @@ function AddRawMaterials() {
               <NumberInputField name={"rmaterial_quantity"} placeholder={"Material Quantity"} Label={"Quantity"}/>
               <NumberInputField name={"rmaterial_price"} placeholder={"Raw-material Price"} Label={"Price"}/>
           </div>                            
-          <FileInputField name={"rmaterial_image"} />
-            <FormSubmitButton action={"action"} path={"raw-materials"} />         
+            <FileInputField name={"rmaterial_image"} label={"Raw material's"} />
+            <FormSubmitButton action={"add"} path={"raw-materials"} />         
         </form>
       </div>
     </div >
