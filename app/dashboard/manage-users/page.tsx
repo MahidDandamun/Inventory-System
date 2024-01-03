@@ -5,7 +5,8 @@ import { AddButton } from "../../ui/dashboard/buttons/button";
 // import image from '../../../images/Avatar.png';
 import Link from 'next/link';
 import DataTable from "../../ui/dashboard/table/table";
-import {fetchUser}  from "../../lib/data";
+import { fetchUser } from "../../lib/data";
+
 const ManageUsers= async ({searchParams})=> {
   const q= searchParams?.q || "";
   const users = await fetchUser(q);

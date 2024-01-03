@@ -1,4 +1,4 @@
-"use client";
+ 
 import Pagination from "../../ui/dashboard/pagination/pagination";
 import DataTable from "../../ui/dashboard/table/table";
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
@@ -10,44 +10,48 @@ import product4 from '../../../images/products/candle-4.jpg';
  
 import Link from "next/link";
 import { AddButton } from "../../ui/dashboard/buttons/button";
+import { fetchProduct } from "../../lib/data";
  
-function ProductsPage() {
- 
-  const tableHeaders = ["Image", "Sku", "Name", "Price", "Quantity", "Warehouse"]
-  const products = [
-    {   
-      Image:product1,
-      Sku: "123456789",
-      Name: "Passion Flicker",
-      Price: "P 100",
-      Quantity: "95",
-      Warehouse: "Makati City"
-    },
-    {
-      Image:product2,
-      Sku: "123243789", 
-      Name: "Heritage Flame",
-      Price: "P 130",
-      Quantity: "45",
-      Warehouse: "Taguig City"
-    },
-    {   
-      Image:product3,
-      Sku: "123456789",
-      Name: "Nightowl Flame",
-      Price: "P 150",
-      Quantity: "75",
-      Warehouse: "Manadaluyong City"
-    },
-    {
-      Image:product4,
-      Sku: "123456789",
-      Name: "Autumn Glow",
-      Price: "P 100",
-      Quantity: "85",
-      Warehouse: "Taguig City "
-    }
-  ]
+const ProductsPage = async ({searchParams}) => {
+  const q= searchParams?.q || "";
+  const products = await fetchProduct(q);
+
+
+  const tableHeaders = ["Sku", "Name", "Price", "Quantity", "Warehouse"]
+  // const products = [
+  //   {   
+  //     Image:product1,
+  //     Sku: "123456789",
+  //     Name: "Passion Flicker",
+  //     Price: "P 100",
+  //     Quantity: "95",
+  //     Warehouse: "Makati City"
+  //   },
+  //   {
+  //     Image:product2,
+  //     Sku: "123243789", 
+  //     Name: "Heritage Flame",
+  //     Price: "P 130",
+  //     Quantity: "45",
+  //     Warehouse: "Taguig City"
+  //   },
+  //   {   
+  //     Image:product3,
+  //     Sku: "123456789",
+  //     Name: "Nightowl Flame",
+  //     Price: "P 150",
+  //     Quantity: "75",
+  //     Warehouse: "Manadaluyong City"
+  //   },
+  //   {
+  //     Image:product4,
+  //     Sku: "123456789",
+  //     Name: "Autumn Glow",
+  //     Price: "P 100",
+  //     Quantity: "85",
+  //     Warehouse: "Taguig City "
+  //   }
+  // ]
  
   return (
     <>
@@ -62,7 +66,7 @@ function ProductsPage() {
                 <AddButton/>
               </Link>
             </div>
-            <DataTable path={"products"} headers={tableHeaders} datas={products} hasImage={true}/>
+            <DataTable path={"products"} headers={tableHeaders} datas={products} hasImage={false}/>
           <Pagination/>  
           </div>
         </div>

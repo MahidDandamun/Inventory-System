@@ -1,45 +1,21 @@
 // Importing necessary components and images
 import Pagination from "../../ui/dashboard/pagination/pagination";
 import DataTable from "../../ui/dashboard/table/table";
-import rawMaterial1 from '../../../images/raw-materials/rawMaterial-1.png';
-import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';
-import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
+// import rawMaterial1 from '../../../images/raw-materials/rawMaterial-1.png';
+// import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';
+// import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
 import Link from 'next/link';
 import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
 import { AddButton } from "../../ui/dashboard/buttons/button";
+import { fetchRmaterial } from "../../lib/data";
 
 // Function component for Raw Materials page
-function RawMaterialsPage() {
+const RawMaterialsPage= async ({ searchParams })=> {
+  const q= searchParams?.q || "";
+  const rmaterials = await fetchRmaterial(q);
   // Table headers for the data table
-  const tableHeaders = ["Image", "Name", "Price", "Quantity", "Warehouse","Supplier"];
-
-  // Raw materials data
-  const rawMaterials = [
-    {   
-        Image: rawMaterial1,
-        Name: "Soy wax ",
-        Price: "P220 / 1kg",
-        Quantity: "200kg",
-        Warehouse: "Santa Rosa",
-        Supplier: "candle supplier1",
-    },
-    {
-        Image: rawMaterial2,
-        Name: "Candle wicks ",
-        Price: "P 80 / 1pack(10pcs of wick and 6 inches each wick)",
-        Quantity: "200pcs",
-        Warehouse: "Santa Ana",
-        Supplier: "candle supplier2",
-    },
-    {   
-        Image: rawMaterial3,
-        Name: "Vanilla extract ",
-        Price: "P 100 / bottle of 120ml ",
-        Quantity: "100pcs",
-        Warehouse: "Santa Mesa",
-        Supplier: "candle supplier3",
-    },
-  ];
+  const tableHeaders = ["Name", "Price", "Quantity", "Warehouse","Supplier"];
+ 
   
   return (
     <>
@@ -54,7 +30,7 @@ function RawMaterialsPage() {
                 <AddButton/>
               </Link>
             </div>
-            <DataTable path={"raw-materials"} headers={tableHeaders} datas={rawMaterials} hasImage={true}/>
+            <DataTable path={"raw-materials"} headers={tableHeaders} datas={rmaterials} hasImage={false}/>
             <Pagination/>  
           </div>
         </div>

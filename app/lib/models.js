@@ -1,62 +1,70 @@
+ 
 import mongoose from "mongoose";
 
  
 
-// const productsSchema = new mongoose.Schema({
-//   image: {
-//     type: String
-//   },
-//   sku: {
-//     type: Number,
-//     unique: true,
-//     require: true
-//   },
-//   name: {
-//     type: String,
-//     min: 5,
-//     max: 30,
-//     Unique: true,
-//     require: true
-//   },
-//   price: {
-//     type: Number,
-//     require: true
-//   },
-//   quantity: {
-//     type: Number,
-//     require: true,
-//   },
-//   warehouse: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Warehouse' // Reference to the warehouseSchema
-//   }
-// }, { timestamps: true });
+const productSchema = new mongoose.Schema({
+  Image: {
+    type: String
+  },
+  Sku: {
+    type: Number,
+    unique: true,
+    require: true
+  },
+  Name: {
+    type: String,
+    min: 5,
+    max: 30,
+    Unique: true,
+    require: true
+  },
+  Price: {
+    type: Number,
+    require: true
+  },
+  Quantity: {
+    type: Number,
+    require: true,
+  },
+  Warehouse: {
+    type: String,
+    required:true 
+  }
+}, { timestamps: true });
 
-// const rawMaterialSchema = new mongoose.Schema({
-//   image: {
-//     type: String,
-//   },
-//   name: {
-//     type: String,
-//     min: 3,
-//     max: 30,
-//     unique: true,
-//   },
-//   price: {
-//     type: Number,
-//     required: true
-//   },
-//   quantity: {
-//     type: Number,
-//     required: true
-//   },
-//   warehouse: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Warehouse' // Reference to the warehouseSchema
-//   }
-// }, { timestamps: true });
+const rawMaterialSchema = new mongoose.Schema({
+  Image: {
+    type: String,
+  },
+  Name: {
+    type: String,
+    min: 3,
+    max: 30,
+    unique: true,
+  },
+  Price: {
+    type: Number,
+    required: true
+  },
+  Quantity: {
+    type: Number,
+    required: true
+  },
+  Warehouse: {
+    type: String,
+    required:true 
+  },
+  Supplier: {
+    type: String,
+    required:true 
+  }
+}, { timestamps: true });
 
 const userSchema = new mongoose.Schema({
+  Image: {
+    type:String
+  },
   Name: {
     type: String,
     required: true,
@@ -105,6 +113,8 @@ const warehouseSchema = new mongoose.Schema({
  
 export  const Warehouse = mongoose.models.Warehouse || mongoose.model("Warehouse", warehouseSchema);
 export  const User = mongoose.models.User || mongoose.model("User", userSchema);
+export  const RawMaterial = mongoose.models.RawMaterial || mongoose.model("RawMaterial", rawMaterialSchema);
+export  const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
  
  
  
