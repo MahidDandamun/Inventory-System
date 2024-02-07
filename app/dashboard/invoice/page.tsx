@@ -1,7 +1,8 @@
 "use client";
-import Pagination from "../../ui/dashboard/pagination/pagination";
-import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
-import DataTable from "../../ui/dashboard/table/table";
+import Pagination from "../../../components/ui/dashboard/pagination/pagination";
+import { SearchInputField } from "../../../components/ui/dashboard/inputFields/inputField";
+import DataTable from "../../../components/ui/dashboard/table/table";
+import React from "react";
  
 function InvoicePage() {
   const tableHeaders = ["Name", "Address", "Item", "Qty", "PricePerItem", "GrandTotal", "PaymentMethod", "PaymentStatus"]
@@ -52,7 +53,7 @@ function InvoicePage() {
   
   return (
     <>
-      <div className="md:p-4 sm:ml-64 bg-white dark:bg-gray-900">
+      <div className=" bg-white dark:bg-gray-900">
         <div className="rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">
           <div className="relative mt-5 sm-mt-0 overflow-x-auto shadow-md sm:rounded-lg p-5">
           <h1 className="text-xl sm:py-5 md:text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Invoice</h1>

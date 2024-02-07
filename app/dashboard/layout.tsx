@@ -1,19 +1,24 @@
-import Navbar from "../ui/dashboard/navbar/navbar";
-import Sidebar from "../ui/dashboard/sidebar/sidebar";
  
+import Navbar from "../../components/ui/dashboard/navbar/navbar";
+import Sidebar from "../../components/ui/dashboard/sidebar/sidebar";
+import  PageWrapper  from "../../components/ui/dashboard/page-wrapper";
  
-function Layout({children}) {
+interface Props { 
+  children: React.ReactNode;
+
+}
+
+function Layout({ children }: Props) {
+  
+ 
   return (
-    <div>
-      <div>
-        <Sidebar />
-      </div>
-      <div>
-        <Navbar />
-        <div className="h-screen bg-white-400 dark:bg-gray-900">
-        {children}                 
-        </div>
-      </div>
+    <div>   
+        <Sidebar/>
+        <Navbar/>
+        <PageWrapper>
+          {children}                  
+        </PageWrapper>
+      
     </div>
   )
 }

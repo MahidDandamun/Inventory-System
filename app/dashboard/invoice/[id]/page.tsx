@@ -1,6 +1,6 @@
 "use client"
  
-import { TextInputField, NumberInputField, DateInputField, FormSubmitButton, SelectOptionField } from "../../../ui/dashboard/inputFields/inputField";
+import { TextInputField, NumberInputField, DateInputField, FormSubmitButton, SelectOptionField } from "../../../../components/ui/dashboard/inputFields/inputField";
 
  
 function EditInvoicePage() {

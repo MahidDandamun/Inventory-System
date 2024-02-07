@@ -67,7 +67,8 @@ function DashboardPage() {
   ]
   return (
     <>
-      <div className="mt-5 p-4 sm:ml-64 sm:mt-0 bg-white dark:bg-gray-900">
+    {/* sm:ml-64 sm:mt-0*/}
+      <div className="mt-5  bg-white dark:bg-gray-900">
         <div className="sm:p-4 rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">         
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5 ">
                 {cardItems.map((item, index) => (

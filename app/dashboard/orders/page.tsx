@@ -1,14 +1,14 @@
 "use client";
-import Pagination from "../../ui/dashboard/pagination/pagination";
+import Pagination from "../../../components/ui/dashboard/pagination/pagination";
 import product1 from '../../../images/products/candle-1.jpg';
 import product2 from '../../../images/products/candle-2.jpg';
 import product3 from '../../../images/products/candle-3.jpg';
 import product4 from '../../../images/products/candle-4.jpg';
-import DataTable from "../../ui/dashboard/table/table";
+import DataTable from "../../../components/ui/dashboard/table/table";
  
 import Link from 'next/link';
-import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
-import { AddButton } from "../../ui/dashboard/buttons/button";
+import { SearchInputField } from "../../../components/ui/dashboard/inputFields/inputField";
+import { AddButton } from "../../../components/ui/dashboard/buttons/button";
 function OrdersPage() {
   const tableHeaders = ["ProductImage", "DateOfSalesOrder", "Customer", "Product", "Quantity", "TotalCost", "Discounts","DeliveryStatus", "AdditionalCharges"]
   
@@ -61,7 +61,7 @@ function OrdersPage() {
   
   return (
     <>
-      <div className="md:p-4 sm:ml-64 bg-white dark:bg-gray-900">
+      <div className="  bg-white dark:bg-gray-900">
         <div className="rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">
           <div className="relative mt-5 sm-mt-0 overflow-x-auto shadow-md sm:rounded-lg p-5">
           <h1 className="text-xl sm:py-5 md:text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Orders</h1>

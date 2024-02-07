@@ -1,6 +1,10 @@
 import { Inter } from 'next/font/google';
-import '../styles/main.scss';
-
+import { SessionProvider } from 'next-auth/react';
+import { auth } from '../auth';
+import './globals.css';
+import Navbar from "../components/ui/dashboard/navbar/navbar";
+import Sidebar from "../components/ui/dashboard/sidebar/sidebar";
+import PageWrapper from '../components/ui/dashboard/page-wrapper';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -8,11 +12,19 @@ export const metadata = {
   description: 'Created by Black Python Group',
 }
 
-export default function RootLayout({ children }) {
+interface Props{
+  children?: React.ReactNode
+}
+
+export default async function RootLayout({ children }:Props) {
+  const session = await auth();
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}
-      </body>
-    </html>
+    <SessionProvider session={session}> 
+      <html lang="">
+        <body className="h-12/12">
+          {children}        
+        </body>
+      </html>
+    </SessionProvider>
   )
 }

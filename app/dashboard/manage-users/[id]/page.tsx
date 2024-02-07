@@ -1,5 +1,5 @@
  
-import { SelectOptionField, TextInputField,FileInputField, FormSubmitButton } from "../../../ui/dashboard/inputFields/inputField";
+import { SelectOptionField, TextInputField,FileInputField, FormSubmitButton } from "../../../../components/ui/dashboard/inputFields/inputField";
 
 
 export default function updateUser() {

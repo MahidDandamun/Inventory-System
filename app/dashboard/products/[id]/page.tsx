@@ -1,7 +1,7 @@
 "use client";
 
  
-import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
+import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../../components/ui/dashboard/inputFields/inputField';
  
 function AddProduct() {
   const warehouseOptions = [

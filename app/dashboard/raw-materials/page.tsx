@@ -1,25 +1,53 @@
 // Importing necessary components and images
-import Pagination from "../../ui/dashboard/pagination/pagination";
-import DataTable from "../../ui/dashboard/table/table";
+import Pagination from "../../../components/ui/dashboard/pagination/pagination";
+import DataTable from "../../../components/ui/dashboard/table/table";
 // import rawMaterial1 from '../../../images/raw-materials/rawMaterial-1.png';
 // import rawMaterial2 from '../../../images/raw-materials/rawMaterial-2.png';
 // import rawMaterial3 from '../../../images/raw-materials/rawMaterial-3.png';
 import Link from 'next/link';
-import { SearchInputField } from "../../ui/dashboard/inputFields/inputField";
-import { AddButton } from "../../ui/dashboard/buttons/button";
-import { fetchRmaterial } from "../../lib/data";
+import { SearchInputField } from "../../../components/ui/dashboard/inputFields/inputField";
+import { AddButton } from "../../../components/ui/dashboard/buttons/button";
+
 
 // Function component for Raw Materials page
-const RawMaterialsPage= async ({ searchParams })=> {
-  const q= searchParams?.q || "";
-  const rmaterials = await fetchRmaterial(q);
+const RawMaterialsPage=  ()=> {
+
   // Table headers for the data table
   const tableHeaders = ["Name", "Price", "Quantity", "Warehouse","Supplier"];
- 
   
+  const rmaterials = [
+    {
+      Name: "Wax",
+      Price: "P 100",
+      Quantity: "95",
+      Warehouse: "Makati City",
+      Supplier: "Supplier 1"
+    },
+    {
+      Name: "Wick",
+      Price: "P 130",
+      Quantity: "45",
+      Warehouse: "Taguig City",
+      Supplier: "Supplier 2"
+    },
+    {
+      Name: "Fragrance",
+      Price: "P 150",
+      Quantity: "75",
+      Warehouse: "Manadaluyong City",
+      Supplier: "Supplier 3"
+    },
+    {
+      Name: "Dye",
+      Price: "P 100",
+      Quantity: "85",
+      Warehouse: "Taguig City ",
+      Supplier: "Supplier 4"
+    }
+  ]
   return (
     <>
-      <div className="md:p-4 sm:ml-64 bg-white dark:bg-gray-900">
+      <div className="  bg-white dark:bg-gray-900">
         <div className="rounded-lg dark:border-gray-700 mt-14 overflow-y-auto">
           <div className="relative mt-5 sm-mt-0 overflow-x-auto shadow-md sm:rounded-lg p-5">
             <h1 className="text-xl sm:py-5 md:text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Raw Materials</h1>
