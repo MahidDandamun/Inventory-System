@@ -4,6 +4,7 @@ import { LogoutButton } from "./logout-button";
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons"
 import { IoSettingsOutline } from "react-icons/io5";
+import { Button } from "../ui/button";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -26,16 +27,18 @@ export const UserButton = () => {
 
   return (
     <DropdownMenu  >
-      <DropdownMenuTrigger>
-        <Avatar >
-          <AvatarImage src={user?.image || ""} />
-          <AvatarFallback className="bg-violet-500">
-            <FaUser className="text-white" />
-          </AvatarFallback>
-        </Avatar>
+      <DropdownMenuTrigger asChild>
+         <Button className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={user?.image || ""} />
+            <AvatarFallback className="bg-violet-500">
+              <FaUser className="text-white" />
+            </AvatarFallback>
+          </Avatar>
+         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-48" align="end">
+      <DropdownMenuContent className="w-48" align="center">
         <DropdownMenuLabel>{user?.name || ""}</DropdownMenuLabel>
         <DropdownMenuLabel>{ "Role: (" + user?.role +") "}</DropdownMenuLabel>
         <DropdownMenuLabel className="m-0 font-thin">{user?.email || ""}</DropdownMenuLabel>

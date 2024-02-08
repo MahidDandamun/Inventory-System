@@ -1,15 +1,21 @@
-import { Inter } from 'next/font/google';
+ 
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '../auth';
 import './globals.css';
-import Navbar from "../components/ui/dashboard/navbar/navbar";
-import Sidebar from "../components/ui/dashboard/sidebar/sidebar";
-import PageWrapper from '../components/ui/dashboard/page-wrapper';
-const inter = Inter({ subsets: ['latin'] })
+ import {ThemeProvider}  from '../components/ui/theme-provider'
+
 
 export const metadata = {
   title: 'Theiapollo',
   description: 'Created by Black Python Group',
+  icons: {
+    icon: [
+      '../images/theiapollo-logo.jpg',
+    ],
+    apple: [
+      '../images/theiapollo-logo.jpg',
+    ]
+  }
 }
 
 interface Props{
@@ -20,11 +26,19 @@ export default async function RootLayout({ children }:Props) {
   const session = await auth();
   return (
     <SessionProvider session={session}> 
-      <html lang="">
-        <body className="h-12/12">
-          {children}        
+       <html lang="en"  suppressHydrationWarning>
+        <body className="h-full">
+          <ThemeProvider
+            themes={['dark', 'light']}
+            attribute="class"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </body>
-      </html>
+     
+       </html>
     </SessionProvider>
   )
 }

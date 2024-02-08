@@ -1,4 +1,6 @@
 'use client';
+// import { useTheme } from "next-themes"
+// import 
 import {
   MdDashboard,
   MdShoppingBag,
@@ -12,7 +14,7 @@ import {
 } from 'react-icons/md';
 import { LuPackage2 } from 'react-icons/lu';
 import { FaFileInvoice, FaUsers } from 'react-icons/fa';
-// import Image from 'next/image';
+import {useState, useEffect} from 'react'
  
 import MenuLink from './menuLink';
 // import { FaChevronLeft } from 'react-icons/fa';
@@ -24,13 +26,16 @@ import Image from 'next/image';
 import classNames from 'classnames';
 
 import { useSideBarToggle } from '../../../../hooks/use-sidebar-toggle';
-
+// import { ThemeProvider } from '../theme-provider';
 
 const Sidebar = () => {
+  const [mounted, setMounted] = useState(false);
   const {toggleCollapse} = useSideBarToggle();
-  const asideStyle = classNames("sidebar fixed top-0 left-0 z-50 w-[16rem] h-screen pt-16 bg-white border-r overflow-y-auto  border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700 dark:text-white transition-all duration-300 ease-in-out",
+
+
+  const asideStyle = classNames("sidebar fixed top-0 left-0 z-50 w-[16rem] h-full pt-16 bg-white dark:bg-[#070D1C] border-r overflow-y-auto  border-gray-200 sm:translate-x-0 dark:border-gray-700 dark:text-white transition-all duration-300 ease-in-out",
     {
-      ["sm:w-[5rem] sm-left-0 left-[-100%] "]: toggleCollapse,
+      ["sm:w-[5rem]"]: toggleCollapse,
       ["w-[16rem]"]: !toggleCollapse,
 
     });
@@ -38,7 +43,7 @@ const Sidebar = () => {
     ["h-[8rem] w-[13rem]"]:!toggleCollapse
 
   })
-
+  useEffect(() => setMounted(true), []);
   const menuItems = [
     {
       title: 'Pages',
@@ -112,19 +117,28 @@ const Sidebar = () => {
       ],
     },
   ];
+  // const { setTheme, theme } = useTheme()
+
+  // const isActive = (themeName: string) => {
+  //     return (theme === themeName && <CheckIcon
+  //         className='ml-2 h-4 w-4'
+  //     />)
+  // }
   return (
     <>
       <div className={asideStyle} aria-label="Sidebar">
-        <div className=" object-cover relative  w-full h-2/12 pt-4 px-3 flex justify-center">
-          <Image
-             loading='lazy'
-             src={logo}
-            className={imageSize}
-            alt="Theiapollo Logo"
-        >
-           </Image>
+        <div className="sidebar-top object-cover relative  w-full h-2/12 pt-4 px-3 flex justify-center">
+          
+            <Image
+              loading='lazy'
+              src={logo}
+              className={imageSize}
+              alt="Theiapollo Logo"
+            >
+            </Image>
+          
         </div>
-        <div className="h-8/12 px-3 py-4 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        <div className="h-8/12 px-3 py-4 pb-4 overflow-y-auto bg-white dark:bg-[#070D1C]">
           <ul className="space-y-2">
             {menuItems.map((item, index) => (
               <li className="relative" key={index}>

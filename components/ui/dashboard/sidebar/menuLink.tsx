@@ -24,7 +24,7 @@ const MenuLink = ({ item, toggled }: Props) => {
    ${
      pathname === item.path
        ? 'bg-gray-100 dark:bg-gray-700 text-violet-500  dark:text-violet-400'
-       : 'bg-white dark:bg-gray-800'
+       : 'bg-white dark:bg-[#070D1C]'
    }`)
   return (
     <>

@@ -1,20 +1,34 @@
- 
-import Pagination from "../../../components/ui/dashboard/pagination/pagination";
 import DataTable from "../../../components/ui/dashboard/table/table";
+import Pagination from "../../../components/ui/dashboard/pagination/pagination";
 import { SearchInputField } from "../../../components/ui/dashboard/inputFields/inputField";
+import Link from 'next/link';
+
+
+
 import product1 from '../../../images/products/candle-1.jpg';
 import product2 from '../../../images/products/candle-2.jpg';
 import product3 from '../../../images/products/candle-3.jpg';
 import product4 from '../../../images/products/candle-4.jpg';
  
  
-import Link from "next/link";
+import path from "path"
+ 
 import { AddButton } from "../../../components/ui/dashboard/buttons/button";
+// import {Link}
+import { z } from "zod"
+import { promises as fs } from "fs"
+ 
+
+import {taskSchema} from "../../../schemas";
+ 
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
+import { RecentSales } from '../../../components/ui/recent-sales';
+import { Products } from '../../../components/ui/products';
+ 
+
+const ProductsPage =  async () => {
 
  
-const ProductsPage =  () => {
-
-
 
   const tableHeaders = ["Sku", "Name", "Price", "Quantity", "Warehouse"]
   const products = [
@@ -52,6 +66,8 @@ const ProductsPage =  () => {
     }
   ]
  
+ 
+ 
   return (
     <>
       <div className="  bg-white dark:bg-gray-900">
@@ -70,7 +86,17 @@ const ProductsPage =  () => {
           </div>
         </div>
       </div>
-    </>
+      {/* <Card className="lg:col-span-3">
+        <CardHeader>
+          <CardTitle className="text-gray-800">Products</CardTitle>
+          </CardHeader>
+        <CardContent>
+          <Products />
+        </CardContent>
+      </Card> */}
+ 
+
+    </>  
   )
 }
 export default ProductsPage;
