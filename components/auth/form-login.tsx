@@ -18,6 +18,7 @@ import Link from "next/link";
 
 
 export const LoginForm = () => {
+ 
   const searchParams = useSearchParams();
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
     ? "Email already in use with different provider!"
@@ -59,7 +60,6 @@ export const LoginForm = () => {
 
   return (
     <>
-      
         <CardWrapper
           headerLabel="Welcome back!"
           backButtonLabel="Don't have an account?"

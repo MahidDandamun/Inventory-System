@@ -9,16 +9,16 @@ interface Props {
 
 export default function PageWrapper({ children }: Props) {
   const { toggleCollapse } = useSideBarToggle();
-  const bodyStyle = classNames("bg-background flex-grow mt-16 px-4 transition-all duration-300 ease-in-out",
+  const bodyStyle = classNames("bg-background h-full flex-grow pt-20 px-4  transition-all duration-300 ease-in-out",
       {
-        ["pl-[16.5rem]"]: !toggleCollapse,
-        ["pl-[6.4rem]"]: toggleCollapse,
+        ["sm:pl-[16.5rem]"]: !toggleCollapse,
+        ["sm:pl-[5.4rem]"]: toggleCollapse,
       });
   return (
-    <div>
+  
       <div className={bodyStyle}>
         {children}
       </div>
-    </div>
+    
   )
 }

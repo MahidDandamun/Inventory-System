@@ -5,9 +5,13 @@
 @import 'tailwindcss/utilities';
 
 
-html{
-  height: 100%;
+html,
+body,
+:root {
+  height: 100lvh;
 }
+ 
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -35,8 +35,8 @@ const Sidebar = () => {
 
   const asideStyle = classNames("sidebar fixed top-0 left-0 z-50 w-[16rem] h-full pt-16 bg-white dark:bg-[#070D1C] border-r overflow-y-auto  border-gray-200 sm:translate-x-0 dark:border-gray-700 dark:text-white transition-all duration-300 ease-in-out",
     {
-      ["sm:w-[5rem]"]: toggleCollapse,
-      ["w-[16rem]"]: !toggleCollapse,
+      ["sm:w-[5rem] sm:left-0 left-[-100%]"]: toggleCollapse,
+      ["w-[16rem] sm:left-0"]: !toggleCollapse,
 
     });
   const imageSize = classNames("object-fit",{

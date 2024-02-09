@@ -1,17 +1,20 @@
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '../../components/ui/card';
 import { Overview } from '../../components/ui/overview';
 import { RecentSales } from '../../components/ui/recent-sales';
 
-
 function DashboardPage() {
- 
   return (
     <>
-      <div className="space-y-4 pt-6 pl-2"
-      >
-      <h2 className="text-3xl font-bold text-violet-500 ">Dashboard</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">  
+      <div className="space-y-4 pt-6 pl-2">
+        <h2 className="text-3xl font-bold text-violet-500 ">Dashboard</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-white">
@@ -31,7 +34,9 @@ function DashboardPage() {
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-violet-500">P45,231.89</div>
+              <div className="text-2xl font-bold text-violet-500">
+                P45,231.89
+              </div>
               <p className="text-xs text-muted-foreground">
                 +20.1% from last month
               </p>
@@ -67,7 +72,9 @@ function DashboardPage() {
           </Card> */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 dark:text-white">Sales</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 dark:text-white">
+                Sales
+              </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -127,9 +134,7 @@ function DashboardPage() {
           <Card className="lg:col-span-3">
             <CardHeader>
               <CardTitle className="text-gray-800">Recent Sales</CardTitle>
-              <CardDescription>
-                You made 265 sales this month.
-              </CardDescription>
+              <CardDescription>You made 265 sales this month.</CardDescription>
             </CardHeader>
             <CardContent>
               <RecentSales />
@@ -137,8 +142,7 @@ function DashboardPage() {
           </Card>
         </div>
       </div>
-    
     </>
-  )
+  );
 }
 export default DashboardPage;

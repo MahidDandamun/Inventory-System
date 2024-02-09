@@ -15,7 +15,7 @@ function Navbar( ) {
   const buttonUser = classNames("flex items-center justify-between sm:order-2 order-1");
   
   const {toggleCollapse, invokeToggleCollapse} = useSideBarToggle();
-    const navCn = classNames("fixed transition-all duration-300 ease-in-out px-12 top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-[#070D1C] dark:border-[#020817]", {
+    const navCn = classNames("flex items-center fixed transition-all duration-300 ease-in-out h-20 px-2 sm:px-12 top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-[#070D1C] dark:border-gray-700", {
     
     ["sm:pl-[16rem]"]:!toggleCollapse,
     ["sm:pl-[5rem]"]: toggleCollapse,
@@ -29,7 +29,7 @@ function Navbar( ) {
   return (
     <>
       <nav className={navCn}>
-          <div className="flex items-center p4-11 justify-between w-full lg:px-5 lg:pl-3 drop-shadow-md shadow-sm">
+          <div className="flex items-center h-full p4-11 bg-white dark:bg-[#070D1C] justify-between w-full lg:px-5 lg:pl-3 ">
       
             <button onClick={sideBarToggle} className={buttonToggle}>
               <RxHamburgerMenu size={24} className="dark:text-violet-600 text-violet-600"/>
