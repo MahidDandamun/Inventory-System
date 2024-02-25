@@ -125,7 +125,9 @@ function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-7">
           <Card className="lg:col-span-4">
             <CardHeader>
-              <CardTitle>Overview</CardTitle>
+              <CardTitle className="text-gray-700 dark:text-violet-500">
+                Overview
+              </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
               <Overview />
@@ -133,7 +135,9 @@ function DashboardPage() {
           </Card>
           <Card className="lg:col-span-3">
             <CardHeader>
-              <CardTitle className="text-gray-800">Recent Sales</CardTitle>
+              <CardTitle className="text-gray-700 dark:text-violet-500">
+                Recent Sales
+              </CardTitle>
               <CardDescription>You made 265 sales this month.</CardDescription>
             </CardHeader>
             <CardContent>

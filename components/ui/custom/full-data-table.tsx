@@ -26,11 +26,13 @@ import { Input } from '../input';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  page: String;
 }
 
-export function DataTable<TData, TValue>({
+export function FullDataTable<TData, TValue>({
   data,
   columns,
+  page,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -57,10 +59,12 @@ export function DataTable<TData, TValue>({
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter product..."
-          value={(table.getColumn('product')?.getFilterValue() as string) ?? ''}
+          placeholder="Filter warehouse..."
+          value={
+            (table.getColumn('location')?.getFilterValue() as string) ?? ''
+          }
           onChange={(event) =>
-            table.getColumn('product')?.setFilterValue(event.target.value)
+            table.getColumn('location')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

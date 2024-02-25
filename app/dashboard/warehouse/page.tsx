@@ -1,56 +1,66 @@
 // import React, { useEffect, useState } from 'react';
 
-import DataTable from '../../../components/ui/dashboard/table/table';
-import Pagination from '../../../components/ui/dashboard/pagination/pagination';
-import Link from 'next/link';
-import { SearchInputField } from '../../../components/ui/dashboard/inputFields/inputField';
-import { AddButton } from '../../../components/ui/dashboard/buttons/button';
+// import DataTable from '../../../components/ui/dashboard/table/table';
+// import Pagination from '../../../components/ui/dashboard/pagination/pagination';
+// import { RecentSales } from '../../../components/ui/recent-sales';
 
-const WarehousePage = () => {
-  const tableHeaders = ['Location', 'Status'];
-  const warehouses = [
-    {
-      Location: 'Makati City',
-      Status: 'Active',
-    },
-    {
-      Location: 'Taguig City',
-      Status: 'Active',
-    },
-    {
-      Location: 'Manadaluyong City',
-      Status: 'Active',
-    },
-    {
-      Location: 'Quezon City',
-      Status: 'Active',
-    },
-  ];
+import Link from 'next/link';
+
+import { AddButton } from '../../../components/ui/dashboard/buttons/button';
+import { getWarehouses } from '../../../data/warehouse';
+import { DataTableFull } from '../../../components/ui/custom/data-table-full';
+import { columns } from '../../../components/ui/custom/columns';
+import { ColumnDef } from '@tanstack/react-table';
+import { taskSchema } from '../../../schemas';
+import { z } from 'zod';
+import path from 'path';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '../../../components/ui/card';
+
+// type Warehouses = {
+//   id: string;
+//   location: string;
+//   status: 'ACTIVE' | 'INACTIVE';
+// };
+
+// const columns: ColumnDef<Warehouses>[] = [
+//   {
+//     accessorKey: 'location',
+//     header: 'Location',
+//   },
+//   {
+//     accessorKey: 'status',
+//     header: 'Status',
+//   },
+// ];
+ 
+const WarehousePage = async () => {
+  const wareHouses = await getWarehouses();
+  console.log(wareHouses);
+
   return (
     <>
       <div className="pt-6 pl-2">
-        <h1 className="text-xl sm:py-5 md:text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
-          Warehouse
-        </h1>
-        <div className="relative flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
-          <label htmlFor="search-users" className="sr-only">
-            Search
-          </label>
-          <SearchInputField
-            name={'search_warehouse'}
-            placeholder="Search Warehouse"
-          />
-          <Link href="/dashboard/warehouse/add">
-            <AddButton />
-          </Link>
+        <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+          <div className="flex items-center justify-between space-y-2">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Warehouses</h2>
+              <p className="text-muted-foreground">
+                Here's the list of warehouses
+              </p>
+            </div>
+            <Link href="/dashboard/warehouse/add">
+              <AddButton />
+            </Link>
+          </div>
+          <DataTableFull data={wareHouses} columns={columns} />
         </div>
-        <DataTable
-          path={'warehouse'}
-          headers={tableHeaders}
-          datas={warehouses}
-          hasImage={false}
-        />
-        <Pagination />
+ 
       </div>
     </>
   );
