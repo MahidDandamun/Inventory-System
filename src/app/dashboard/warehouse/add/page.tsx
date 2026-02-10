@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-// import { FormSubmitButton, SelectOptionField , TextInputField } from "../../../ui/dashboard/inputFields/inputField";
+// import { FormSubmitButton, SelectOptionField , TextInputField } from "../../../../components/ui/dashboard/inputFields/inputField";
 
 function AddWarehouse() {
   const warehouseStatus = [
