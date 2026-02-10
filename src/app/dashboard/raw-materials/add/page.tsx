@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../ui/dashboard/inputFields/inputField';
+import { FileInputField, FormSubmitButton, NumberInputField, SelectOptionField, TextInputField } from '../../../../components/ui/dashboard/inputFields/inputField';
 
 function AddRawMaterials() {
   const warehouseOptions = [
