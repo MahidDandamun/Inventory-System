@@ -9,8 +9,9 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { IconLoader2 } from "@tabler/icons-react"
-
+import { IconLoader2, IconEye, IconEyeOff } from "@tabler/icons-react"
+import { toast } from "sonner"
+import Image from "next/image"
 import { registerSchema, type RegisterInput } from "@/schemas/auth"
 import { registerAction } from "@/app/(auth)/_actions/register"
 
@@ -31,6 +32,7 @@ export function RegisterForm() {
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | undefined>()
     const [success, setSuccess] = useState<string | undefined>()
+    const [showPassword, setShowPassword] = useState(false)
 
     const {
         register,
@@ -50,17 +52,22 @@ export function RegisterForm() {
             const result = await registerAction(values)
             if ("error" in result) {
                 setError(result.error)
+                toast.error("Registration failed", { description: result.error })
             } else {
                 reset()
                 setSuccess(result.success)
+                toast.success("Success!", { description: result.success })
             }
         })
     }
 
     return (
-        <Card>
+        <Card className="border-0 shadow-none sm:border sm:shadow-sm">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Create an account</CardTitle>
+                <div className="flex justify-center pb-2">
+                    <Image src="/logo.png" alt="Logo" width={48} height={48} className="h-12 w-12" />
+                </div>
+                <CardTitle className="text-xl sm:text-2xl">Create an account</CardTitle>
                 <CardDescription>Enter your details to get started</CardDescription>
             </CardHeader>
             <CardContent>
@@ -94,13 +101,32 @@ export function RegisterForm() {
 
                     <div className="space-y-2">
                         <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="At least 6 characters"
-                            disabled={isPending}
-                            {...register("password")}
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="At least 6 characters"
+                                disabled={isPending}
+                                className="pr-10"
+                                {...register("password")}
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                            >
+                                {showPassword ? (
+                                    <IconEyeOff className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                    <IconEye className="h-4 w-4 text-muted-foreground" />
+                                )}
+                                <span className="sr-only">
+                                    {showPassword ? "Hide password" : "Show password"}
+                                </span>
+                            </Button>
+                        </div>
                         {errors.password && (
                             <p className="text-sm text-destructive">{errors.password.message}</p>
                         )}

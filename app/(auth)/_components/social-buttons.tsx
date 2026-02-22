@@ -18,7 +18,7 @@ export function SocialButtons() {
     }
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-2 gap-4">
             <Button
                 type="button"
                 variant="outline"

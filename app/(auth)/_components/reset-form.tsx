@@ -56,9 +56,9 @@ export function ResetForm() {
     }
 
     return (
-        <Card>
+        <Card className="border-0 shadow-none sm:border sm:shadow-sm">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Forgot your password?</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Forgot your password?</CardTitle>
                 <CardDescription>
                     Enter your email and we&apos;ll send a reset link
                 </CardDescription>

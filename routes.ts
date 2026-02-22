@@ -15,3 +15,6 @@ export const apiAuthPrefix = "/api/auth"
 
 /** Where to redirect after successful login */
 export const DEFAULT_LOGIN_REDIRECT = "/dashboard"
+
+/** Routes only accessible by ADMIN role */
+export const adminRoutes = ["/users"]

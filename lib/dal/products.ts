@@ -1,15 +1,8 @@
-// lib/dal/products.ts
-// ---
-// Data Access Layer — Product operations
-// Security boundary: auth checks + DTO transformation
-// ---
-
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 
-/** DTO — only fields the UI needs */
 export type ProductDTO = {
     id: string
     name: string
@@ -23,10 +16,6 @@ export type ProductDTO = {
     createdAt: Date
 }
 
-/**
- * Get all products. Requires authentication.
- * Returns DTOs — never raw Prisma models.
- */
 export const getProducts = cache(async (): Promise<ProductDTO[]> => {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
@@ -50,9 +39,6 @@ export const getProducts = cache(async (): Promise<ProductDTO[]> => {
     }))
 })
 
-/**
- * Get a single product by ID. Requires authentication.
- */
 export async function getProductById(
     id: string
 ): Promise<ProductDTO | null> {
@@ -79,9 +65,6 @@ export async function getProductById(
     }
 }
 
-/**
- * Create a new product. Called by server actions only.
- */
 export async function createProduct(data: {
     name: string
     sku: string
@@ -105,9 +88,6 @@ export async function createProduct(data: {
     })
 }
 
-/**
- * Update a product by ID.
- */
 export async function updateProduct(
     id: string,
     data: {
@@ -126,9 +106,6 @@ export async function updateProduct(
     return prisma.product.update({ where: { id }, data })
 }
 
-/**
- * Delete a product by ID.
- */
 export async function deleteProduct(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")

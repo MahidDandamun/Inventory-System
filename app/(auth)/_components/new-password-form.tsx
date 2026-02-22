@@ -60,9 +60,9 @@ export function NewPasswordForm() {
     }
 
     return (
-        <Card>
+        <Card className="border-0 shadow-none sm:border sm:shadow-sm">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Set a new password</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Set a new password</CardTitle>
                 <CardDescription>Enter your new password below</CardDescription>
             </CardHeader>
             <CardContent>

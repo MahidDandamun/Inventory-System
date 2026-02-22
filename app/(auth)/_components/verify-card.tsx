@@ -28,14 +28,13 @@ export function VerifyCard() {
     const searchParams = useSearchParams()
     const token = searchParams.get("token")
 
-    const [error, setError] = useState<string | undefined>()
+    const [error, setError] = useState<string | undefined>(
+        !token ? "Missing verification token." : undefined
+    )
     const [success, setSuccess] = useState<string | undefined>()
 
     useEffect(() => {
-        if (!token) {
-            setError("Missing verification token.")
-            return
-        }
+        if (!token) return
 
         verifyEmailAction(token).then((result) => {
             if ("error" in result) {
@@ -47,9 +46,9 @@ export function VerifyCard() {
     }, [token])
 
     return (
-        <Card>
+        <Card className="border-0 shadow-none sm:border sm:shadow-sm">
             <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Email Verification</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Email Verification</CardTitle>
                 <CardDescription>Confirming your email address</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

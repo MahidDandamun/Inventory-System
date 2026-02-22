@@ -1,14 +1,8 @@
-// lib/dal/warehouses.ts
-// ---
-// Data Access Layer — Warehouse operations
-// ---
-
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 
-/** DTO for warehouse list/detail views */
 export type WarehouseDTO = {
     id: string
     location: string
@@ -17,9 +11,6 @@ export type WarehouseDTO = {
     createdAt: Date
 }
 
-/**
- * Get all warehouses with product count.
- */
 export const getWarehouses = cache(async (): Promise<WarehouseDTO[]> => {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
@@ -38,9 +29,6 @@ export const getWarehouses = cache(async (): Promise<WarehouseDTO[]> => {
     }))
 })
 
-/**
- * Get a single warehouse by ID.
- */
 export async function getWarehouseById(
     id: string
 ): Promise<WarehouseDTO | null> {
@@ -62,9 +50,6 @@ export async function getWarehouseById(
     }
 }
 
-/**
- * Create a new warehouse.
- */
 export async function createWarehouse(data: { location: string }) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
@@ -72,9 +57,6 @@ export async function createWarehouse(data: { location: string }) {
     return prisma.warehouse.create({ data })
 }
 
-/**
- * Update a warehouse.
- */
 export async function updateWarehouse(
     id: string,
     data: { location?: string; status?: "ACTIVE" | "INACTIVE" }
@@ -85,9 +67,6 @@ export async function updateWarehouse(
     return prisma.warehouse.update({ where: { id }, data })
 }
 
-/**
- * Delete a warehouse. Fails if warehouse has products.
- */
 export async function deleteWarehouse(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")

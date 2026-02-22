@@ -1,6 +1,8 @@
 // app/(auth)/layout.tsx
 // ---
-// Auth layout — centered card for login/register/reset pages
+// Auth layout — base wrapper for all auth pages.
+// Login page owns its own full-page layout.
+// Register/reset/verify/etc. use the centered card pattern.
 // ---
 
 export default function AuthLayout({
@@ -8,9 +10,5 @@ export default function AuthLayout({
 }: {
     children: React.ReactNode
 }) {
-    return (
-        <main className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-            <div className="w-full max-w-md">{children}</div>
-        </main>
-    )
+    return <>{children}</>
 }

@@ -1,14 +1,8 @@
-// lib/dal/orders.ts
-// ---
-// Data Access Layer — Order operations
-// ---
-
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 
-/** DTO for order list views */
 export type OrderDTO = {
     id: string
     orderNo: string
@@ -19,7 +13,6 @@ export type OrderDTO = {
     createdAt: Date
 }
 
-/** DTO for order detail with line items */
 export type OrderDetailDTO = OrderDTO & {
     items: {
         id: string
@@ -29,9 +22,6 @@ export type OrderDetailDTO = OrderDTO & {
     }[]
 }
 
-/**
- * Get all orders.
- */
 export const getOrders = cache(async (): Promise<OrderDTO[]> => {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
@@ -52,9 +42,6 @@ export const getOrders = cache(async (): Promise<OrderDTO[]> => {
     }))
 })
 
-/**
- * Get a single order with line items.
- */
 export async function getOrderById(
     id: string
 ): Promise<OrderDetailDTO | null> {
@@ -87,4 +74,54 @@ export async function getOrderById(
             unitPrice: item.unitPrice.toNumber(),
         })),
     }
+}
+
+export type OrderCreateDTO = {
+    customer: string
+    items: { productId: string; quantity: number; unitPrice: number }[]
+}
+
+export type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+
+export async function createOrder(data: OrderCreateDTO) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+
+    const total = data.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
+    const orderNo = `ORD-${Date.now().toString().slice(-6)}`
+
+    return prisma.order.create({
+        data: {
+            customer: data.customer,
+            orderNo,
+            total,
+            items: {
+                create: data.items.map(i => ({
+                    productId: i.productId,
+                    quantity: i.quantity,
+                    unitPrice: i.unitPrice
+                }))
+            }
+        },
+    })
+}
+
+export async function updateOrderStatus(
+    id: string,
+    status: OrderStatus
+) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+
+    return prisma.order.update({
+        where: { id },
+        data: { status }
+    })
+}
+
+export async function deleteOrder(id: string) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+
+    return prisma.order.delete({ where: { id } })
 }

@@ -10,6 +10,7 @@ import { Public_Sans, Geist_Mono } from "next/font/google"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 import { auth } from "@/auth"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const publicSans = Public_Sans({
@@ -51,6 +52,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>
