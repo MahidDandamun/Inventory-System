@@ -13,16 +13,14 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen flex flex-col bg-background">
+        <div className="min-h-screen flex flex-col bg-muted/30">
 
             {/* ── Main hero area ─────────────────────────────── */}
-            <main className="flex flex-1 items-center justify-center px-4 py-10 sm:py-16">
+            <main className="flex flex-1 items-center justify-center p-4">
 
-                {/* ── DESKTOP (lg+): two-column card layout ─── */}
-                <div className="hidden lg:grid grid-cols-2 w-full max-w-5xl rounded-2xl border shadow-xl overflow-hidden">
-
+                <div className="w-full max-w-5xl grid lg:grid-cols-2 bg-background rounded-3xl shadow-xl overflow-hidden border border-border">
                     {/* Left panel: brand + illustration */}
-                    <div className="flex flex-col justify-between bg-gradient-to-br from-primary/90 via-primary to-orange-700 p-10 text-white">
+                    <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-primary/90 via-primary to-orange-700 p-10 text-white">
                         {/* Brand */}
                         <div className="flex items-center gap-3">
                             <Image src="/logo.png" alt="Theiapollo" width={36} height={36} className="h-9 w-9 rounded-lg brightness-0 invert" />
@@ -48,17 +46,12 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Right panel: form */}
-                    <div className="flex flex-col justify-center px-12 py-10 bg-background">
-                        <div className="w-full max-w-md mx-auto">
+                    {/* Right side: Login Container */}
+                    <div className="flex items-center justify-center p-6 sm:p-12 lg:p-16">
+                        <div className="w-full max-w-md [&>div]:shadow-none [&>div]:border-none [&>div]:bg-transparent [&>div]:ring-0">
                             <LoginForm />
                         </div>
                     </div>
-                </div>
-
-                {/* ── MOBILE/TABLET (below lg): plain centered form, no outer container ─── */}
-                <div className="lg:hidden w-full max-w-sm">
-                    <LoginForm />
                 </div>
 
             </main>

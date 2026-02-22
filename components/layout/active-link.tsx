@@ -8,8 +8,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import type { ForwardRefExoticComponent, RefAttributes } from "react"
-import type { IconProps } from "@tabler/icons-react"
+// import type { ForwardRefExoticComponent, RefAttributes } from "react"
+// import type { IconProps } from "@tabler/icons-react"
 
 interface NavItem {
     label: string

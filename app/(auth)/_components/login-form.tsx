@@ -73,7 +73,7 @@ export function LoginForm() {
     }
 
     return (
-        <Card className="border-0 shadow-none bg-transparent">
+        <Card className="border-0 shadow-none bg-transparent ring-0">
             <CardHeader className="text-center">
                 <div className="flex justify-center pb-2">
                     <Image src="/logo.png" alt="Logo" width={48} height={48} className="h-12 w-12" />
