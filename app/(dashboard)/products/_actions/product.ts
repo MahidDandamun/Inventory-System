@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { createProduct, updateProduct, deleteProduct } from "@/lib/dal/products"
 import { productSchema } from "@/schemas/product"
+import { createNotification } from "@/lib/dal/notifications"
+import { getAllUsers } from "@/lib/dal/users"
 
 export async function createProductAction(formData: FormData) {
     const parsed = productSchema.safeParse(Object.fromEntries(formData))
@@ -13,6 +15,11 @@ export async function createProductAction(formData: FormData) {
 
     try {
         const product = await createProduct(parsed.data)
+        const users = await getAllUsers()
+        const admins = users.filter((u) => u.role === "ADMIN")
+        for (const admin of admins) {
+            await createNotification(admin.id, "New Product Added", `Product "${product.name}" was added to the catalog.`)
+        }
         revalidatePath("/products")
         return { success: true, data: product }
     } catch (error: unknown) {
@@ -30,6 +37,15 @@ export async function updateProductAction(id: string, formData: FormData) {
     try {
         // Only update allowed fields, not including warehouseId if not strictly needed or handle it securely.
         const product = await updateProduct(id, parsed.data)
+
+        if (product.quantity <= 10) {
+            const users = await getAllUsers()
+            const admins = users.filter((u) => u.role === "ADMIN")
+            for (const admin of admins) {
+                await createNotification(admin.id, "Low Stock Alert", `Product "${product.name}" is low on stock (${product.quantity} remaining).`)
+            }
+        }
+
         revalidatePath("/products")
         return { success: true, data: product }
     } catch (error: unknown) {

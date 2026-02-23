@@ -20,6 +20,7 @@ import {
     sendVerificationEmail,
     sendTwoFactorEmail,
 } from "@/lib/mail"
+import { rateLimit } from "@/lib/rate-limit"
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes"
 
 type LoginResult =
@@ -29,6 +30,14 @@ type LoginResult =
     | undefined
 
 export async function loginAction(values: LoginInput): Promise<LoginResult> {
+    // 0. Apply rate limiter (5 attempts per 15 minutes per email)
+    const ipOrEmail = values.email || "unknown_ip"
+    const { success } = await rateLimit(`login_${ipOrEmail}`, 5, 15 * 60 * 1000)
+
+    if (!success) {
+        return { error: "Too many login attempts. Please try again later." }
+    }
+
     // 1. Validate input
     const parsed = loginSchema.safeParse(values)
     if (!parsed.success) {

@@ -29,7 +29,24 @@ export default async function OrdersPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={orders} searchKey="orderNo" />
+            <DataTable
+                columns={columns}
+                data={orders}
+                searchKey="orderNo"
+                filterColumns={[
+                    {
+                        id: "status",
+                        title: "Status",
+                        options: [
+                            { label: "Pending", value: "PENDING" },
+                            { label: "Processing", value: "PROCESSING" },
+                            { label: "Shipped", value: "SHIPPED" },
+                            { label: "Delivered", value: "DELIVERED" },
+                            { label: "Cancelled", value: "CANCELLED" },
+                        ]
+                    }
+                ]}
+            />
         </div>
     )
 }

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { createRawMaterial, updateRawMaterial, deleteRawMaterial } from "@/lib/dal/raw-materials"
 import { rawMaterialSchema } from "@/schemas/raw-material"
+import { createNotification } from "@/lib/dal/notifications"
+import { getAllUsers } from "@/lib/dal/users"
 
 export async function createRawMaterialAction(formData: FormData) {
     const parsed = rawMaterialSchema.safeParse(Object.fromEntries(formData))
@@ -13,6 +15,11 @@ export async function createRawMaterialAction(formData: FormData) {
 
     try {
         const item = await createRawMaterial(parsed.data)
+        const users = await getAllUsers()
+        const admins = users.filter((u) => u.role === "ADMIN")
+        for (const admin of admins) {
+            await createNotification(admin.id, "New Material Added", `Raw Material "${item.name}" was added.`)
+        }
         revalidatePath("/raw-materials")
         return { success: true, data: item }
     } catch (error: unknown) {
@@ -29,6 +36,15 @@ export async function updateRawMaterialAction(id: string, formData: FormData) {
 
     try {
         const item = await updateRawMaterial(id, parsed.data)
+
+        if (item.quantity <= item.reorderAt) {
+            const users = await getAllUsers()
+            const admins = users.filter((u) => u.role === "ADMIN")
+            for (const admin of admins) {
+                await createNotification(admin.id, "Material Reorder Alert", `Material "${item.name}" reached the reorder point (${item.quantity} ${item.unit}).`)
+            }
+        }
+
         revalidatePath("/raw-materials")
         return { success: true, data: item }
     } catch (error: unknown) {

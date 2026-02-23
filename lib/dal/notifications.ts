@@ -31,3 +31,13 @@ export async function updateAllNotificationsAsRead(userId: string) {
         data: { isRead: true },
     })
 }
+
+export async function createNotification(userId: string, title: string, message: string) {
+    return prisma.notification.create({
+        data: {
+            userId,
+            title,
+            message,
+        }
+    })
+}

@@ -15,6 +15,7 @@ import {
     IconFileInvoice,
     IconUsers,
     IconSettings,
+    IconHistory,
 } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,6 +32,7 @@ const adminNavigation = [
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
+    { label: "System Logs", href: "/system-logs", icon: IconHistory },
     { label: "Users", href: "/users", icon: IconUsers },
     { label: "Settings", href: "/settings", icon: IconSettings },
 ]

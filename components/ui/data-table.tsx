@@ -7,6 +7,7 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 
@@ -19,46 +20,89 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+export interface DataTableFilterColumn {
+    id: string
+    title: string
+    options: { label: string; value: string }[]
+}
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     searchKey?: string
+    filterColumns?: DataTableFilterColumn[]
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     searchKey,
+    filterColumns,
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = React.useState("")
 
-    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: "auto",
         state: {
             columnFilters,
+            globalFilter,
         },
     })
 
     return (
         <div>
-            {searchKey && (
-                <div className="flex items-center pb-4">
+            <div className="flex items-center gap-2 pb-4">
+                {searchKey && (
                     <Input
-                        placeholder={`Search ${searchKey}...`}
-                        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-                        }
+                        placeholder="Search across all columns..."
+                        value={globalFilter ?? ""}
+                        onChange={(event) => setGlobalFilter(event.target.value)}
                         className="max-w-sm"
                     />
-                </div>
-            )}
+                )}
+
+                {filterColumns?.map((filterCol) => {
+                    const column = table.getColumn(filterCol.id)
+                    if (!column) return null
+
+                    return (
+                        <Select
+                            key={filterCol.id}
+                            value={(column.getFilterValue() as string) ?? "ALL"}
+                            onValueChange={(val) => {
+                                if (val === "ALL") {
+                                    column.setFilterValue(undefined)
+                                } else {
+                                    column.setFilterValue(val)
+                                }
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder={`Filter by ${filterCol.title}`} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">All {filterCol.title}</SelectItem>
+                                {filterCol.options.map((opt) => (
+                                    <SelectItem key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )
+                })}
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -102,6 +146,25 @@ export function DataTable<TData, TValue>({
                         )}
                     </TableBody>
                 </Table>
+            </div>
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                >
+                    Previous
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                >
+                    Next
+                </Button>
             </div>
         </div>
     )

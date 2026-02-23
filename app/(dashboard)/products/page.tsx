@@ -29,7 +29,21 @@ export default async function ProductsPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={products} searchKey="name" />
+            <DataTable
+                columns={columns}
+                data={products}
+                searchKey="name"
+                filterColumns={[
+                    {
+                        id: "status",
+                        title: "Status",
+                        options: [
+                            { label: "Active", value: "ACTIVE" },
+                            { label: "Inactive", value: "INACTIVE" },
+                        ]
+                    }
+                ]}
+            />
         </div>
     )
 }

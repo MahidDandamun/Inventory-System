@@ -29,7 +29,21 @@ export default async function RawMaterialsPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={items} searchKey="name" />
+            <DataTable
+                columns={columns}
+                data={items}
+                searchKey="name"
+                filterColumns={[
+                    {
+                        id: "status",
+                        title: "Status",
+                        options: [
+                            { label: "Active", value: "ACTIVE" },
+                            { label: "Inactive", value: "INACTIVE" },
+                        ]
+                    }
+                ]}
+            />
         </div>
     )
 }

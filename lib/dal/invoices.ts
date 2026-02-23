@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { createSystemLog } from "@/lib/dal/system-logs"
 
 export type InvoiceDTO = {
     id: string
@@ -54,31 +55,38 @@ export async function createInvoice(data: { orderId: string, markAsPaid?: boolea
 
     const invoiceNo = `INV-${Date.now().toString().slice(-6)}`
 
-    return prisma.invoice.create({
+    const invoice = await prisma.invoice.create({
         data: {
             invoiceNo,
             orderId: data.orderId,
             total: order.total,
             paidAt: data.markAsPaid ? new Date() : null,
+            createdById: user.id,
         }
     })
+    await createSystemLog(user.id, "CREATE", "INVOICE", invoice.id, JSON.stringify(data))
+    return invoice
 }
 
 export async function updateInvoice(id: string, data: { markAsPaid?: boolean }) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.invoice.update({
+    const invoice = await prisma.invoice.update({
         where: { id },
         data: {
             paidAt: data.markAsPaid ? new Date() : null,
         }
     })
+    await createSystemLog(user.id, "UPDATE", "INVOICE", id, JSON.stringify(data))
+    return invoice
 }
 
 export async function deleteInvoice(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.invoice.delete({ where: { id } })
+    const invoice = await prisma.invoice.delete({ where: { id } })
+    await createSystemLog(user.id, "DELETE", "INVOICE", id)
+    return invoice
 }

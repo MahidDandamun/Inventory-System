@@ -22,6 +22,13 @@ model User {
   accounts              Account[]
   twoFactorConfirmation TwoFactorConfirmation?
   notifications         Notification[]
+
+  createdWarehouses Warehouse[]
+  createdProducts   Product[]
+  createdMaterials  RawMaterial[]
+  createdOrders     Order[]
+  createdInvoices   Invoice[]
+  systemLogs        SystemLog[]
 }
 
 model Account {
@@ -76,12 +83,14 @@ model TwoFactorConfirmation {
 }
 
 model Warehouse {
-  id        String    @id @default(cuid())
-  location  String    @unique
-  status    Status    @default(ACTIVE)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
+  id          String    @id @default(cuid())
+  location    String    @unique
+  status      Status    @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String?
+  products    Product[]
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model Product {
@@ -95,10 +104,13 @@ model Product {
   warehouseId String
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  createdById String?
   orderItems  OrderItem[]
   warehouse   Warehouse   @relation(fields: [warehouseId], references: [id])
+  createdBy   User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([warehouseId])
+  @@index([createdById])
 }
 
 model RawMaterial {
@@ -112,18 +124,22 @@ model RawMaterial {
   status      Status   @default(ACTIVE)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model Order {
-  id        String      @id @default(cuid())
-  orderNo   String      @unique
-  customer  String
-  status    OrderStatus @default(PENDING)
-  total     Decimal     @db.Decimal(10, 2)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  invoice   Invoice?
-  items     OrderItem[]
+  id          String      @id @default(cuid())
+  orderNo     String      @unique
+  customer    String
+  status      OrderStatus @default(PENDING)
+  total       Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdById String?
+  invoice     Invoice?
+  items       OrderItem[]
+  createdBy   User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model OrderItem {
@@ -140,14 +156,16 @@ model OrderItem {
 }
 
 model Invoice {
-  id        String    @id @default(cuid())
-  invoiceNo String    @unique
-  orderId   String    @unique
-  total     Decimal   @db.Decimal(10, 2)
-  paidAt    DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  order     Order     @relation(fields: [orderId], references: [id])
+  id          String    @id @default(cuid())
+  invoiceNo   String    @unique
+  orderId     String    @unique
+  total       Decimal   @db.Decimal(10, 2)
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String?
+  order       Order     @relation(fields: [orderId], references: [id])
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 enum UserRole {
@@ -179,4 +197,19 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  @db.Text
+  userId    String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entity, entityId])
 }

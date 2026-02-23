@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { createSystemLog } from "@/lib/dal/system-logs"
 
 export type WarehouseDTO = {
     id: string
@@ -54,7 +55,14 @@ export async function createWarehouse(data: { location: string }) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.warehouse.create({ data })
+    const warehouse = await prisma.warehouse.create({
+        data: {
+            ...data,
+            createdById: user.id,
+        }
+    })
+    await createSystemLog(user.id, "CREATE", "WAREHOUSE", warehouse.id, JSON.stringify(data))
+    return warehouse
 }
 
 export async function updateWarehouse(
@@ -64,12 +72,16 @@ export async function updateWarehouse(
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.warehouse.update({ where: { id }, data })
+    const warehouse = await prisma.warehouse.update({ where: { id }, data })
+    await createSystemLog(user.id, "UPDATE", "WAREHOUSE", id, JSON.stringify(data))
+    return warehouse
 }
 
 export async function deleteWarehouse(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.warehouse.delete({ where: { id } })
+    const warehouse = await prisma.warehouse.delete({ where: { id } })
+    await createSystemLog(user.id, "DELETE", "WAREHOUSE", id)
+    return warehouse
 }

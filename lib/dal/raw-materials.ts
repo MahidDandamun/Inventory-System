@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { createSystemLog } from "@/lib/dal/system-logs"
 
 export type RawMaterialDTO = {
     id: string
@@ -45,7 +46,14 @@ export async function createRawMaterial(data: {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.rawMaterial.create({ data })
+    const rawMaterial = await prisma.rawMaterial.create({
+        data: {
+            ...data,
+            createdById: user.id,
+        }
+    })
+    await createSystemLog(user.id, "CREATE", "RAW_MATERIAL", rawMaterial.id, JSON.stringify(data))
+    return rawMaterial
 }
 
 export async function updateRawMaterial(
@@ -63,12 +71,16 @@ export async function updateRawMaterial(
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.rawMaterial.update({ where: { id }, data })
+    const rawMaterial = await prisma.rawMaterial.update({ where: { id }, data })
+    await createSystemLog(user.id, "UPDATE", "RAW_MATERIAL", id, JSON.stringify(data))
+    return rawMaterial
 }
 
 export async function deleteRawMaterial(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.rawMaterial.delete({ where: { id } })
+    const rawMaterial = await prisma.rawMaterial.delete({ where: { id } })
+    await createSystemLog(user.id, "DELETE", "RAW_MATERIAL", id)
+    return rawMaterial
 }

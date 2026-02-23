@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { createSystemLog } from "@/lib/dal/system-logs"
 
 export type OrderDTO = {
     id: string
@@ -90,11 +91,12 @@ export async function createOrder(data: OrderCreateDTO) {
     const total = data.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
     const orderNo = `ORD-${Date.now().toString().slice(-6)}`
 
-    return prisma.order.create({
+    const order = await prisma.order.create({
         data: {
             customer: data.customer,
             orderNo,
             total,
+            createdById: user.id,
             items: {
                 create: data.items.map(i => ({
                     productId: i.productId,
@@ -104,6 +106,8 @@ export async function createOrder(data: OrderCreateDTO) {
             }
         },
     })
+    await createSystemLog(user.id, "CREATE", "ORDER", order.id, JSON.stringify(data))
+    return order
 }
 
 export async function updateOrderStatus(
@@ -113,15 +117,19 @@ export async function updateOrderStatus(
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.order.update({
+    const order = await prisma.order.update({
         where: { id },
         data: { status }
     })
+    await createSystemLog(user.id, "UPDATE", "ORDER", id, JSON.stringify({ status }))
+    return order
 }
 
 export async function deleteOrder(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.order.delete({ where: { id } })
+    const order = await prisma.order.delete({ where: { id } })
+    await createSystemLog(user.id, "DELETE", "ORDER", id)
+    return order
 }

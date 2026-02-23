@@ -37,7 +37,21 @@ export default async function UsersPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={users} searchKey="email" />
+            <DataTable
+                columns={columns}
+                data={users}
+                searchKey="email"
+                filterColumns={[
+                    {
+                        id: "role",
+                        title: "Role",
+                        options: [
+                            { label: "Admin", value: "ADMIN" },
+                            { label: "User", value: "USER" },
+                        ]
+                    }
+                ]}
+            />
         </div>
     )
 }

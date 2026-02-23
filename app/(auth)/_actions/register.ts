@@ -12,10 +12,19 @@ import { prisma } from "@/lib/prisma"
 import { registerSchema, type RegisterInput } from "@/schemas/auth"
 import { generateVerificationToken } from "@/lib/tokens"
 import { sendVerificationEmail } from "@/lib/mail"
+import { rateLimit } from "@/lib/rate-limit"
 
 type RegisterResult = { error: string } | { success: string }
 
 export async function registerAction(values: RegisterInput): Promise<RegisterResult> {
+    // 0. Apply rate limiter (5 attempts per 15 minutes per email)
+    const ipOrEmail = values.email || "unknown_ip"
+    const { success } = await rateLimit(`register_${ipOrEmail}`, 5, 15 * 60 * 1000)
+
+    if (!success) {
+        return { error: "Too many registration attempts. Please try again later." }
+    }
+
     // 1. Validate input
     const parsed = registerSchema.safeParse(values)
     if (!parsed.success) {

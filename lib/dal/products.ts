@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
+import { createSystemLog } from "@/lib/dal/system-logs"
 
 export type ProductDTO = {
     id: string
@@ -76,7 +77,7 @@ export async function createProduct(data: {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.product.create({
+    const product = await prisma.product.create({
         data: {
             name: data.name,
             sku: data.sku,
@@ -84,8 +85,12 @@ export async function createProduct(data: {
             price: data.price,
             quantity: data.quantity,
             warehouseId: data.warehouseId,
+            createdById: user.id,
         },
     })
+
+    await createSystemLog(user.id, "CREATE", "PRODUCT", product.id, JSON.stringify(data))
+    return product
 }
 
 export async function updateProduct(
@@ -103,12 +108,16 @@ export async function updateProduct(
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.product.update({ where: { id }, data })
+    const product = await prisma.product.update({ where: { id }, data })
+    await createSystemLog(user.id, "UPDATE", "PRODUCT", id, JSON.stringify(data))
+    return product
 }
 
 export async function deleteProduct(id: string) {
     const user = await getCurrentUser()
     if (!user) throw new Error("Unauthorized")
 
-    return prisma.product.delete({ where: { id } })
+    const product = await prisma.product.delete({ where: { id } })
+    await createSystemLog(user.id, "DELETE", "PRODUCT", id)
+    return product
 }
