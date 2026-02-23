@@ -1,0 +1,37 @@
+
+> inventory-system@0.1.0 lint
+> eslint
+
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\app\(dashboard)\products\_components\columns.tsx
+  123:25  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  123:40  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\app\(dashboard)\raw-materials\_components\columns.tsx
+  125:25  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  125:37  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\app\(dashboard)\users\_components\columns.tsx
+  126:25  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  126:38  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\app\(dashboard)\warehouse\_components\columns.tsx
+  111:25  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  111:46  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\components\ui\data-table.tsx
+  49:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\WEB DEVELOPMENT\projects\Inventory-System\components\ui\data-table.tsx:49:19
+  47 |     const [globalFilter, setGlobalFilter] = React.useState("")
+  48 |
+> 49 |     const table = useReactTable({
+     |                   ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  50 |         data,
+  51 |         columns,
+  52 |         getCoreRowModel: getCoreRowModel(),  react-hooks/incompatible-library
+
+Γ£û 9 problems (8 errors, 1 warning)
+

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -69,13 +70,17 @@ export function InvoiceForm({ invoice, orders }: InvoiceFormProps) {
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
+                        toast.error(firstError[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
+                toast.success(invoice ? "Invoice updated successfully" : "Invoice generated successfully")
                 router.push("/invoices")
                 router.refresh()
             }
@@ -86,7 +91,7 @@ export function InvoiceForm({ invoice, orders }: InvoiceFormProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <Label>Select Order</Label>
+                    <Label>Select Order *</Label>
                     {invoice ? (
                         <Select disabled value={orderValue}>
                             <SelectTrigger>

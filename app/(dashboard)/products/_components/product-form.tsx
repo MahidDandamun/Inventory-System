@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -77,13 +78,17 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
+                        toast.error(firstError[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
+                toast.success(product ? "Product updated successfully" : "Product added successfully")
                 router.push("/products")
                 router.refresh()
             }
@@ -94,7 +99,7 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="name">Product Name</Label>
+                    <Label htmlFor="name">Product Name *</Label>
                     <Input
                         id="name"
                         placeholder="Logitech MX Master 3S"
@@ -107,7 +112,7 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="sku">SKU</Label>
+                    <Label htmlFor="sku">SKU *</Label>
                     <Input
                         id="sku"
                         placeholder="PRD-12345"
@@ -120,7 +125,7 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="price">Price ($)</Label>
+                    <Label htmlFor="price">Price ($) *</Label>
                     <Input
                         id="price"
                         type="number"
@@ -135,7 +140,7 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
+                    <Label htmlFor="quantity">Quantity *</Label>
                     <Input
                         id="quantity"
                         type="number"
@@ -150,7 +155,7 @@ export function ProductForm({ product, warehouses }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="warehouseId">Warehouse</Label>
+                <Label htmlFor="warehouseId">Warehouse *</Label>
                 <Select
                     disabled={isPending}
                     value={warehouseValue}

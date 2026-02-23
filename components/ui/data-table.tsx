@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { IconDownload } from "@tabler/icons-react"
 
 export interface DataTableFilterColumn {
     id: string
@@ -59,6 +60,37 @@ export function DataTable<TData, TValue>({
             globalFilter,
         },
     })
+
+    const exportTableToCSV = () => {
+        const toSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+        const exportColumns = table.getAllLeafColumns().filter(c => c.id !== "actions");
+
+        const headers = exportColumns
+            .map((c) => toSnakeCase(c.id))
+            .join(",")
+
+        const rows = table.getCoreRowModel().rows.map((row) =>
+            row.getVisibleCells()
+                .filter((cell) => cell.column.id !== "actions")
+                .map((cell) => {
+                    const value = cell.getValue()
+                    // Escape quotes and wrap in quotes to handle commas within data
+                    return `"${String(value ?? "").replace(/"/g, '""')}"`
+                })
+                .join(",")
+        )
+
+        const csvContent = "\uFEFF" + [headers, ...rows].join("\n")
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.setAttribute("href", url)
+        link.setAttribute("download", "table_export.csv")
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
 
     return (
         <div>
@@ -103,6 +135,14 @@ export function DataTable<TData, TValue>({
                     )
                 })}
             </div>
+
+            <div className="flex justify-end pb-4">
+                <Button onClick={exportTableToCSV} variant="outline" size="sm">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export CSV
+                </Button>
+            </div>
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

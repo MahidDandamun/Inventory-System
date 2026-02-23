@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -78,14 +79,18 @@ export function SettingsForm({ user }: SettingsFormProps) {
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
+                        toast.error(firstError[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
                 setSuccess("Settings updated successfully.")
+                toast.success("Settings updated successfully.")
                 router.refresh()
             }
         })

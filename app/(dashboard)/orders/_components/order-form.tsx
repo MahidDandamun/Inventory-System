@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2, IconPlus, IconTrash } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,10 +89,13 @@ export function OrderForm({ order, products }: OrderFormProps) {
                 const firstError = Object.values(err).find(e => e && e.length > 0)
                 if (firstError) {
                     setError(firstError[0])
+                    toast.error(firstError[0])
                 } else if (err.root) {
                     setError(err.root[0])
+                    toast.error(err.root[0])
                 }
             } else {
+                toast.success(order ? "Order updated successfully" : "Order created successfully")
                 router.push("/orders")
                 router.refresh()
             }
@@ -108,7 +112,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-                <Label htmlFor="customer">Customer Name</Label>
+                <Label htmlFor="customer">Customer Name *</Label>
                 <Input
                     id="customer"
                     placeholder="Acme Corp"
@@ -122,7 +126,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <Label>Order Items</Label>
+                    <Label>Order Items *</Label>
                     <Button
                         type="button"
                         variant="outline"
@@ -142,7 +146,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
                     {fields.map((field, index) => (
                         <div key={field.id} className="flex flex-col sm:flex-row gap-4 items-end border p-4 rounded-lg bg-card/50">
                             <div className="flex-1 space-y-2 w-full">
-                                <Label>Product</Label>
+                                <Label>Product *</Label>
                                 <Select
                                     disabled={isPending}
                                     value={watchItems[index]?.productId}
@@ -165,7 +169,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
                             </div>
 
                             <div className="w-full sm:w-24 space-y-2">
-                                <Label>Qty</Label>
+                                <Label>Qty *</Label>
                                 <Input
                                     type="number"
                                     min="1"
@@ -175,7 +179,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
                             </div>
 
                             <div className="w-full sm:w-32 space-y-2">
-                                <Label>Price</Label>
+                                <Label>Price *</Label>
                                 <Input
                                     type="number"
                                     step="0.01"
@@ -239,9 +243,15 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
         startTransition(async () => {
             const formData = new FormData()
             formData.append("status", status)
-            await updateOrderStatusAction(order.id, formData)
-            router.push("/orders")
-            router.refresh()
+            const result = await updateOrderStatusAction(order.id, formData)
+
+            if (result?.error) {
+                toast.error("Failed to update order status")
+            } else {
+                toast.success("Order status updated successfully")
+                router.push("/orders")
+                router.refresh()
+            }
         })
     }
 

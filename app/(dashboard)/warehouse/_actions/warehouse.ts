@@ -42,6 +42,6 @@ export async function deleteWarehouseAction(id: string) {
         revalidatePath("/warehouse")
         return { success: true }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unexpected Error"] } }
+        return { error: error instanceof Error ? error.message : "Unknown error" }
     }
 }   

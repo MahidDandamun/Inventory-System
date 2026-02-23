@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -77,13 +78,17 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
+                        toast.error(firstError[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
+                toast.success(item ? "Raw Material updated successfully" : "Raw Material added successfully")
                 router.push("/raw-materials")
                 router.refresh()
             }
@@ -94,7 +99,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="name">Material Name</Label>
+                    <Label htmlFor="name">Material Name *</Label>
                     <Input
                         id="name"
                         placeholder="Aluminum Sheet"
@@ -107,7 +112,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="sku">SKU</Label>
+                    <Label htmlFor="sku">SKU *</Label>
                     <Input
                         id="sku"
                         placeholder="MAT-123"
@@ -120,7 +125,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="unit">Unit Measure</Label>
+                    <Label htmlFor="unit">Unit Measure *</Label>
                     <Input
                         id="unit"
                         placeholder="kg, pcs, meters..."
@@ -133,7 +138,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
+                    <Label htmlFor="status">Status *</Label>
                     <Select
                         disabled={isPending}
                         value={statusValue}
@@ -153,7 +158,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="quantity">Current Inventory / Quantity</Label>
+                    <Label htmlFor="quantity">Current Inventory / Quantity *</Label>
                     <Input
                         id="quantity"
                         type="number"
@@ -167,7 +172,7 @@ export function RawMaterialForm({ item }: RawMaterialFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="reorderAt">Reorder Alert Point</Label>
+                    <Label htmlFor="reorderAt">Reorder Alert Point *</Label>
                     <Input
                         id="reorderAt"
                         type="number"

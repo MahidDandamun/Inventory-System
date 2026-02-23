@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -68,13 +69,17 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
                     const err = result.error as Record<string, string[]>
                     if (err.location) {
                         setError(err.location[0])
+                        toast.error(err.location[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
+                toast.success(warehouse ? "Warehouse updated successfully" : "Warehouse created successfully")
                 router.push("/warehouse")
                 router.refresh()
             }
@@ -84,7 +89,7 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location">Location *</Label>
                 <Input
                     id="location"
                     placeholder="Main Warehouse, NY"
@@ -98,7 +103,7 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status">Status *</Label>
                 <Select
                     disabled={isPending}
                     value={statusValue}

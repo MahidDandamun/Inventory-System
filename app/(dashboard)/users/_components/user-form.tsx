@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconLoader2 } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -70,13 +71,17 @@ export function UserForm({ user }: UserFormProps) {
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
+                        toast.error(firstError[0])
                     } else if (err.root) {
                         setError(err.root[0])
+                        toast.error(err.root[0])
                     }
                 } else {
                     setError(String(result.error))
+                    toast.error(String(result.error))
                 }
             } else {
+                toast.success(user ? "User updated successfully" : "User created successfully")
                 router.push("/users")
                 router.refresh()
             }
@@ -87,7 +92,7 @@ export function UserForm({ user }: UserFormProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">Full Name *</Label>
                     <Input
                         id="name"
                         placeholder="John Doe"
@@ -100,7 +105,7 @@ export function UserForm({ user }: UserFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Email Address *</Label>
                     <Input
                         id="email"
                         type="email"
@@ -115,7 +120,7 @@ export function UserForm({ user }: UserFormProps) {
 
                 <div className="space-y-2">
                     <Label htmlFor="password">
-                        {user ? "New Password (Optional)" : "Password"}
+                        {user ? "New Password (Optional)" : "Password *"}
                     </Label>
                     <Input
                         id="password"
@@ -130,7 +135,7 @@ export function UserForm({ user }: UserFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="role">System Role</Label>
+                    <Label htmlFor="role">System Role *</Label>
                     <Select
                         disabled={isPending}
                         value={roleValue}

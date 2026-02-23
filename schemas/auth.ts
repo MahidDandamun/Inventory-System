@@ -33,8 +33,8 @@ export const settingsSchema = z
         isTwoFactorEnabled: z.optional(z.boolean()),
         role: z.optional(z.enum([UserRole.ADMIN, UserRole.USER])),
         email: z.optional(z.string().email()),
-        password: z.optional(z.string().min(6)),
-        newPassword: z.optional(z.string().min(6)),
+        password: z.optional(z.string().min(6).or(z.literal(""))),
+        newPassword: z.optional(z.string().min(6).or(z.literal(""))),
     })
     .refine((data) => !(data.password && !data.newPassword), {
         message: "New password is required",
