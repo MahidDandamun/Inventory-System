@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { RawMaterialDTO } from "@/lib/dal/raw-materials"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -25,11 +26,7 @@ export const columns: ColumnDef<RawMaterialDTO>[] = [
         header: "Status",
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            return (
-                <Badge variant={status === "ACTIVE" ? "default" : "secondary"}>
-                    {status}
-                </Badge>
-            )
+            return <StatusBadge status={status} />
         },
     },
     {

@@ -29,7 +29,7 @@ export default async function OrdersPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={orders} />
+            <DataTable columns={columns} data={orders} searchKey="orderNo" />
         </div>
     )
 }

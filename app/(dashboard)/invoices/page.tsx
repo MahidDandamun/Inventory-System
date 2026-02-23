@@ -29,7 +29,7 @@ export default async function InvoicesPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={invoices} />
+            <DataTable columns={columns} data={invoices} searchKey="invoiceNo" />
         </div>
     )
 }

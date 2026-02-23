@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { OrderDTO } from "@/lib/dal/orders"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { IconDots, IconEye, IconTrash } from "@tabler/icons-react"
@@ -11,13 +11,6 @@ import { deleteOrderAction } from "../_actions/order"
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
 
-const statusColors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-    PENDING: "secondary",
-    PROCESSING: "default",
-    SHIPPED: "outline",
-    DELIVERED: "default", // Maybe success color in real life
-    CANCELLED: "destructive",
-}
 
 export const columns: ColumnDef<OrderDTO>[] = [
     {
@@ -34,11 +27,7 @@ export const columns: ColumnDef<OrderDTO>[] = [
         header: "Status",
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            return (
-                <Badge variant={statusColors[status] || "default"}>
-                    {status}
-                </Badge>
-            )
+            return <StatusBadge status={status} />
         },
     },
     {

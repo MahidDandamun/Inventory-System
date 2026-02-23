@@ -23,7 +23,7 @@ export async function sendVerificationEmail(email: string, token: string) {
 
     try {
         await resend.emails.send({
-            from: "Inventory System <onboarding@resend.dev>",
+            from: "onboarding@resend.dev",
             to: email,
             subject: "Verify your email",
             html: `<p>Click <a href="${confirmLink}">here</a> to verify your email.</p>`,
@@ -46,7 +46,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
 
     try {
         await resend.emails.send({
-            from: "Inventory System <onboarding@resend.dev>",
+            from: "onboarding@resend.dev",
             to: email,
             subject: "Reset your password",
             html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
@@ -67,7 +67,7 @@ export async function sendTwoFactorEmail(email: string, token: string) {
 
     try {
         await resend.emails.send({
-            from: "Inventory System <onboarding@resend.dev>",
+            from: "onboarding@resend.dev",
             to: email,
             subject: "Your 2FA Code",
             html: `<p>Your two-factor authentication code is: <strong>${token}</strong></p>`,

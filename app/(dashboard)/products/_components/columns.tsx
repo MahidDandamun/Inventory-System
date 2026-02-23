@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { ProductDTO } from "@/lib/dal/products"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react"
@@ -25,11 +25,7 @@ export const columns: ColumnDef<ProductDTO>[] = [
         header: "Status",
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            return (
-                <Badge variant={status === "ACTIVE" ? "default" : "secondary"}>
-                    {status}
-                </Badge>
-            )
+            return <StatusBadge status={status} />
         },
     },
     {

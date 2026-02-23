@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { WarehouseDTO } from "@/lib/dal/warehouses"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react"
@@ -21,11 +21,7 @@ export const columns: ColumnDef<WarehouseDTO>[] = [
         header: "Status",
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            return (
-                <Badge variant={status === "ACTIVE" ? "default" : "secondary"}>
-                    {status}
-                </Badge>
-            )
+            return <StatusBadge status={status} />
         },
     },
     {

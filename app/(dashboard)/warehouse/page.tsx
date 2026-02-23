@@ -29,7 +29,7 @@ export default async function WarehousePage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={warehouses} />
+            <DataTable columns={columns} data={warehouses} searchKey="location" />
         </div>
     )
 }

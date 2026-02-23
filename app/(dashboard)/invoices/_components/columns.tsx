@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { InvoiceDTO } from "@/lib/dal/invoices"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react"
@@ -42,11 +42,7 @@ export const columns: ColumnDef<InvoiceDTO>[] = [
         header: "Status",
         cell: ({ row }) => {
             const isPaid = !!row.original.paidAt
-            return (
-                <Badge variant={isPaid ? "default" : "secondary"}>
-                    {isPaid ? "PAID" : "UNPAID"}
-                </Badge>
-            )
+            return <StatusBadge status={isPaid ? "PAID" : "UNPAID"} />
         },
     },
     {

@@ -37,7 +37,7 @@ export default async function UsersPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={users} />
+            <DataTable columns={columns} data={users} searchKey="email" />
         </div>
     )
 }

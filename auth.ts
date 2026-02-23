@@ -74,13 +74,25 @@ export const {
             return session
         },
 
-        async jwt({ token }) {
+        async jwt({ token, user: authUser }) {
             if (!token.sub) return token
 
             const user = await prisma.user.findUnique({
                 where: { id: token.sub },
             })
-            if (!user) return token
+
+            if (!user) {
+                // For new OAuth users during their first login, local DB sync might be in progress
+                if (authUser) {
+                    token.isOAuth = true
+                    token.name = authUser.name
+                    token.email = authUser.email
+                    // Default role for the session fallback
+                    token.role = "USER"
+                    token.isTwoFactorEnabled = false
+                }
+                return token
+            }
 
             const account = await prisma.account.findFirst({
                 where: { userId: user.id },

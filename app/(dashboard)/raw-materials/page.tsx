@@ -29,7 +29,7 @@ export default async function RawMaterialsPage() {
                 </Button>
             </div>
 
-            <DataTable columns={columns} data={items} />
+            <DataTable columns={columns} data={items} searchKey="name" />
         </div>
     )
 }
