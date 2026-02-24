@@ -28,7 +28,7 @@ export const columns: ColumnDef<OrderDTO>[] = [
     {
         accessorKey: "orderNo",
         header: "Order #",
-        cell: ({ row }) => <span className="font-semibold">{row.getValue("orderNo")}</span>
+        cell: ({ row }) => <span className="font-semibold text-primary">{row.getValue("orderNo")}</span>
     },
     {
         accessorKey: "customer",
@@ -55,7 +55,7 @@ export const columns: ColumnDef<OrderDTO>[] = [
                 style: "currency",
                 currency: "USD",
             }).format(amount)
-            return <div className="font-medium">{formatted}</div>
+            return <div className="font-medium text-emerald-600 dark:text-emerald-400">{formatted}</div>
         },
     },
     {
@@ -83,7 +83,7 @@ function ActionMenu({ order }: { order: OrderDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteOrderAction(order.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete order")
             } else {
                 toast.success("Order deleted successfully")

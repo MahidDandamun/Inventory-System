@@ -5,6 +5,7 @@ import { createUser, updateUser, deleteUser, type UserCreateDTO, type UserUpdate
 import { userAdminSchema } from "@/schemas/user"
 import { getCurrentUser } from "@/lib/auth"
 import bcrypt from "bcryptjs"
+import { handleServerError } from "@/lib/error-handling"
 
 async function requireAdmin() {
     const user = await getCurrentUser()
@@ -40,10 +41,7 @@ export async function createUserAction(formData: FormData) {
         revalidatePath("/users")
         return { success: true, data: user }
     } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-            return { error: { root: ["Email already in use."] } }
-        }
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -72,7 +70,7 @@ export async function updateUserAction(id: string, formData: FormData) {
         revalidatePath("/users")
         return { success: true, data: user }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -88,6 +86,6 @@ export async function deleteUserAction(id: string) {
         revalidatePath("/users")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }

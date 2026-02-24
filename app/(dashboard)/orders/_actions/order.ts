@@ -5,6 +5,7 @@ import { createOrder, updateOrderStatus, deleteOrder, type OrderStatus } from "@
 import { orderSchema } from "@/schemas/order"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function createOrderAction(formData: FormData) {
     // We expect a JSON string for items since it's an array of objects
@@ -37,7 +38,7 @@ export async function createOrderAction(formData: FormData) {
         revalidatePath("/orders")
         return { success: true, data: order }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -57,7 +58,7 @@ export async function updateOrderStatusAction(id: string, formData: FormData) {
         revalidatePath("/orders")
         return { success: true, data: order }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -67,6 +68,6 @@ export async function deleteOrderAction(id: string) {
         revalidatePath("/orders")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }

@@ -15,12 +15,12 @@ export default async function SystemLogsPage() {
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight">System Ledger</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-primary">System Ledger</h2>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Audit Trail</CardTitle>
+                    <CardTitle className="text-primary">Audit Trail</CardTitle>
                     <CardDescription>
                         A historical ledger of all modifications across the system.
                     </CardDescription>
@@ -32,3 +32,4 @@ export default async function SystemLogsPage() {
         </div>
     )
 }
+

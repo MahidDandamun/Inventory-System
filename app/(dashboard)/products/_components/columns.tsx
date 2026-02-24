@@ -49,7 +49,7 @@ export const columns: ColumnDef<ProductDTO>[] = [
                 style: "currency",
                 currency: "USD",
             }).format(amount)
-            return <div className="font-medium">{formatted}</div>
+            return <div className="font-medium text-emerald-600 dark:text-emerald-400">{formatted}</div>
         },
     },
     {
@@ -78,7 +78,7 @@ function ActionMenu({ product }: { product: ProductDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteProductAction(product.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete product")
             } else {
                 toast.success("Product deleted successfully")

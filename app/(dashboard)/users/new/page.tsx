@@ -16,7 +16,7 @@ export default async function NewUserPage() {
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Add User</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Add User</h1>
                 <p className="text-muted-foreground">
                     Create a new system user profile.
                 </p>
@@ -28,3 +28,4 @@ export default async function NewUserPage() {
         </div>
     )
 }
+

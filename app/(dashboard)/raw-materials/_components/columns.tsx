@@ -80,7 +80,7 @@ function ActionMenu({ item }: { item: RawMaterialDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteRawMaterialAction(item.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete raw material")
             } else {
                 toast.success("Raw material deleted successfully")

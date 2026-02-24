@@ -9,6 +9,7 @@ import { ThemeSwitcher } from "@/components/layout/theme-switcher"
 import { MobileSidebar } from "@/components/layout/mobile-sidebar"
 import { UserButton } from "@/components/layout/user-button"
 import { NotificationsBell } from "@/components/layout/notifications-bell"
+import { TourButton } from "@/components/tour-button"
 
 export async function Navbar() {
     const user = await getCurrentUser()
@@ -20,9 +21,16 @@ export async function Navbar() {
                 <MobileSidebar role={user?.role} />
             </div>
             <div className="flex items-center gap-2">
-                <NotificationsBell initialNotifications={notifications} />
-                <ThemeSwitcher />
-                <UserButton />
+                <TourButton />
+                <div id="notifications-bell">
+                    <NotificationsBell initialNotifications={notifications} />
+                </div>
+                <div id="theme-toggle">
+                    <ThemeSwitcher />
+                </div>
+                <div id="user-menu">
+                    <UserButton />
+                </div>
             </div>
         </header>
     )

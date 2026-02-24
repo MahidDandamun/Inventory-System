@@ -29,7 +29,7 @@ export default async function EditProductPage({
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Edit Product</h1>
                 <p className="text-muted-foreground">
                     Update product details and inventory.
                 </p>

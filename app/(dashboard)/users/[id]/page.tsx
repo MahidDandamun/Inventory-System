@@ -30,7 +30,7 @@ export default async function EditUserPage({
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit User</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Edit User</h1>
                 <p className="text-muted-foreground">
                     Update profile, role, and access credentials.
                 </p>

@@ -66,7 +66,7 @@ function ActionMenu({ warehouse }: { warehouse: WarehouseDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteWarehouseAction(warehouse.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete warehouse")
             } else {
                 toast.success("Warehouse deleted successfully")

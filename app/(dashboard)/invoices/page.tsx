@@ -16,7 +16,7 @@ export default async function InvoicesPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Invoices</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-primary">Invoices</h1>
                     <p className="text-muted-foreground">
                         Manage billing and payment statuses.
                     </p>
@@ -33,3 +33,4 @@ export default async function InvoicesPage() {
         </div>
     )
 }
+

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { settingsSchema, type SettingsInput } from "@/schemas/auth"
 import bcrypt from "bcryptjs"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function updateSettingsAction(formData: FormData) {
     const user = await getCurrentUser()
@@ -13,7 +14,7 @@ export async function updateSettingsAction(formData: FormData) {
     // Parse form data
     const values = Object.fromEntries(formData)
     // Convert checkbox to boolean
-    const isTwoFactorEnabled = values.isTwoFactorEnabled === "on" || values.isTwoFactorEnabled === "true"
+    const isTwoFactorEnabled = values.isTwoFactorEnabled === "true"
 
     const parsed = settingsSchema.safeParse({
         ...values,
@@ -65,9 +66,6 @@ export async function updateSettingsAction(formData: FormData) {
         revalidatePath("/settings")
         return { success: true }
     } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-            return { error: { root: ["Email already in use."] } }
-        }
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }

@@ -25,7 +25,7 @@ export default async function EditWarehousePage({
     return (
         <div className="space-y-6 max-w-2xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Edit Warehouse</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Edit Warehouse</h1>
                 <p className="text-muted-foreground">
                     Update location details.
                 </p>

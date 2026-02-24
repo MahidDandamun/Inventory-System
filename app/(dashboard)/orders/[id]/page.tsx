@@ -22,7 +22,7 @@ export default async function ViewOrderPage({
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Order Details</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Order Details</h1>
                 <p className="text-muted-foreground">
                     View order information and update status.
                 </p>

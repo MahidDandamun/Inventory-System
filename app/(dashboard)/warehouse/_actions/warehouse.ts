@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { createWarehouse, updateWarehouse, deleteWarehouse } from "@/lib/dal/warehouses"
 import { warehouseSchema } from "@/schemas/warehouse"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function createWarehouseAction(formData: FormData) {
     const parsed = warehouseSchema.safeParse(Object.fromEntries(formData))
@@ -16,7 +17,7 @@ export async function createWarehouseAction(formData: FormData) {
         revalidatePath("/warehouse")
         return { success: true, data: warehouse }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unexpected Error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -32,7 +33,7 @@ export async function updateWarehouseAction(id: string, formData: FormData) {
         revalidatePath("/warehouse")
         return { success: true, data: warehouse }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unexpected Error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -42,6 +43,6 @@ export async function deleteWarehouseAction(id: string) {
         revalidatePath("/warehouse")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }   

@@ -67,7 +67,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
             if (values.name) formData.append("name", values.name)
             if (values.email) formData.append("email", values.email)
             if (values.role) formData.append("role", values.role)
-            if (values.isTwoFactorEnabled) formData.append("isTwoFactorEnabled", "true")
+            formData.append("isTwoFactorEnabled", values.isTwoFactorEnabled ? "true" : "false")
             if (values.password) formData.append("password", values.password)
             if (values.newPassword) formData.append("newPassword", values.newPassword)
 

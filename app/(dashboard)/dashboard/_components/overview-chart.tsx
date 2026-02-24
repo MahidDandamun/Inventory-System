@@ -28,7 +28,9 @@ export function OverviewChart({ data }: { data: { name: string; total: number }[
                     tickFormatter={(value) => `$${value}`}
                 />
                 <Tooltip
-                    contentStyle={{ borderRadius: "8px", border: "1px solid #eee" }}
+                    cursor={{ fill: "hsl(var(--muted)/0.2)" }}
+                    contentStyle={{ borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--popover)", color: "var(--popover-foreground)" }}
+                    itemStyle={{ color: "var(--popover-foreground)" }}
                 />
                 <Bar
                     dataKey="total"

@@ -15,7 +15,7 @@ export default async function NewProductPage() {
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">New Product</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">New Product</h1>
                 <p className="text-muted-foreground">
                     Add a new product to your inventory.
                 </p>
@@ -27,3 +27,4 @@ export default async function NewProductPage() {
         </div>
     )
 }
+

@@ -27,7 +27,7 @@ export const columns: ColumnDef<InvoiceDTO>[] = [
     {
         accessorKey: "invoiceNo",
         header: "Invoice #",
-        cell: ({ row }) => <span className="font-semibold">{row.getValue("invoiceNo")}</span>
+        cell: ({ row }) => <span className="font-semibold text-primary">{row.getValue("invoiceNo")}</span>
     },
     {
         accessorKey: "orderNo",
@@ -46,7 +46,7 @@ export const columns: ColumnDef<InvoiceDTO>[] = [
                 style: "currency",
                 currency: "USD",
             }).format(amount)
-            return <div className="font-medium">{formatted}</div>
+            return <div className="font-medium text-emerald-600 dark:text-emerald-400">{formatted}</div>
         },
     },
     {
@@ -82,7 +82,7 @@ function ActionMenu({ invoice }: { invoice: InvoiceDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteInvoiceAction(invoice.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete invoice")
             } else {
                 toast.success("Invoice deleted successfully")

@@ -81,7 +81,7 @@ export default async function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h1>
 
             {/* Stat cards */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -91,10 +91,10 @@ export default async function DashboardPage() {
                             <CardTitle className="text-sm font-medium text-muted-foreground">
                                 {stat.title}
                             </CardTitle>
-                            <stat.icon className="h-4 w-4 text-muted-foreground" />
+                            <stat.icon className="h-5 w-5 text-primary/80" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stat.value}</div>
+                            <div className="text-3xl font-bold tracking-tight text-primary">{stat.value}</div>
                             <p className="text-xs text-muted-foreground">
                                 {stat.description}
                             </p>
@@ -106,7 +106,7 @@ export default async function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4">
                     <CardHeader>
-                        <CardTitle>Overview</CardTitle>
+                        <CardTitle className="text-primary">Overview</CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
                         <OverviewChart data={chartData} />
@@ -115,14 +115,14 @@ export default async function DashboardPage() {
 
                 <Card className="col-span-3">
                     <CardHeader>
-                        <CardTitle>Recent Orders</CardTitle>
+                        <CardTitle className="text-primary">Recent Orders</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-8">
                             {orders.slice(0, 5).map(order => (
                                 <div key={order.id} className="flex items-center">
                                     <div className="ml-4 space-y-1">
-                                        <p className="text-sm font-medium leading-none">{order.customer}</p>
+                                        <p className="text-sm font-medium leading-none text-primary">{order.customer}</p>
                                         <p className="text-sm text-muted-foreground">
                                             {order.orderNo}
                                         </p>
@@ -144,3 +144,4 @@ export default async function DashboardPage() {
         </div>
     )
 }
+

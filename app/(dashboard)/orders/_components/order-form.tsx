@@ -245,7 +245,7 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
             formData.append("status", status)
             const result = await updateOrderStatusAction(order.id, formData)
 
-            if (result?.error) {
+            if (result && "error" in result) {
                 toast.error("Failed to update order status")
             } else {
                 toast.success("Order status updated successfully")

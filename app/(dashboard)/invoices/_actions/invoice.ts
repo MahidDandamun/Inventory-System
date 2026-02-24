@@ -5,6 +5,7 @@ import { createInvoice, updateInvoice, deleteInvoice } from "@/lib/dal/invoices"
 import { invoiceSchema } from "@/schemas/invoice"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function createInvoiceAction(formData: FormData) {
     const markAsPaidStr = formData.get("markAsPaid")
@@ -23,10 +24,7 @@ export async function createInvoiceAction(formData: FormData) {
         revalidatePath("/invoices")
         return { success: true, data: invoice }
     } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-            return { error: { root: ["An invoice already exists for this order."] } }
-        }
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -49,7 +47,7 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
         revalidatePath("/invoices")
         return { success: true, data: invoice }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -59,6 +57,6 @@ export async function deleteInvoiceAction(id: string) {
         revalidatePath("/invoices")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }

@@ -5,6 +5,7 @@ import { createRawMaterial, updateRawMaterial, deleteRawMaterial } from "@/lib/d
 import { rawMaterialSchema } from "@/schemas/raw-material"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function createRawMaterialAction(formData: FormData) {
     const parsed = rawMaterialSchema.safeParse(Object.fromEntries(formData))
@@ -23,7 +24,7 @@ export async function createRawMaterialAction(formData: FormData) {
         revalidatePath("/raw-materials")
         return { success: true, data: item }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -48,7 +49,7 @@ export async function updateRawMaterialAction(id: string, formData: FormData) {
         revalidatePath("/raw-materials")
         return { success: true, data: item }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -58,6 +59,6 @@ export async function deleteRawMaterialAction(id: string) {
         revalidatePath("/raw-materials")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }

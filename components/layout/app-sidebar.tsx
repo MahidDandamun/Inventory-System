@@ -62,7 +62,7 @@ export async function AppSidebar() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-1 px-3 py-4">
+            <nav id="sidebar-nav" className="flex-1 space-y-1 px-3 py-4">
                 {navigation.map((item) => (
                     <ActiveLink
                         key={item.href}

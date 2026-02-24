@@ -81,7 +81,7 @@ function ActionMenu({ user }: { user: UserDTO }) {
     const handleDelete = () => {
         startTransition(async () => {
             const result = await deleteUserAction(user.id)
-            if (result.error) {
+            if (result && "error" in result) {
                 toast.error(typeof result.error === "string" ? result.error : "Failed to delete user")
             } else {
                 toast.success("User deleted successfully")

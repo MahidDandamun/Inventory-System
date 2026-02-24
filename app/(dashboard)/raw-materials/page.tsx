@@ -16,7 +16,7 @@ export default async function RawMaterialsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Raw Materials</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-primary">Raw Materials</h1>
                     <p className="text-muted-foreground">
                         Manage your raw materials and stock levels.
                     </p>
@@ -47,3 +47,4 @@ export default async function RawMaterialsPage() {
         </div>
     )
 }
+

@@ -5,6 +5,7 @@ import { createProduct, updateProduct, deleteProduct } from "@/lib/dal/products"
 import { productSchema } from "@/schemas/product"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
+import { handleServerError } from "@/lib/error-handling"
 
 export async function createProductAction(formData: FormData) {
     const parsed = productSchema.safeParse(Object.fromEntries(formData))
@@ -23,7 +24,7 @@ export async function createProductAction(formData: FormData) {
         revalidatePath("/products")
         return { success: true, data: product }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -49,7 +50,7 @@ export async function updateProductAction(id: string, formData: FormData) {
         revalidatePath("/products")
         return { success: true, data: product }
     } catch (error: unknown) {
-        return { error: { root: [error instanceof Error ? error.message : "Unknown error"] } }
+        return handleServerError(error)
     }
 }
 
@@ -59,6 +60,6 @@ export async function deleteProductAction(id: string) {
         revalidatePath("/products")
         return { success: true }
     } catch (error: unknown) {
-        return { error: error instanceof Error ? error.message : "Unknown error" }
+        return handleServerError(error)
     }
 }

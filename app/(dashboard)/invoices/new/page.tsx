@@ -12,7 +12,7 @@ export default async function NewInvoicePage() {
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Generate Invoice</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">Generate Invoice</h1>
                 <p className="text-muted-foreground">
                     Select an order to create a new invoice.
                 </p>
@@ -24,3 +24,4 @@ export default async function NewInvoicePage() {
         </div>
     )
 }
+
