@@ -1,8 +1,9 @@
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
-import { getCurrentUser } from "@/lib/auth"
 import { createSystemLog } from "@/lib/dal/system-logs"
+import { requireCurrentUser } from "@/lib/dal/guards"
+import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-number"
 
 export type InvoiceDTO = {
     id: string
@@ -15,8 +16,7 @@ export type InvoiceDTO = {
 }
 
 export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    await requireCurrentUser()
 
     const invoices = await prisma.invoice.findMany({
         include: {
@@ -37,8 +37,7 @@ export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
 })
 
 export async function getInvoiceById(id: string) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    await requireCurrentUser()
 
     return prisma.invoice.findUnique({
         where: { id },
@@ -47,30 +46,27 @@ export async function getInvoiceById(id: string) {
 }
 
 export async function createInvoice(data: { orderId: string, markAsPaid?: boolean }) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
     const order = await prisma.order.findUnique({ where: { id: data.orderId } })
     if (!order) throw new Error("Order not found")
 
-    const invoiceNo = `INV-${Date.now().toString().slice(-6)}`
-
-    const invoice = await prisma.invoice.create({
+    const invoice = await createWithUniqueRetry(() => prisma.invoice.create({
         data: {
-            invoiceNo,
+            invoiceNo: generateDocumentNumber("INV"),
             orderId: data.orderId,
             total: order.total,
             paidAt: data.markAsPaid ? new Date() : null,
             createdById: user.id,
         }
-    })
+    }))
+
     await createSystemLog(user.id, "CREATE", "INVOICE", invoice.id, JSON.stringify(data))
     return invoice
 }
 
 export async function updateInvoice(id: string, data: { markAsPaid?: boolean }) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
     const invoice = await prisma.invoice.update({
         where: { id },
@@ -83,8 +79,7 @@ export async function updateInvoice(id: string, data: { markAsPaid?: boolean }) 
 }
 
 export async function deleteInvoice(id: string) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
     const invoice = await prisma.invoice.delete({ where: { id } })
     await createSystemLog(user.id, "DELETE", "INVOICE", id)

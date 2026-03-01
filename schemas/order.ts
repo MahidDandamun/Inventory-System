@@ -4,6 +4,7 @@
 // ---
 
 import { z } from "zod"
+import { ORDER_STATUS_VALUES } from "@/lib/order-status"
 
 export const orderItemSchema = z.object({
     productId: z.string().min(1, { message: "Product is required" }),

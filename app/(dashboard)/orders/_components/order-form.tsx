@@ -22,6 +22,7 @@ import { orderSchema, type OrderInput } from "@/schemas/order"
 import { createOrderAction, updateOrderStatusAction } from "../_actions/order"
 import { type OrderStatus } from "@/lib/dal/orders"
 import { OrderDetailDTO } from "@/lib/dal/orders"
+import { ORDER_STATUS_VALUES, getAllowedOrderStatuses } from "@/lib/order-status"
 import { ProductDTO } from "@/lib/dal/products"
 
 interface OrderFormProps {
@@ -229,6 +230,7 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [status, setStatus] = useState(order.status)
+    const allowedStatuses = getAllowedOrderStatuses(order.status)
 
     const handleUpdate = () => {
         startTransition(async () => {
@@ -287,11 +289,15 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="PENDING">Pending</SelectItem>
-                        <SelectItem value="PROCESSING">Processing</SelectItem>
-                        <SelectItem value="SHIPPED">Shipped</SelectItem>
-                        <SelectItem value="DELIVERED">Delivered</SelectItem>
-                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                        {ORDER_STATUS_VALUES.map((statusOption) => {
+                            const isAllowed = allowedStatuses.includes(statusOption)
+
+                            return (
+                                <SelectItem key={statusOption} value={statusOption} disabled={!isAllowed}>
+                                    {statusOption.charAt(0) + statusOption.slice(1).toLowerCase()}
+                                </SelectItem>
+                            )
+                        })}
                     </SelectContent>
                 </Select>
             </div>

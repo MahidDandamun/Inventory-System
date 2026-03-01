@@ -1,8 +1,16 @@
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
-import { getCurrentUser } from "@/lib/auth"
 import { createSystemLog } from "@/lib/dal/system-logs"
+import { requireCurrentUser } from "@/lib/dal/guards"
+import {
+    type OrderStatus,
+    ORDER_STATUS_FLOW,
+    canTransitionOrderStatus,
+} from "@/lib/order-status"
+import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-number"
+
+export { ORDER_STATUS_FLOW }
 
 const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
     PENDING: ["PROCESSING", "CANCELLED"],
@@ -27,7 +35,7 @@ export type OrderDTO = {
     id: string
     orderNo: string
     customer: string
-    status: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+    status: OrderStatus
     total: number
     itemCount: number
     createdAt: Date
@@ -101,7 +109,7 @@ export type OrderCreateDTO = {
     items: { productId: string; quantity: number; unitPrice: number }[]
 }
 
-export type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+export type { OrderStatus }
 
 export async function createOrder(data: OrderCreateDTO) {
     const user = await requireCurrentUser()
