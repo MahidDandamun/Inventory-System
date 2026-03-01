@@ -4,6 +4,7 @@
 // ---
 
 import { z } from "zod"
+import { ORDER_STATUS_VALUES } from "@/lib/order-status"
 
 export const orderItemSchema = z.object({
     productId: z.string().min(1, { message: "Product is required" }),
@@ -21,5 +22,8 @@ export const orderSchema = z.object({
         .min(1, { message: "At least one item is required" }),
 })
 
+export const orderStatusSchema = z.enum(ORDER_STATUS_VALUES)
+
 export type OrderInput = z.infer<typeof orderSchema>
 export type OrderItemInput = z.infer<typeof orderItemSchema>
+export type OrderStatusInput = z.infer<typeof orderStatusSchema>

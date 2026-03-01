@@ -1,4 +1,6 @@
 import { Metadata } from "next"
+import { redirect } from "next/navigation"
+import { getCurrentUser } from "@/lib/auth"
 import { getAllSystemLogs } from "@/lib/dal/system-logs"
 import { columns } from "./_components/columns"
 import { DataTable } from "@/components/ui/data-table"
@@ -10,6 +12,12 @@ export const metadata: Metadata = {
 }
 
 export default async function SystemLogsPage() {
+    const user = await getCurrentUser()
+
+    if (!user || user.role !== "ADMIN") {
+        redirect("/dashboard")
+    }
+
     const logs = await getAllSystemLogs()
 
     return (
@@ -32,4 +40,3 @@ export default async function SystemLogsPage() {
         </div>
     )
 }
-

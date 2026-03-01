@@ -1,6 +1,7 @@
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
+import { requireAdminUser, requireCurrentUser } from "@/lib/dal/guards"
 
 export type UserDTO = {
     id: string
@@ -13,6 +14,7 @@ export type UserDTO = {
 }
 
 export const getUserById = cache(async (id: string) => {
+    await requireAdminUser()
     return prisma.user.findUnique({ where: { id } })
 })
 
@@ -25,6 +27,8 @@ export async function getAccountByUserId(userId: string) {
 }
 
 export async function getAllUsers(): Promise<UserDTO[]> {
+    await requireAdminUser()
+
     const users = await prisma.user.findMany({
         include: { accounts: { select: { id: true } } },
         orderBy: { createdAt: "desc" },
@@ -41,10 +45,27 @@ export async function getAllUsers(): Promise<UserDTO[]> {
     }))
 }
 
+/**
+ * Internal notification-recipient lookup for system events.
+ * Requires an authenticated caller but does not require admin role.
+ */
+export async function getAdminUserIdsForNotifications(): Promise<string[]> {
+    await requireCurrentUser()
+
+    const admins = await prisma.user.findMany({
+        where: { role: "ADMIN" },
+        select: { id: true },
+    })
+
+    return admins.map((admin) => admin.id)
+}
+
 export type UserCreateDTO = { name: string, email: string, password?: string, role: "ADMIN" | "USER" }
 export type UserUpdateDTO = { name?: string, email?: string, password?: string, role?: "ADMIN" | "USER" }
 
 export async function createUser(data: UserCreateDTO) {
+    await requireAdminUser()
+
     return prisma.user.create({
         data: {
             name: data.name,
@@ -56,6 +77,8 @@ export async function createUser(data: UserCreateDTO) {
 }
 
 export async function updateUser(id: string, data: UserUpdateDTO) {
+    await requireAdminUser()
+
     const updateData: Partial<UserUpdateDTO> = { ...data }
     if (!updateData.password) {
         delete updateData.password
@@ -68,5 +91,6 @@ export async function updateUser(id: string, data: UserUpdateDTO) {
 }
 
 export async function deleteUser(id: string) {
+    await requireAdminUser()
     return prisma.user.delete({ where: { id } })
 }
