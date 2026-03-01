@@ -110,7 +110,7 @@ Fill in your values in `.env`:
 
 ```env
 # Database (Neon PostgreSQL)
-DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require&pgbouncer=true"
+NEON_DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require&pgbouncer=true"
 DIRECT_URL="postgresql://user:password@host/dbname?sslmode=require"
 
 # Auth secret — generate with: npx auth secret
