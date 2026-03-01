@@ -30,6 +30,14 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ order, products }: OrderFormProps) {
+    if (order) {
+        return <OrderStatusForm order={order} />
+    }
+
+    return <CreateOrderForm products={products} />
+}
+
+function CreateOrderForm({ products }: { products: ProductDTO[] }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | undefined>()
@@ -38,19 +46,13 @@ export function OrderForm({ order, products }: OrderFormProps) {
         register,
         control,
         handleSubmit,
-
         setValue,
         formState: { errors },
     } = useForm<OrderInput>({
         resolver: zodResolver(orderSchema) as never,
         defaultValues: {
-            customer: order?.customer || "",
-            items: order?.items?.map(i => ({
-                productId: i.id, // Not exact mapped properly, wait... 
-                // Wait, if editing, we only update status anyway, but let's map it correctly for default
-                quantity: i.quantity,
-                unitPrice: i.unitPrice
-            })) || [{ productId: "", quantity: 1, unitPrice: 0 }],
+            customer: "",
+            items: [{ productId: "", quantity: 1, unitPrice: 0 }],
         },
     })
 
@@ -61,21 +63,15 @@ export function OrderForm({ order, products }: OrderFormProps) {
 
     const watchItems = useWatch({ control, name: "items" })
 
-    // Auto-update price when product changes
     const handleProductChange = (index: number, productId: string) => {
         setValue(`items.${index}.productId`, productId)
-        const product = products.find(p => p.id === productId)
+        const product = products.find((p) => p.id === productId)
         if (product) {
             setValue(`items.${index}.unitPrice`, product.price)
         }
     }
 
     function onSubmit(values: OrderInput) {
-        if (order) {
-            // Edit is not supported for full order form in this basic version, only status
-            return
-        }
-
         setError(undefined)
         startTransition(async () => {
             const formData = new FormData()
@@ -86,7 +82,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
 
             if (result?.error) {
                 const err = result.error as Record<string, string[]>
-                const firstError = Object.values(err).find(e => e && e.length > 0)
+                const firstError = Object.values(err).find((e) => e && e.length > 0)
                 if (firstError) {
                     setError(firstError[0])
                     toast.error(firstError[0])
@@ -95,19 +91,14 @@ export function OrderForm({ order, products }: OrderFormProps) {
                     toast.error(err.root[0])
                 }
             } else {
-                toast.success(order ? "Order updated successfully" : "Order created successfully")
+                toast.success("Order created successfully")
                 router.push("/orders")
                 router.refresh()
             }
         })
     }
 
-    // Status update only form
-    if (order) {
-        return <OrderStatusForm order={order} />
-    }
-
-    const total = watchItems.reduce((acc, item) => acc + (Number(item?.quantity || 0) * Number(item?.unitPrice || 0)), 0)
+    const total = watchItems.reduce((acc, item) => acc + Number(item?.quantity || 0) * Number(item?.unitPrice || 0), 0)
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -138,7 +129,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
                     </Button>
                 </div>
 
-                {errors.items?.message && typeof errors.items.message === 'string' && (
+                {errors.items?.message && typeof errors.items.message === "string" && (
                     <p className="text-sm text-destructive">{errors.items.message}</p>
                 )}
 
@@ -156,7 +147,7 @@ export function OrderForm({ order, products }: OrderFormProps) {
                                         <SelectValue placeholder="Select product" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {products.map(p => (
+                                        {products.map((p) => (
                                             <SelectItem key={p.id} value={p.id}>
                                                 {p.name} - ${p.price} ({p.quantity} in stock)
                                             </SelectItem>
@@ -278,7 +269,7 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
 
             <div className="border rounded-md p-4 space-y-3 bg-muted/20 text-sm">
                 <h3 className="font-semibold">Line Items</h3>
-                {order.items.map(item => (
+                {order.items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-0 border-border/50">
                         <div>
                             <span className="font-medium">{item.productName}</span>
