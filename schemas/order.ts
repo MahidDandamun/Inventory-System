@@ -21,5 +21,14 @@ export const orderSchema = z.object({
         .min(1, { message: "At least one item is required" }),
 })
 
+export const orderStatusSchema = z.enum([
+    "PENDING",
+    "PROCESSING",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+])
+
 export type OrderInput = z.infer<typeof orderSchema>
 export type OrderItemInput = z.infer<typeof orderItemSchema>
+export type OrderStatusInput = z.infer<typeof orderStatusSchema>

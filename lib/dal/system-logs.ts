@@ -1,5 +1,6 @@
 import "server-only"
 import { prisma } from "@/lib/prisma"
+import { requireAdminUser, requireCurrentUser } from "@/lib/dal/guards"
 
 export async function createSystemLog(
     userId: string | null | undefined,
@@ -9,6 +10,8 @@ export async function createSystemLog(
     details?: string
 ) {
     try {
+        await requireCurrentUser()
+
         await prisma.systemLog.create({
             data: {
                 userId: userId || null,
@@ -24,6 +27,8 @@ export async function createSystemLog(
 }
 
 export async function getAllSystemLogs() {
+    await requireAdminUser()
+
     const logs = await prisma.systemLog.findMany({
         orderBy: { createdAt: "desc" },
         include: { user: { select: { name: true, email: true } } }
