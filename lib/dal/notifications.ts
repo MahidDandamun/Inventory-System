@@ -67,6 +67,8 @@ export async function createNotification(
     if (!isSelfNotification && !isAdmin && !isSystemEvent) {
         throw new Error("Forbidden")
     }
+export async function createNotification(userId: string, title: string, message: string) {
+    await requireCurrentUser()
 
     return prisma.notification.create({
         data: {

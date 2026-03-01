@@ -12,6 +12,25 @@ import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-nu
 
 export { ORDER_STATUS_FLOW }
 
+const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
+    PENDING: ["PROCESSING", "CANCELLED"],
+    PROCESSING: ["SHIPPED", "CANCELLED"],
+    SHIPPED: ["DELIVERED"],
+    DELIVERED: [],
+    CANCELLED: [],
+}
+
+async function requireCurrentUser() {
+    const user = await getCurrentUser()
+    if (!user) throw new Error("Unauthorized")
+    return user
+}
+
+function canTransitionOrderStatus(from: OrderStatus, to: OrderStatus) {
+    if (from === to) return true
+    return ORDER_STATUS_FLOW[from].includes(to)
+}
+
 export type OrderDTO = {
     id: string
     orderNo: string
@@ -128,31 +147,30 @@ export async function createOrder(data: OrderCreateDTO) {
     })
 
     const total = calculatedItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
+    const orderNo = `ORD-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
 
-    const order = await createWithUniqueRetry(() =>
-        prisma.$transaction(async (tx) => {
-            const created = await tx.order.create({
-                data: {
-                    customer: data.customer,
-                    orderNo: generateDocumentNumber("ORD"),
-                    total,
-                    createdById: user.id,
-                    items: {
-                        create: calculatedItems,
-                    },
+    const order = await prisma.$transaction(async (tx) => {
+        const created = await tx.order.create({
+            data: {
+                customer: data.customer,
+                orderNo,
+                total,
+                createdById: user.id,
+                items: {
+                    create: calculatedItems,
                 },
-            })
-
-            for (const item of calculatedItems) {
-                await tx.product.update({
-                    where: { id: item.productId },
-                    data: { quantity: { decrement: item.quantity } },
-                })
-            }
-
-            return created
+            },
         })
-    )
+
+        for (const item of calculatedItems) {
+            await tx.product.update({
+                where: { id: item.productId },
+                data: { quantity: { decrement: item.quantity } },
+            })
+        }
+
+        return created
+    })
 
     await createSystemLog(user.id, "CREATE", "ORDER", order.id, JSON.stringify(data))
     return order
