@@ -1,5 +1,5 @@
 import "server-only"
-import { createNotification } from "@/lib/dal/notifications"
+import { prisma } from "@/lib/prisma"
 import { getAdminUserIdsForNotifications } from "@/lib/dal/users"
 
 export async function notifyAdmins(title: string, message: string) {
@@ -7,7 +7,9 @@ export async function notifyAdmins(title: string, message: string) {
 
     await Promise.all(
         adminIds.map((adminId) =>
-            createNotification(adminId, title, message, { asSystemEvent: true })
+            prisma.notification.create({
+                data: { userId: adminId, title, message },
+            })
         )
     )
 }
