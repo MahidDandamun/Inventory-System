@@ -9,9 +9,10 @@ import { handleServerError } from "@/lib/error-handling"
 
 export async function createInvoiceAction(formData: FormData) {
     const markAsPaidStr = formData.get("markAsPaid")
+    const orderId = formData.get("orderId")
 
     const parsed = invoiceSchema.safeParse({
-        orderId: formData.get("orderId"),
+        orderId: orderId,
         markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on",
     })
 

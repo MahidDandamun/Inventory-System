@@ -1,0 +1,22 @@
+# ============================================================
+# Base compose file — shared service definitions
+# Use with: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up
+#           docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up
+# ============================================================
+services:
+  app:
+    image: inventory-system:${IMAGE_TAG:-latest}
+    container_name: inventory-system
+    ports:
+      - "3000:3000"
+    environment:
+      NEON_DATABASE_URL: "${NEON_DATABASE_URL}"
+      DIRECT_URL: "${DIRECT_URL}"
+      AUTH_SECRET: "${AUTH_SECRET}"
+      AUTH_TRUST_HOST: "${AUTH_TRUST_HOST:-true}"
+      GITHUB_CLIENT_ID: "${GITHUB_CLIENT_ID}"
+      GITHUB_CLIENT_SECRET: "${GITHUB_CLIENT_SECRET}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
+      RESEND_API_KEY: "${RESEND_API_KEY}"
+    restart: unless-stopped

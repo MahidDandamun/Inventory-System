@@ -1,0 +1,11 @@
+# ============================================================
+# Production override
+# Pulls pre-built image from Docker Hub (pushed by GitHub Actions).
+# Usage: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+# IMAGE_TAG is set by CI (e.g. the git SHA or release tag).
+# ============================================================
+services:
+  app:
+    image: mahiddandamun/inventory-system:${IMAGE_TAG:-latest}
+    container_name: inventory-system-prod
+    restart: always

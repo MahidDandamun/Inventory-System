@@ -15,11 +15,11 @@ export default async function EditInvoicePage({
     const { id } = await params
 
     const invoice = await getInvoiceById(id)
-    const allOrders = await getOrders()
-
     if (!invoice) {
         notFound()
     }
+    const allOrders = await getOrders()
+
 
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
