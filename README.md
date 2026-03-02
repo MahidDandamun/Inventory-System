@@ -193,23 +193,46 @@ inventory-system/
 │
 ├── lib/
 │   ├── dal/                      # ← Data Access Layer (security boundary)
+│   │   ├── guards.ts             # requireCurrentUser(), requireAdminUser()
 │   │   ├── users.ts
 │   │   ├── products.ts
 │   │   ├── warehouses.ts
 │   │   ├── raw-materials.ts
 │   │   ├── orders.ts
-│   │   └── invoices.ts
+│   │   ├── invoices.ts
+│   │   ├── bill-of-materials.ts
+│   │   ├── stock-movements.ts
+│   │   ├── notifications.ts
+│   │   └── system-logs.ts
 │   ├── auth.ts                   # getCurrentUser() — React.cache() wrapped
+│   ├── document-number.ts        # Document number generation
+│   ├── error-handling.ts         # handleServerError() for action catch blocks
 │   ├── mail.ts                   # Resend email service
+│   ├── order-status.ts           # Status transition map + validation
+│   ├── rate-limit.ts             # Rate limiting helper
 │   ├── tokens.ts                 # Token generation helpers
 │   └── prisma.ts                 # Prisma singleton
 │
 ├── schemas/                      # Zod validation schemas (shared)
 ├── types/                        # TypeScript interfaces & DTO types
-├── hooks/                        # Custom React hooks
+│
+├── __tests__/                    # Vitest unit tests
+│   ├── dal/                      # DAL unit tests
+│   └── lib/                      # lib utility unit tests
+│
+├── e2e/                          # Playwright E2E tests
+│
+├── _agent/                       # AI agent context & workflow definitions
+│   ├── rules/rules.md            # Canonical project rules & file index
+│   ├── context/architecture.md  # System architecture reference
+│   ├── context/patterns.md      # Copy-paste code templates
+│   └── workflows/               # Slash-command workflow definitions
+│
+├── prisma/                       # Prisma schema & migrations
+├── public/                       # Static assets
 ├── auth.ts                       # NextAuth.js configuration
 ├── auth.config.ts                # OAuth provider setup
-├── middleware.ts                  # Route protection (public / private)
+├── middleware.ts                 # Route protection (public / private)
 └── routes.ts                     # Centralised route constants
 ```
 
