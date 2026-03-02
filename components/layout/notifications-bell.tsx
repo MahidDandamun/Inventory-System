@@ -17,7 +17,7 @@ export function NotificationsBell({ initialNotifications }: { initialNotificatio
     const handleMarkAsRead = (id: string) => {
         startTransition(async () => {
             const result = await markNotificationAsRead(id)
-            if (result?.error) toast.error(result.error)
+            if (result && !result.success) toast.error(result.error)
             else router.refresh()
         })
     }
@@ -25,7 +25,7 @@ export function NotificationsBell({ initialNotifications }: { initialNotificatio
     const handleMarkAllAsRead = () => {
         startTransition(async () => {
             const result = await markAllNotificationsAsRead()
-            if (result?.error) toast.error(result.error)
+            if (result && !result.success) toast.error(result.error)
             else router.refresh()
         })
     }

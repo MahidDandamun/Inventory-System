@@ -5,39 +5,27 @@ import { createProduct, updateProduct, deleteProduct } from "@/lib/dal/products"
 import { productSchema } from "@/schemas/product"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 export async function createProductAction(formData: FormData) {
-    const parsed = productSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(productSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const product = await createProduct(parsed.data)
+        const product = await createProduct(data)
         const users = await getAllUsers()
         const admins = users.filter((u) => u.role === "ADMIN")
         for (const admin of admins) {
             await createNotification(admin.id, "New Product Added", `Product "${product.name}" was added to the catalog.`)
         }
         revalidatePath("/products")
-        return { success: true, data: product }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return product
+    })
 }
 
 export async function updateProductAction(id: string, formData: FormData) {
-    const parsed = productSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(productSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        // Only update allowed fields, not including warehouseId if not strictly needed or handle it securely.
-        const product = await updateProduct(id, parsed.data)
+        const product = await updateProduct(id, data)
 
         if (product.quantity <= 10) {
             const users = await getAllUsers()
@@ -48,18 +36,14 @@ export async function updateProductAction(id: string, formData: FormData) {
         }
 
         revalidatePath("/products")
-        return { success: true, data: product }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return product
+    })
 }
 
 export async function deleteProductAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await deleteProduct(id)
         revalidatePath("/products")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return null
+    })
 }

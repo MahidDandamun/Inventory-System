@@ -5,38 +5,27 @@ import { createRawMaterial, updateRawMaterial, deleteRawMaterial } from "@/lib/d
 import { rawMaterialSchema } from "@/schemas/raw-material"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 export async function createRawMaterialAction(formData: FormData) {
-    const parsed = rawMaterialSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(rawMaterialSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const item = await createRawMaterial(parsed.data)
+        const item = await createRawMaterial(data)
         const users = await getAllUsers()
         const admins = users.filter((u) => u.role === "ADMIN")
         for (const admin of admins) {
             await createNotification(admin.id, "New Material Added", `Raw Material "${item.name}" was added.`)
         }
         revalidatePath("/raw-materials")
-        return { success: true, data: item }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return item
+    })
 }
 
 export async function updateRawMaterialAction(id: string, formData: FormData) {
-    const parsed = rawMaterialSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(rawMaterialSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const item = await updateRawMaterial(id, parsed.data)
+        const item = await updateRawMaterial(id, data)
 
         if (item.quantity <= item.reorderAt) {
             const users = await getAllUsers()
@@ -47,18 +36,14 @@ export async function updateRawMaterialAction(id: string, formData: FormData) {
         }
 
         revalidatePath("/raw-materials")
-        return { success: true, data: item }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return item
+    })
 }
 
 export async function deleteRawMaterialAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await deleteRawMaterial(id)
         revalidatePath("/raw-materials")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return null
+    })
 }

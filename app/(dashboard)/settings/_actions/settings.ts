@@ -5,11 +5,10 @@ import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { settingsSchema, type SettingsInput } from "@/schemas/auth"
 import bcrypt from "bcryptjs"
-import { handleServerError } from "@/lib/error-handling"
 
 export async function updateSettingsAction(formData: FormData) {
     const user = await getCurrentUser()
-    if (!user) return { error: { root: ["Unauthorized"] } }
+    if (!user) return { success: false, error: "Unauthorized" } as const
 
     // Parse form data
     const values = Object.fromEntries(formData)
@@ -22,7 +21,7 @@ export async function updateSettingsAction(formData: FormData) {
     })
 
     if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
+        return { success: false, error: "Invalid settings data.", fieldErrors: parsed.error.flatten().fieldErrors }
     }
 
     const data = parsed.data
@@ -31,7 +30,7 @@ export async function updateSettingsAction(formData: FormData) {
         const dbUser = await prisma.user.findUnique({ where: { id: user.id } })
 
         if (!dbUser) {
-            return { error: { root: ["Unauthorized"] } }
+            return { success: false, error: "Unauthorized" }
         }
 
         const updateData: Partial<SettingsInput & { emailVerified: Date | null }> = {
@@ -53,7 +52,7 @@ export async function updateSettingsAction(formData: FormData) {
         if (data.password && data.newPassword && dbUser.password) {
             const passwordsMatch = await bcrypt.compare(data.password, dbUser.password)
             if (!passwordsMatch) {
-                return { error: { password: ["Incorrect current password"] } }
+                return { success: false, error: "Incorrect current password", fieldErrors: { password: ["Incorrect current password"] } }
             }
             updateData.password = await bcrypt.hash(data.newPassword, 10)
         }
@@ -64,8 +63,8 @@ export async function updateSettingsAction(formData: FormData) {
         })
 
         revalidatePath("/settings")
-        return { success: true }
+        return { success: true, data: null }
     } catch (error: unknown) {
-        return handleServerError(error)
+        return { success: false, error: error instanceof Error ? error.message : "An unexpected error occurred." }
     }
 }

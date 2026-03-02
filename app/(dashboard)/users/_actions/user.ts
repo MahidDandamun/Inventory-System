@@ -5,7 +5,8 @@ import { createUser, updateUser, deleteUser, type UserCreateDTO, type UserUpdate
 import { userAdminSchema } from "@/schemas/user"
 import { getCurrentUser } from "@/lib/auth"
 import bcrypt from "bcryptjs"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 async function requireAdmin() {
     const user = await getCurrentUser()
@@ -15,77 +16,44 @@ async function requireAdmin() {
 }
 
 export async function createUserAction(formData: FormData) {
-    try {
+    return validatedAction(userAdminSchema, formData, async (data) => {
         await requireAdmin()
-    } catch {
-        return { error: "Unauthorized: Admin access required." }
-    }
-
-    const parsed = userAdminSchema.safeParse(Object.fromEntries(formData))
-
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const data: UserCreateDTO = {
-            name: parsed.data.name,
-            email: parsed.data.email,
-            role: parsed.data.role
+        const payload: UserCreateDTO = {
+            name: data.name,
+            email: data.email,
+            role: data.role
         }
-        if (parsed.data.password) {
-            data.password = await bcrypt.hash(parsed.data.password, 10)
+        if (data.password) {
+            payload.password = await bcrypt.hash(data.password, 10)
         }
 
-        const user = await createUser(data)
+        const user = await createUser(payload)
         revalidatePath("/users")
-        return { success: true, data: user }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return user
+    })
 }
 
 export async function updateUserAction(id: string, formData: FormData) {
-    try {
+    return validatedAction(userAdminSchema, formData, async (data) => {
         await requireAdmin()
-    } catch {
-        return { error: "Unauthorized: Admin access required." }
-    }
-
-    const parsed = userAdminSchema.safeParse(Object.fromEntries(formData))
-
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const data: UserUpdateDTO = { ...parsed.data }
-        if (data.password) {
-            data.password = await bcrypt.hash(data.password, 10)
+        const payload: UserUpdateDTO = { ...data }
+        if (payload.password) {
+            payload.password = await bcrypt.hash(payload.password, 10)
         } else {
-            delete data.password
+            delete payload.password
         }
 
-        const user = await updateUser(id, data)
+        const user = await updateUser(id, payload)
         revalidatePath("/users")
-        return { success: true, data: user }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return user
+    })
 }
 
 export async function deleteUserAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await requireAdmin()
-    } catch {
-        return { error: "Unauthorized: Admin access required." }
-    }
-
-    try {
         await deleteUser(id)
         revalidatePath("/users")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return null
+    })
 }

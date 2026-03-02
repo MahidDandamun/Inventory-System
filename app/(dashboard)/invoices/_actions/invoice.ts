@@ -5,36 +5,30 @@ import { createInvoice, updateInvoice, deleteInvoice } from "@/lib/dal/invoices"
 import { invoiceSchema } from "@/schemas/invoice"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 export async function createInvoiceAction(formData: FormData) {
     const markAsPaidStr = formData.get("markAsPaid")
     const orderId = formData.get("orderId")
 
-    const parsed = invoiceSchema.safeParse({
+    return validatedAction(invoiceSchema, {
         orderId: orderId,
         markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on",
-    })
-
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const invoice = await createInvoice(parsed.data)
+    }, async (data) => {
+        const invoice = await createInvoice(data)
         revalidatePath("/invoices")
-        return { success: true, data: invoice }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return invoice
+    })
 }
 
 export async function updateInvoiceAction(id: string, formData: FormData) {
     const markAsPaidStr = formData.get("markAsPaid")
-    try {
-        const invoice = await updateInvoice(id, {
-            markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on"
-        })
+
+    return validatedAction(invoiceSchema, {
+        markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on"
+    }, async (data) => {
+        const invoice = await updateInvoice(id, data)
 
         // Notify admins if invoice was just paid
         if (invoice.paidAt) {
@@ -46,18 +40,14 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
         }
 
         revalidatePath("/invoices")
-        return { success: true, data: invoice }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return invoice
+    })
 }
 
 export async function deleteInvoiceAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await deleteInvoice(id)
         revalidatePath("/invoices")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return null
+    })
 }

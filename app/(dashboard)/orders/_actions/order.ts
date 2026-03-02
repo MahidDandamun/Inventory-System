@@ -5,7 +5,8 @@ import { createOrder, updateOrderStatus, deleteOrder, type OrderStatus } from "@
 import { orderSchema, orderStatusSchema } from "@/schemas/order"
 import { createNotification } from "@/lib/dal/notifications"
 import { getAllUsers } from "@/lib/dal/users"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 export async function createOrderAction(formData: FormData) {
     const customer = formData.get("customer") as string
@@ -15,17 +16,11 @@ export async function createOrderAction(formData: FormData) {
     try {
         if (itemsRaw) items = JSON.parse(itemsRaw)
     } catch {
-        return { error: { root: ["Invalid items format"] } }
+        return { success: false, error: "Invalid items format", fieldErrors: { root: ["Invalid items format"] } } as const
     }
 
-    const parsed = orderSchema.safeParse({ customer, items })
-
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const order = await createOrder(parsed.data)
+    return validatedAction(orderSchema, { customer, items }, async (data) => {
+        const order = await createOrder(data)
 
         const users = await getAllUsers()
         const admins = users.filter((u) => u.role === "ADMIN")
@@ -34,22 +29,13 @@ export async function createOrderAction(formData: FormData) {
         }
 
         revalidatePath("/orders")
-        return { success: true, data: order }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return order
+    })
 }
 
 export async function updateOrderStatusAction(id: string, formData: FormData) {
-    const parsedStatus = orderStatusSchema.safeParse(formData.get("status"))
-
-    if (!parsedStatus.success) {
-        return { error: { status: ["Invalid order status"] } }
-    }
-
-    const status: OrderStatus = parsedStatus.data
-
-    try {
+    return validatedAction(orderStatusSchema, formData.get("status"), async (statusData) => {
+        const status: OrderStatus = statusData as OrderStatus
         const order = await updateOrderStatus(id, status)
 
         if (status === "CANCELLED") {
@@ -61,18 +47,14 @@ export async function updateOrderStatusAction(id: string, formData: FormData) {
         }
 
         revalidatePath("/orders")
-        return { success: true, data: order }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return order
+    })
 }
 
 export async function deleteOrderAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await deleteOrder(id)
         revalidatePath("/orders")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return null
+    })
 }

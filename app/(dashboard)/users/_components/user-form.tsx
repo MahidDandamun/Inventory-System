@@ -65,9 +65,9 @@ export function UserForm({ user }: UserFormProps) {
                 result = await createUserAction(formData)
             }
 
-            if (result?.error) {
-                if (typeof result.error === "object") {
-                    const err = result.error as Record<string, string[]>
+            if (result && !result.success) {
+                if (result.fieldErrors) {
+                    const err = result.fieldErrors
                     const firstError = Object.values(err).find(e => e && e.length > 0)
                     if (firstError) {
                         setError(firstError[0])
@@ -76,9 +76,9 @@ export function UserForm({ user }: UserFormProps) {
                         setError(err.root[0])
                         toast.error(err.root[0])
                     }
-                } else {
-                    setError(String(result.error))
-                    toast.error(String(result.error))
+                } else if (result.error) {
+                    setError(result.error)
+                    toast.error(result.error)
                 }
             } else {
                 toast.success(user ? "User updated successfully" : "User created successfully")

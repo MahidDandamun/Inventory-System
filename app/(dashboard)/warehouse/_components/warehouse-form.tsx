@@ -64,9 +64,9 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
                 result = await createWarehouseAction(formData)
             }
 
-            if (result?.error) {
-                if (typeof result.error === "object") {
-                    const err = result.error as Record<string, string[]>
+            if (result && !result.success) {
+                if (result.fieldErrors) {
+                    const err = result.fieldErrors
                     if (err.location) {
                         setError(err.location[0])
                         toast.error(err.location[0])
@@ -74,9 +74,9 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
                         setError(err.root[0])
                         toast.error(err.root[0])
                     }
-                } else {
-                    setError(String(result.error))
-                    toast.error(String(result.error))
+                } else if (result.error) {
+                    setError(result.error)
+                    toast.error(result.error)
                 }
             } else {
                 toast.success(warehouse ? "Warehouse updated successfully" : "Warehouse created successfully")

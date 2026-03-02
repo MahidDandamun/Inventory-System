@@ -81,15 +81,20 @@ function CreateOrderForm({ products }: { products: ProductDTO[] }) {
 
             const result = await createOrderAction(formData)
 
-            if (result?.error) {
-                const err = result.error as Record<string, string[]>
-                const firstError = Object.values(err).find((e) => e && e.length > 0)
-                if (firstError) {
-                    setError(firstError[0])
-                    toast.error(firstError[0])
-                } else if (err.root) {
-                    setError(err.root[0])
-                    toast.error(err.root[0])
+            if (result && !result.success) {
+                if (result.fieldErrors) {
+                    const err = result.fieldErrors
+                    const firstError = Object.values(err).find((e) => e && e.length > 0)
+                    if (firstError) {
+                        setError(firstError[0])
+                        toast.error(firstError[0])
+                    } else if (err.root) {
+                        setError(err.root[0])
+                        toast.error(err.root[0])
+                    }
+                } else if (result.error) {
+                    setError(result.error)
+                    toast.error(result.error)
                 }
             } else {
                 toast.success("Order created successfully")
@@ -238,8 +243,8 @@ function OrderStatusForm({ order }: { order: OrderDetailDTO }) {
             formData.append("status", status)
             const result = await updateOrderStatusAction(order.id, formData)
 
-            if (result && "error" in result) {
-                toast.error("Failed to update order status")
+            if (result && !result.success) {
+                toast.error(result.error || "Failed to update order status")
             } else {
                 toast.success("Order status updated successfully")
                 router.push("/orders")

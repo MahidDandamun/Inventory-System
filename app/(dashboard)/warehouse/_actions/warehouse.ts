@@ -3,46 +3,31 @@
 import { revalidatePath } from "next/cache"
 import { createWarehouse, updateWarehouse, deleteWarehouse } from "@/lib/dal/warehouses"
 import { warehouseSchema } from "@/schemas/warehouse"
-import { handleServerError } from "@/lib/error-handling"
+import { validatedAction } from "@/lib/actions/safe-action"
+import { z } from "zod"
 
 export async function createWarehouseAction(formData: FormData) {
-    const parsed = warehouseSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(warehouseSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const warehouse = await createWarehouse(parsed.data)
+        const warehouse = await createWarehouse(data)
         revalidatePath("/warehouse")
-        return { success: true, data: warehouse }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return warehouse
+    })
 }
 
 export async function updateWarehouseAction(id: string, formData: FormData) {
-    const parsed = warehouseSchema.safeParse(Object.fromEntries(formData))
+    return validatedAction(warehouseSchema, formData, async (data) => {
 
-    if (!parsed.success) {
-        return { error: parsed.error.flatten().fieldErrors }
-    }
-
-    try {
-        const warehouse = await updateWarehouse(id, parsed.data)
+        const warehouse = await updateWarehouse(id, data)
         revalidatePath("/warehouse")
-        return { success: true, data: warehouse }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
+        return warehouse
+    })
 }
 
 export async function deleteWarehouseAction(id: string) {
-    try {
+    return validatedAction(z.any(), {}, async () => {
         await deleteWarehouse(id)
         revalidatePath("/warehouse")
-        return { success: true }
-    } catch (error: unknown) {
-        return handleServerError(error)
-    }
-}   
+        return null
+    })
+}
