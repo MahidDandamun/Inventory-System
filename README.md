@@ -59,6 +59,21 @@ A **production-grade inventory management system** built as a portfolio project 
 
 ---
 
+## System Flow
+
+```text
+Raw Materials ──[BOM]──► Products ──[Orders]──► Order Items
+                                                    │
+                                                    ▼
+                                               Invoices
+                                                    │
+                                                    ▼
+                                             Stock Movements
+                                            (audit trail)
+```
+
+---
+
 ## Tech Stack
 
 | Technology | Version | Purpose |

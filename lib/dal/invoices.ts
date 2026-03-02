@@ -36,13 +36,29 @@ export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
     }))
 })
 
-export async function getInvoiceById(id: string) {
+export type InvoiceDetailDTO = InvoiceDTO & {
+    orderId: string
+}
+
+export async function getInvoiceById(id: string): Promise<InvoiceDetailDTO | null> {
     await requireCurrentUser()
 
-    return prisma.invoice.findUnique({
+    const inv = await prisma.invoice.findUnique({
         where: { id },
-        include: { order: true }
+        include: { order: { select: { orderNo: true, customer: true } } }
     })
+    if (!inv) return null
+
+    return {
+        id: inv.id,
+        invoiceNo: inv.invoiceNo,
+        orderNo: inv.order.orderNo,
+        customer: inv.order.customer,
+        total: inv.total.toNumber(),
+        paidAt: inv.paidAt,
+        createdAt: inv.createdAt,
+        orderId: inv.orderId,
+    }
 }
 
 export async function createInvoice(data: { orderId: string, markAsPaid?: boolean }) {

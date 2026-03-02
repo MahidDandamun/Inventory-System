@@ -1,13 +1,13 @@
 "use server"
 
-import { getCurrentUser } from "@/lib/auth"
-import { updateNotificationAsRead, updateAllNotificationsAsRead } from "@/lib/dal/notifications"
 import { revalidatePath } from "next/cache"
+import { updateNotificationAsRead, updateAllNotificationsAsRead } from "@/lib/dal/notifications"
+import { requireCurrentUser } from "@/lib/dal/guards"
 
 export async function markNotificationAsRead(id: string) {
     try {
-        const user = await getCurrentUser()
-        if (!user || !user.id) return { error: "Unauthorized" }
+        const user = await requireCurrentUser()
+        if (!user.id) return { error: "Unauthorized" }
 
         await updateNotificationAsRead(id, user.id)
 
@@ -20,8 +20,8 @@ export async function markNotificationAsRead(id: string) {
 
 export async function markAllNotificationsAsRead() {
     try {
-        const user = await getCurrentUser()
-        if (!user || !user.id) return { error: "Unauthorized" }
+        const user = await requireCurrentUser()
+        if (!user.id) return { error: "Unauthorized" }
 
         await updateAllNotificationsAsRead(user.id)
 

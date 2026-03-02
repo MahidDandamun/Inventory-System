@@ -8,28 +8,11 @@ import {
     ORDER_STATUS_FLOW,
     canTransitionOrderStatus,
 } from "@/lib/order-status"
-import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-number"
+
+import { recordStockMovement } from "@/lib/dal/stock-movements"
+import { checkLowStock } from "@/lib/dal/notifications"
 
 export { ORDER_STATUS_FLOW }
-
-const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
-    PENDING: ["PROCESSING", "CANCELLED"],
-    PROCESSING: ["SHIPPED", "CANCELLED"],
-    SHIPPED: ["DELIVERED"],
-    DELIVERED: [],
-    CANCELLED: [],
-}
-
-async function requireCurrentUser() {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
-    return user
-}
-
-function canTransitionOrderStatus(from: OrderStatus, to: OrderStatus) {
-    if (from === to) return true
-    return ORDER_STATUS_FLOW[from].includes(to)
-}
 
 export type OrderDTO = {
     id: string
@@ -167,12 +150,21 @@ export async function createOrder(data: OrderCreateDTO) {
                 where: { id: item.productId },
                 data: { quantity: { decrement: item.quantity } },
             })
+            await recordStockMovement({
+                entity: "PRODUCT",
+                entityId: item.productId,
+                type: "OUT",
+                quantity: item.quantity,
+                reason: `Order ${orderNo} created`,
+                userId: user.id
+            }, tx)
         }
 
         return created
     })
 
     await createSystemLog(user.id, "CREATE", "ORDER", order.id, JSON.stringify(data))
+    await checkLowStock()
     return order
 }
 
@@ -207,6 +199,14 @@ export async function updateOrderStatus(
                     where: { id: item.productId },
                     data: { quantity: { increment: item.quantity } },
                 })
+                await recordStockMovement({
+                    entity: "PRODUCT",
+                    entityId: item.productId,
+                    type: "IN",
+                    quantity: item.quantity,
+                    reason: `Order ${existingOrder.orderNo} cancelled`,
+                    userId: user.id
+                }, tx)
             }
         }
 
@@ -214,6 +214,7 @@ export async function updateOrderStatus(
     })
 
     await createSystemLog(user.id, "UPDATE", "ORDER", id, JSON.stringify({ status }))
+    if (status === "CANCELLED") await checkLowStock()
     return order
 }
 
@@ -236,6 +237,14 @@ export async function deleteOrder(id: string) {
                     where: { id: item.productId },
                     data: { quantity: { increment: item.quantity } },
                 })
+                await recordStockMovement({
+                    entity: "PRODUCT",
+                    entityId: item.productId,
+                    type: "IN",
+                    quantity: item.quantity,
+                    reason: `Order ${existingOrder.orderNo} deleted`,
+                    userId: user.id
+                }, tx)
             }
         }
 

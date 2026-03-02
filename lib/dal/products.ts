@@ -1,8 +1,10 @@
 import "server-only"
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
-import { getCurrentUser } from "@/lib/auth"
 import { createSystemLog } from "@/lib/dal/system-logs"
+import { requireCurrentUser } from "@/lib/dal/guards"
+import { recordStockMovement } from "@/lib/dal/stock-movements"
+import { checkLowStock } from "@/lib/dal/notifications"
 
 export type ProductDTO = {
     id: string
@@ -18,8 +20,7 @@ export type ProductDTO = {
 }
 
 export const getProducts = cache(async (): Promise<ProductDTO[]> => {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    await requireCurrentUser()
 
     const products = await prisma.product.findMany({
         include: { warehouse: { select: { location: true } } },
@@ -43,8 +44,7 @@ export const getProducts = cache(async (): Promise<ProductDTO[]> => {
 export async function getProductById(
     id: string
 ): Promise<ProductDTO | null> {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    await requireCurrentUser()
 
     const p = await prisma.product.findUnique({
         where: { id },
@@ -74,8 +74,7 @@ export async function createProduct(data: {
     quantity: number
     warehouseId: string
 }) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
     const product = await prisma.product.create({
         data: {
@@ -89,7 +88,19 @@ export async function createProduct(data: {
         },
     })
 
+    if (data.quantity > 0) {
+        await recordStockMovement({
+            entity: "PRODUCT",
+            entityId: product.id,
+            type: "IN",
+            quantity: data.quantity,
+            reason: "Initial stock on creation",
+            userId: user.id
+        })
+    }
+
     await createSystemLog(user.id, "CREATE", "PRODUCT", product.id, JSON.stringify(data))
+    await checkLowStock()
     return product
 }
 
@@ -105,17 +116,34 @@ export async function updateProduct(
         status?: "ACTIVE" | "INACTIVE"
     }
 ) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
+    const existing = await prisma.product.findUnique({ where: { id } })
     const product = await prisma.product.update({ where: { id }, data })
+
+    if (existing && data.quantity !== undefined && data.quantity !== existing.quantity) {
+        const diff = data.quantity - existing.quantity
+        await recordStockMovement({
+            entity: "PRODUCT",
+            entityId: id,
+            type: diff > 0 ? "IN" : "OUT",
+            quantity: Math.abs(diff),
+            reason: "Manual adjustment via update",
+            userId: user.id
+        })
+    }
+
     await createSystemLog(user.id, "UPDATE", "PRODUCT", id, JSON.stringify(data))
+
+    if (existing && data.quantity !== undefined && data.quantity !== existing.quantity) {
+        await checkLowStock()
+    }
+
     return product
 }
 
 export async function deleteProduct(id: string) {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
+    const user = await requireCurrentUser()
 
     const product = await prisma.product.delete({ where: { id } })
     await createSystemLog(user.id, "DELETE", "PRODUCT", id)
