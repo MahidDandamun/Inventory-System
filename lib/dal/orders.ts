@@ -11,6 +11,7 @@ import {
 
 import { recordStockMovement } from "@/lib/dal/stock-movements"
 import { checkLowStock } from "@/lib/dal/notifications"
+import type { Order, OrderItem } from "@prisma/client"
 
 export { ORDER_STATUS_FLOW }
 
@@ -34,6 +35,31 @@ export type OrderDetailDTO = OrderDTO & {
     }[]
 }
 
+export function toOrderDTO(order: Order & { _count?: { items: number } }): OrderDTO {
+    return {
+        id: order.id,
+        orderNo: order.orderNo,
+        customer: order.customer,
+        status: order.status as OrderStatus,
+        total: typeof order.total?.toNumber === 'function' ? order.total.toNumber() : Number(order.total),
+        itemCount: order._count?.items ?? 0,
+        createdAt: order.createdAt,
+    }
+}
+
+export function toOrderDetailDTO(order: Order & { _count?: { items: number }, items: (OrderItem & { product: { name: string } })[] }): OrderDetailDTO {
+    return {
+        ...toOrderDTO(order),
+        items: order.items.map(item => ({
+            id: item.id,
+            productId: item.productId,
+            productName: item.product.name,
+            quantity: item.quantity,
+            unitPrice: typeof item.unitPrice?.toNumber === 'function' ? item.unitPrice.toNumber() : Number(item.unitPrice),
+        }))
+    }
+}
+
 export const getOrders = cache(async (): Promise<OrderDTO[]> => {
     await requireCurrentUser()
 
@@ -42,15 +68,7 @@ export const getOrders = cache(async (): Promise<OrderDTO[]> => {
         orderBy: { createdAt: "desc" },
     })
 
-    return orders.map((o: typeof orders[number]) => ({
-        id: o.id,
-        orderNo: o.orderNo,
-        customer: o.customer,
-        status: o.status,
-        total: o.total.toNumber(),
-        itemCount: o._count.items,
-        createdAt: o.createdAt,
-    }))
+    return orders.map((o) => toOrderDTO(o))
 })
 
 export async function getOrderById(
@@ -69,22 +87,7 @@ export async function getOrderById(
     })
     if (!o) return null
 
-    return {
-        id: o.id,
-        orderNo: o.orderNo,
-        customer: o.customer,
-        status: o.status,
-        total: o.total.toNumber(),
-        itemCount: o._count.items,
-        createdAt: o.createdAt,
-        items: o.items.map((item: typeof o.items[number]) => ({
-            id: item.id,
-            productId: item.productId,
-            productName: item.product.name,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice.toNumber(),
-        })),
-    }
+    return toOrderDetailDTO(o)
 }
 
 export type OrderCreateDTO = {
@@ -94,7 +97,7 @@ export type OrderCreateDTO = {
 
 export type { OrderStatus }
 
-export async function createOrder(data: OrderCreateDTO) {
+export async function createOrder(data: OrderCreateDTO): Promise<OrderDetailDTO> {
     const user = await requireCurrentUser()
 
     const productIds = [...new Set(data.items.map((item) => item.productId))]
@@ -143,6 +146,12 @@ export async function createOrder(data: OrderCreateDTO) {
                     create: calculatedItems,
                 },
             },
+            include: {
+                items: {
+                    include: { product: { select: { name: true } } }
+                },
+                _count: { select: { items: true } }
+            }
         })
 
         for (const item of calculatedItems) {
@@ -165,13 +174,13 @@ export async function createOrder(data: OrderCreateDTO) {
 
     await createSystemLog(user.id, "CREATE", "ORDER", order.id, JSON.stringify(data))
     await checkLowStock()
-    return order
+    return toOrderDetailDTO(order)
 }
 
 export async function updateOrderStatus(
     id: string,
     status: OrderStatus
-) {
+): Promise<OrderDetailDTO> {
     const user = await requireCurrentUser()
 
     const existingOrder = await prisma.order.findUnique({
@@ -183,7 +192,7 @@ export async function updateOrderStatus(
         throw new Error("Order not found")
     }
 
-    if (!canTransitionOrderStatus(existingOrder.status, status)) {
+    if (!canTransitionOrderStatus(existingOrder.status as OrderStatus, status)) {
         throw new Error(`Invalid status transition: ${existingOrder.status} -> ${status}`)
     }
 
@@ -191,6 +200,12 @@ export async function updateOrderStatus(
         const updated = await tx.order.update({
             where: { id },
             data: { status },
+            include: {
+                items: {
+                    include: { product: { select: { name: true } } }
+                },
+                _count: { select: { items: true } }
+            }
         })
 
         if (status === "CANCELLED") {
@@ -215,10 +230,10 @@ export async function updateOrderStatus(
 
     await createSystemLog(user.id, "UPDATE", "ORDER", id, JSON.stringify({ status }))
     if (status === "CANCELLED") await checkLowStock()
-    return order
+    return toOrderDetailDTO(order)
 }
 
-export async function deleteOrder(id: string) {
+export async function deleteOrder(id: string): Promise<OrderDetailDTO> {
     const user = await requireCurrentUser()
 
     const existingOrder = await prisma.order.findUnique({
@@ -248,9 +263,17 @@ export async function deleteOrder(id: string) {
             }
         }
 
-        return tx.order.delete({ where: { id } })
+        return tx.order.delete({
+            where: { id },
+            include: {
+                items: {
+                    include: { product: { select: { name: true } } }
+                },
+                _count: { select: { items: true } }
+            }
+        })
     })
 
     await createSystemLog(user.id, "DELETE", "ORDER", id)
-    return order
+    return toOrderDetailDTO(order)
 }

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { createSystemLog } from "@/lib/dal/system-logs"
 import { requireCurrentUser } from "@/lib/dal/guards"
 import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-number"
+import type { Invoice } from "@prisma/client"
 
 export type InvoiceDTO = {
     id: string
@@ -13,6 +14,29 @@ export type InvoiceDTO = {
     total: number
     paidAt: Date | null
     createdAt: Date
+}
+
+export type InvoiceDetailDTO = InvoiceDTO & {
+    orderId: string
+}
+
+export function toInvoiceDTO(invoice: Invoice & { order: { orderNo: string, customer: string } }): InvoiceDTO {
+    return {
+        id: invoice.id,
+        invoiceNo: invoice.invoiceNo,
+        orderNo: invoice.order.orderNo,
+        customer: invoice.order.customer,
+        total: typeof invoice.total?.toNumber === 'function' ? invoice.total.toNumber() : Number(invoice.total),
+        paidAt: invoice.paidAt,
+        createdAt: invoice.createdAt,
+    }
+}
+
+export function toInvoiceDetailDTO(invoice: Invoice & { order: { orderNo: string, customer: string } }): InvoiceDetailDTO {
+    return {
+        ...toInvoiceDTO(invoice),
+        orderId: invoice.orderId,
+    }
 }
 
 export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
@@ -25,20 +49,8 @@ export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
         orderBy: { createdAt: "desc" },
     })
 
-    return invoices.map((inv) => ({
-        id: inv.id,
-        invoiceNo: inv.invoiceNo,
-        orderNo: inv.order.orderNo,
-        customer: inv.order.customer,
-        total: inv.total.toNumber(),
-        paidAt: inv.paidAt,
-        createdAt: inv.createdAt,
-    }))
+    return invoices.map((inv) => toInvoiceDTO(inv))
 })
-
-export type InvoiceDetailDTO = InvoiceDTO & {
-    orderId: string
-}
 
 export async function getInvoiceById(id: string): Promise<InvoiceDetailDTO | null> {
     await requireCurrentUser()
@@ -49,19 +61,10 @@ export async function getInvoiceById(id: string): Promise<InvoiceDetailDTO | nul
     })
     if (!inv) return null
 
-    return {
-        id: inv.id,
-        invoiceNo: inv.invoiceNo,
-        orderNo: inv.order.orderNo,
-        customer: inv.order.customer,
-        total: inv.total.toNumber(),
-        paidAt: inv.paidAt,
-        createdAt: inv.createdAt,
-        orderId: inv.orderId,
-    }
+    return toInvoiceDetailDTO(inv)
 }
 
-export async function createInvoice(data: { orderId: string, markAsPaid?: boolean }) {
+export async function createInvoice(data: { orderId: string, markAsPaid?: boolean }): Promise<InvoiceDetailDTO> {
     const user = await requireCurrentUser()
 
     const order = await prisma.order.findUnique({ where: { id: data.orderId } })
@@ -74,30 +77,35 @@ export async function createInvoice(data: { orderId: string, markAsPaid?: boolea
             total: order.total,
             paidAt: data.markAsPaid ? new Date() : null,
             createdById: user.id,
-        }
+        },
+        include: { order: { select: { orderNo: true, customer: true } } }
     }))
 
     await createSystemLog(user.id, "CREATE", "INVOICE", invoice.id, JSON.stringify(data))
-    return invoice
+    return toInvoiceDetailDTO(invoice)
 }
 
-export async function updateInvoice(id: string, data: { markAsPaid?: boolean }) {
+export async function updateInvoice(id: string, data: { markAsPaid?: boolean }): Promise<InvoiceDetailDTO> {
     const user = await requireCurrentUser()
 
     const invoice = await prisma.invoice.update({
         where: { id },
         data: {
             paidAt: data.markAsPaid ? new Date() : null,
-        }
+        },
+        include: { order: { select: { orderNo: true, customer: true } } }
     })
     await createSystemLog(user.id, "UPDATE", "INVOICE", id, JSON.stringify(data))
-    return invoice
+    return toInvoiceDetailDTO(invoice)
 }
 
-export async function deleteInvoice(id: string) {
+export async function deleteInvoice(id: string): Promise<InvoiceDetailDTO> {
     const user = await requireCurrentUser()
 
-    const invoice = await prisma.invoice.delete({ where: { id } })
+    const invoice = await prisma.invoice.delete({
+        where: { id },
+        include: { order: { select: { orderNo: true, customer: true } } }
+    })
     await createSystemLog(user.id, "DELETE", "INVOICE", id)
-    return invoice
+    return toInvoiceDetailDTO(invoice)
 }

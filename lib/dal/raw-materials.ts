@@ -5,6 +5,7 @@ import { createSystemLog } from "@/lib/dal/system-logs"
 import { requireCurrentUser } from "@/lib/dal/guards"
 import { recordStockMovement } from "@/lib/dal/stock-movements"
 import { checkLowStock } from "@/lib/dal/notifications"
+import type { RawMaterial } from "@prisma/client"
 
 export type RawMaterialDTO = {
     id: string
@@ -18,6 +19,20 @@ export type RawMaterialDTO = {
     createdAt: Date
 }
 
+export function toRawMaterialDTO(rawMaterial: RawMaterial): RawMaterialDTO {
+    return {
+        id: rawMaterial.id,
+        name: rawMaterial.name,
+        sku: rawMaterial.sku,
+        description: rawMaterial.description,
+        unit: rawMaterial.unit,
+        quantity: rawMaterial.quantity,
+        reorderAt: rawMaterial.reorderAt,
+        status: rawMaterial.status,
+        createdAt: rawMaterial.createdAt,
+    }
+}
+
 export const getRawMaterials = cache(async (): Promise<RawMaterialDTO[]> => {
     await requireCurrentUser()
 
@@ -25,17 +40,7 @@ export const getRawMaterials = cache(async (): Promise<RawMaterialDTO[]> => {
         orderBy: { createdAt: "desc" },
     })
 
-    return items.map((m: typeof items[number]) => ({
-        id: m.id,
-        name: m.name,
-        sku: m.sku,
-        description: m.description,
-        unit: m.unit,
-        quantity: m.quantity,
-        reorderAt: m.reorderAt,
-        status: m.status,
-        createdAt: m.createdAt,
-    }))
+    return items.map((m) => toRawMaterialDTO(m))
 })
 
 export async function getRawMaterialById(id: string): Promise<RawMaterialDTO | null> {
@@ -44,17 +49,7 @@ export async function getRawMaterialById(id: string): Promise<RawMaterialDTO | n
     const m = await prisma.rawMaterial.findUnique({ where: { id } })
     if (!m) return null
 
-    return {
-        id: m.id,
-        name: m.name,
-        sku: m.sku,
-        description: m.description,
-        unit: m.unit,
-        quantity: m.quantity,
-        reorderAt: m.reorderAt,
-        status: m.status,
-        createdAt: m.createdAt,
-    }
+    return toRawMaterialDTO(m)
 }
 
 export async function createRawMaterial(data: {
@@ -65,7 +60,7 @@ export async function createRawMaterial(data: {
     quantity: number
     reorderAt: number
     status?: "ACTIVE" | "INACTIVE"
-}) {
+}): Promise<RawMaterialDTO> {
     const user = await requireCurrentUser()
 
     const rawMaterial = await prisma.rawMaterial.create({
@@ -88,7 +83,7 @@ export async function createRawMaterial(data: {
 
     await createSystemLog(user.id, "CREATE", "RAW_MATERIAL", rawMaterial.id, JSON.stringify(data))
     await checkLowStock()
-    return rawMaterial
+    return toRawMaterialDTO(rawMaterial)
 }
 
 export async function updateRawMaterial(
@@ -102,7 +97,7 @@ export async function updateRawMaterial(
         reorderAt?: number
         status?: "ACTIVE" | "INACTIVE"
     }
-) {
+): Promise<RawMaterialDTO> {
     const user = await requireCurrentUser()
 
     const existing = await prisma.rawMaterial.findUnique({ where: { id } })
@@ -126,13 +121,13 @@ export async function updateRawMaterial(
         await checkLowStock()
     }
 
-    return rawMaterial
+    return toRawMaterialDTO(rawMaterial)
 }
 
-export async function deleteRawMaterial(id: string) {
+export async function deleteRawMaterial(id: string): Promise<RawMaterialDTO> {
     const user = await requireCurrentUser()
 
     const rawMaterial = await prisma.rawMaterial.delete({ where: { id } })
     await createSystemLog(user.id, "DELETE", "RAW_MATERIAL", id)
-    return rawMaterial
+    return toRawMaterialDTO(rawMaterial)
 }

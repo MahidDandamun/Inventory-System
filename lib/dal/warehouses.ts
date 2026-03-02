@@ -3,6 +3,7 @@ import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { createSystemLog } from "@/lib/dal/system-logs"
 import { requireCurrentUser } from "@/lib/dal/guards"
+import type { Warehouse } from "@prisma/client"
 
 export type WarehouseDTO = {
     id: string
@@ -10,6 +11,16 @@ export type WarehouseDTO = {
     status: "ACTIVE" | "INACTIVE"
     productCount: number
     createdAt: Date
+}
+
+export function toWarehouseDTO(warehouse: Warehouse & { _count?: { products: number } }): WarehouseDTO {
+    return {
+        id: warehouse.id,
+        location: warehouse.location,
+        status: warehouse.status,
+        productCount: warehouse._count?.products ?? 0,
+        createdAt: warehouse.createdAt,
+    }
 }
 
 export const getWarehouses = cache(async (): Promise<WarehouseDTO[]> => {
@@ -20,13 +31,7 @@ export const getWarehouses = cache(async (): Promise<WarehouseDTO[]> => {
         orderBy: { createdAt: "desc" },
     })
 
-    return warehouses.map((w: typeof warehouses[number]) => ({
-        id: w.id,
-        location: w.location,
-        status: w.status,
-        productCount: w._count.products,
-        createdAt: w.createdAt,
-    }))
+    return warehouses.map((w) => toWarehouseDTO(w))
 })
 
 export async function getWarehouseById(
@@ -40,16 +45,10 @@ export async function getWarehouseById(
     })
     if (!w) return null
 
-    return {
-        id: w.id,
-        location: w.location,
-        status: w.status,
-        productCount: w._count.products,
-        createdAt: w.createdAt,
-    }
+    return toWarehouseDTO(w)
 }
 
-export async function createWarehouse(data: { location: string }) {
+export async function createWarehouse(data: { location: string }): Promise<WarehouseDTO> {
     const user = await requireCurrentUser()
 
     const warehouse = await prisma.warehouse.create({
@@ -59,24 +58,24 @@ export async function createWarehouse(data: { location: string }) {
         }
     })
     await createSystemLog(user.id, "CREATE", "WAREHOUSE", warehouse.id, JSON.stringify(data))
-    return warehouse
+    return toWarehouseDTO(warehouse)
 }
 
 export async function updateWarehouse(
     id: string,
     data: { location?: string; status?: "ACTIVE" | "INACTIVE" }
-) {
+): Promise<WarehouseDTO> {
     const user = await requireCurrentUser()
 
     const warehouse = await prisma.warehouse.update({ where: { id }, data })
     await createSystemLog(user.id, "UPDATE", "WAREHOUSE", id, JSON.stringify(data))
-    return warehouse
+    return toWarehouseDTO(warehouse)
 }
 
-export async function deleteWarehouse(id: string) {
+export async function deleteWarehouse(id: string): Promise<WarehouseDTO> {
     const user = await requireCurrentUser()
 
     const warehouse = await prisma.warehouse.delete({ where: { id } })
     await createSystemLog(user.id, "DELETE", "WAREHOUSE", id)
-    return warehouse
+    return toWarehouseDTO(warehouse)
 }

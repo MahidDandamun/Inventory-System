@@ -1,6 +1,7 @@
 import "server-only"
 import { prisma } from "@/lib/prisma"
 import { requireCurrentUser } from "@/lib/dal/guards"
+import type { Notification } from "@prisma/client"
 
 export type NotificationDTO = {
     id: string
@@ -11,29 +12,42 @@ export type NotificationDTO = {
     createdAt: Date
 }
 
+export function toNotificationDTO(notification: Notification): NotificationDTO {
+    return {
+        id: notification.id,
+        userId: notification.userId,
+        title: notification.title,
+        message: notification.message,
+        isRead: notification.isRead,
+        createdAt: notification.createdAt,
+    }
+}
+
 export async function getNotificationsByUserId(userId: string): Promise<NotificationDTO[]> {
     const currentUser = await requireCurrentUser()
     if (currentUser.id !== userId) {
         throw new Error("Forbidden")
     }
 
-    return prisma.notification.findMany({
+    const notes = await prisma.notification.findMany({
         where: { userId },
         orderBy: { createdAt: "desc" },
         take: 20,
     })
+    return notes.map(toNotificationDTO)
 }
 
-export async function updateNotificationAsRead(id: string, userId: string) {
+export async function updateNotificationAsRead(id: string, userId: string): Promise<NotificationDTO> {
     const currentUser = await requireCurrentUser()
     if (currentUser.id !== userId) {
         throw new Error("Forbidden")
     }
 
-    return prisma.notification.update({
+    const note = await prisma.notification.update({
         where: { id, userId },
         data: { isRead: true },
     })
+    return toNotificationDTO(note)
 }
 
 export async function updateAllNotificationsAsRead(userId: string) {
@@ -48,16 +62,17 @@ export async function updateAllNotificationsAsRead(userId: string) {
     })
 }
 
-export async function createNotification(userId: string, title: string, message: string) {
+export async function createNotification(userId: string, title: string, message: string): Promise<NotificationDTO> {
     await requireCurrentUser()
 
-    return prisma.notification.create({
+    const note = await prisma.notification.create({
         data: {
             userId,
             title,
             message,
         }
     })
+    return toNotificationDTO(note)
 }
 
 export async function checkLowStock() {
