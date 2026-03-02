@@ -6,6 +6,8 @@ import { requireCurrentUser } from "@/lib/dal/guards"
 import { recordStockMovement } from "@/lib/dal/stock-movements"
 import { checkLowStock } from "@/lib/dal/notifications"
 
+import type { Product } from "@prisma/client"
+
 export type ProductDTO = {
     id: string
     name: string
@@ -19,6 +21,21 @@ export type ProductDTO = {
     createdAt: Date
 }
 
+export function toProductDTO(product: Product & { warehouse?: { location: string } }, warehouseLocation?: string): ProductDTO {
+    return {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        description: product.description,
+        price: typeof product.price?.toNumber === 'function' ? product.price.toNumber() : Number(product.price),
+        quantity: product.quantity,
+        warehouseId: product.warehouseId,
+        warehouseName: warehouseLocation || product.warehouse?.location || "Unknown",
+        status: product.status,
+        createdAt: product.createdAt,
+    }
+}
+
 export const getProducts = cache(async (): Promise<ProductDTO[]> => {
     await requireCurrentUser()
 
@@ -27,18 +44,7 @@ export const getProducts = cache(async (): Promise<ProductDTO[]> => {
         orderBy: { createdAt: "desc" },
     })
 
-    return products.map((p: typeof products[number]) => ({
-        id: p.id,
-        name: p.name,
-        sku: p.sku,
-        description: p.description,
-        price: p.price.toNumber(),
-        quantity: p.quantity,
-        warehouseId: p.warehouseId,
-        warehouseName: p.warehouse.location,
-        status: p.status,
-        createdAt: p.createdAt,
-    }))
+    return products.map((p) => toProductDTO(p))
 })
 
 export async function getProductById(
@@ -52,18 +58,7 @@ export async function getProductById(
     })
     if (!p) return null
 
-    return {
-        id: p.id,
-        name: p.name,
-        sku: p.sku,
-        description: p.description,
-        price: p.price.toNumber(),
-        quantity: p.quantity,
-        warehouseId: p.warehouseId,
-        warehouseName: p.warehouse.location,
-        status: p.status,
-        createdAt: p.createdAt,
-    }
+    return toProductDTO(p)
 }
 
 export async function createProduct(data: {
@@ -73,7 +68,7 @@ export async function createProduct(data: {
     price: number
     quantity: number
     warehouseId: string
-}) {
+}): Promise<ProductDTO> {
     const user = await requireCurrentUser()
 
     const product = await prisma.product.create({
@@ -86,6 +81,7 @@ export async function createProduct(data: {
             warehouseId: data.warehouseId,
             createdById: user.id,
         },
+        include: { warehouse: { select: { location: true } } }
     })
 
     if (data.quantity > 0) {
@@ -101,7 +97,7 @@ export async function createProduct(data: {
 
     await createSystemLog(user.id, "CREATE", "PRODUCT", product.id, JSON.stringify(data))
     await checkLowStock()
-    return product
+    return toProductDTO(product)
 }
 
 export async function updateProduct(
@@ -115,11 +111,15 @@ export async function updateProduct(
         warehouseId?: string
         status?: "ACTIVE" | "INACTIVE"
     }
-) {
+): Promise<ProductDTO> {
     const user = await requireCurrentUser()
 
     const existing = await prisma.product.findUnique({ where: { id } })
-    const product = await prisma.product.update({ where: { id }, data })
+    const product = await prisma.product.update({
+        where: { id },
+        data,
+        include: { warehouse: { select: { location: true } } }
+    })
 
     if (existing && data.quantity !== undefined && data.quantity !== existing.quantity) {
         const diff = data.quantity - existing.quantity
@@ -139,13 +139,16 @@ export async function updateProduct(
         await checkLowStock()
     }
 
-    return product
+    return toProductDTO(product)
 }
 
-export async function deleteProduct(id: string) {
+export async function deleteProduct(id: string): Promise<ProductDTO> {
     const user = await requireCurrentUser()
 
-    const product = await prisma.product.delete({ where: { id } })
+    const product = await prisma.product.delete({
+        where: { id },
+        include: { warehouse: { select: { location: true } } }
+    })
     await createSystemLog(user.id, "DELETE", "PRODUCT", id)
-    return product
+    return toProductDTO(product)
 }

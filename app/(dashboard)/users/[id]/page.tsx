@@ -43,7 +43,7 @@ export default async function EditUserPage({
                     email: user.email,
                     role: user.role,
                     isTwoFactorEnabled: user.isTwoFactorEnabled,
-                    isOAuth: false,
+                    isOAuth: user.isOAuth,
                     createdAt: user.createdAt
                 }} />
             </div>

@@ -3,6 +3,8 @@ import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { requireAdminUser } from "@/lib/dal/guards"
 
+import type { User } from "@prisma/client"
+
 export type UserDTO = {
     id: string
     name: string | null
@@ -13,17 +15,43 @@ export type UserDTO = {
     createdAt: Date
 }
 
-export const getUserById = cache(async (id: string) => {
-    await requireAdminUser()
-    return prisma.user.findUnique({ where: { id } })
-})
-
-export async function getUserByEmail(email: string) {
-    return prisma.user.findUnique({ where: { email } })
+export type AccountDTO = {
+    id: string
+    userId: string
 }
 
-export async function getAccountByUserId(userId: string) {
-    return prisma.account.findFirst({ where: { userId } })
+export function toUserDTO(user: User, isOAuth: boolean = false): UserDTO {
+    return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isTwoFactorEnabled: user.isTwoFactorEnabled,
+        isOAuth,
+        createdAt: user.createdAt,
+    }
+}
+
+export const getUserById = cache(async (id: string): Promise<UserDTO | null> => {
+    await requireAdminUser()
+    const user = await prisma.user.findUnique({
+        where: { id },
+        include: { accounts: { select: { id: true } } }
+    })
+    return user ? toUserDTO(user, user.accounts.length > 0) : null
+})
+
+export async function getUserByEmail(email: string): Promise<UserDTO | null> {
+    const user = await prisma.user.findUnique({
+        where: { email },
+        include: { accounts: { select: { id: true } } }
+    })
+    return user ? toUserDTO(user, user.accounts.length > 0) : null
+}
+
+export async function getAccountByUserId(userId: string): Promise<AccountDTO | null> {
+    const account = await prisma.account.findFirst({ where: { userId } })
+    return account ? { id: account.id, userId: account.userId } : null
 }
 
 export async function getAllUsers(): Promise<UserDTO[]> {
@@ -34,24 +62,16 @@ export async function getAllUsers(): Promise<UserDTO[]> {
         orderBy: { createdAt: "desc" },
     })
 
-    return users.map((user: typeof users[number]) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isTwoFactorEnabled: user.isTwoFactorEnabled,
-        isOAuth: user.accounts.length > 0,
-        createdAt: user.createdAt,
-    }))
+    return users.map((user) => toUserDTO(user, user.accounts.length > 0))
 }
 
 export type UserCreateDTO = { name: string, email: string, password?: string, role: "ADMIN" | "USER" }
 export type UserUpdateDTO = { name?: string, email?: string, password?: string, role?: "ADMIN" | "USER" }
 
-export async function createUser(data: UserCreateDTO) {
+export async function createUser(data: UserCreateDTO): Promise<UserDTO> {
     await requireAdminUser()
 
-    return prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             name: data.name,
             email: data.email,
@@ -59,9 +79,10 @@ export async function createUser(data: UserCreateDTO) {
             role: data.role,
         }
     })
+    return toUserDTO(user, false)
 }
 
-export async function updateUser(id: string, data: UserUpdateDTO) {
+export async function updateUser(id: string, data: UserUpdateDTO): Promise<UserDTO> {
     await requireAdminUser()
 
     const updateData: Partial<UserUpdateDTO> = { ...data }
@@ -69,13 +90,19 @@ export async function updateUser(id: string, data: UserUpdateDTO) {
         delete updateData.password
     }
 
-    return prisma.user.update({
+    const user = await prisma.user.update({
         where: { id },
         data: updateData,
+        include: { accounts: { select: { id: true } } }
     })
+    return toUserDTO(user, user.accounts.length > 0)
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string): Promise<UserDTO> {
     await requireAdminUser()
-    return prisma.user.delete({ where: { id } })
+    const user = await prisma.user.delete({
+        where: { id },
+        include: { accounts: { select: { id: true } } }
+    })
+    return toUserDTO(user, user.accounts.length > 0)
 }
