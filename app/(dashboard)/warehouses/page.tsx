@@ -3,6 +3,7 @@ import { DataTable } from "@/components/ui/data-table"
 import { columns } from "./_components/columns"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ROUTES } from "@/lib/routes"
 import { IconPlus } from "@tabler/icons-react"
 
 export const metadata = {
@@ -22,7 +23,7 @@ export default async function WarehousePage() {
                     </p>
                 </div>
                 <Button asChild>
-                    <Link href="/warehouse/new">
+                    <Link href={`${ROUTES.WAREHOUSES}/new`}>
                         <IconPlus className="mr-2 h-4 w-4" />
                         Add Warehouse
                     </Link>

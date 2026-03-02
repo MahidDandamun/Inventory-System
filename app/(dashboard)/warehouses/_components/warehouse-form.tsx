@@ -4,6 +4,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition, useState } from "react"
 import { useRouter } from "next/navigation"
+import { ROUTES } from "@/lib/routes"
 import { IconLoader2 } from "@tabler/icons-react"
 import { toast } from "sonner"
 
@@ -80,7 +81,7 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
                 }
             } else {
                 toast.success(warehouse ? "Warehouse updated successfully" : "Warehouse created successfully")
-                router.push("/warehouse")
+                router.push(ROUTES.WAREHOUSES)
                 router.refresh()
             }
         })
@@ -134,7 +135,7 @@ export function WarehouseForm({ warehouse }: WarehouseFormProps) {
                     type="button"
                     variant="outline"
                     disabled={isPending}
-                    onClick={() => router.push("/warehouse")}
+                    onClick={() => router.push(ROUTES.WAREHOUSES)}
                 >
                     Cancel
                 </Button>

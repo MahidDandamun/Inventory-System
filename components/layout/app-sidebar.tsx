@@ -5,6 +5,7 @@
 // ---
 
 import Link from "next/link"
+import { ROUTES } from "@/lib/routes"
 import { getCurrentUser } from "@/lib/auth"
 import { cn } from "@/lib/utils"
 import {
@@ -24,7 +25,7 @@ import Image from "next/image"
 const adminNavigation = [
     { label: "Dashboard", href: "/dashboard", icon: IconDashboard },
     { label: "Products", href: "/products", icon: IconPackage },
-    { label: "Warehouse", href: "/warehouse", icon: IconBuildingWarehouse },
+    { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
@@ -36,7 +37,7 @@ const adminNavigation = [
 const userNavigation = [
     { label: "Dashboard", href: "/dashboard", icon: IconDashboard },
     { label: "Products", href: "/products", icon: IconPackage },
-    { label: "Warehouse", href: "/warehouse", icon: IconBuildingWarehouse },
+    { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },

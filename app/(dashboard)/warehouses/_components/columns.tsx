@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { WarehouseDTO } from "@/lib/dal/warehouses"
+import { ROUTES } from "@/lib/routes"
 import { StatusBadge } from "@/components/ui/status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -89,7 +90,7 @@ function ActionMenu({ warehouse }: { warehouse: WarehouseDTO }) {
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link href={`/warehouse/${warehouse.id}`} className="cursor-pointer">
+                        <Link href={`${ROUTES.WAREHOUSES}/${warehouse.id}`} className="cursor-pointer">
                             <IconEdit className="mr-2 h-4 w-4" />
                             Edit
                         </Link>
