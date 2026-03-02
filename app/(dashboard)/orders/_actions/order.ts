@@ -3,8 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { createOrder, updateOrderStatus, deleteOrder, type OrderStatus } from "@/lib/dal/orders"
 import { orderSchema, orderStatusSchema } from "@/schemas/order"
-import { createNotification } from "@/lib/dal/notifications"
-import { getAllUsers } from "@/lib/dal/users"
+import { notifyAdmins } from "@/lib/domain/notifications"
 import { handleServerError } from "@/lib/error-handling"
 
 export async function createOrderAction(formData: FormData) {
@@ -27,11 +26,7 @@ export async function createOrderAction(formData: FormData) {
     try {
         const order = await createOrder(parsed.data)
 
-        const users = await getAllUsers()
-        const admins = users.filter((u) => u.role === "ADMIN")
-        for (const admin of admins) {
-            await createNotification(admin.id, "New Order Received", `Order #${order.orderNo} was placed by ${order.customer}.`)
-        }
+        await notifyAdmins("New Order Received", `Order #${order.orderNo} was placed by ${order.customer}.`)
 
         revalidatePath("/orders")
         return { success: true, data: order }
@@ -53,11 +48,7 @@ export async function updateOrderStatusAction(id: string, formData: FormData) {
         const order = await updateOrderStatus(id, status)
 
         if (status === "CANCELLED") {
-            const users = await getAllUsers()
-            const admins = users.filter((u) => u.role === "ADMIN")
-            for (const admin of admins) {
-                await createNotification(admin.id, "Order Cancelled", `Order #${order.orderNo} was cancelled.`)
-            }
+            await notifyAdmins("Order Cancelled", `Order #${order.orderNo} was cancelled.`)
         }
 
         revalidatePath("/orders")

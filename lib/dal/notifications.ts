@@ -48,27 +48,15 @@ export async function updateAllNotificationsAsRead(userId: string) {
     })
 }
 
-type CreateNotificationOptions = {
-    asSystemEvent?: boolean
-}
-
-export async function createNotification(
-    userId: string,
-    title: string,
-    message: string,
-    options?: CreateNotificationOptions
-) {
+export async function createNotification(userId: string, title: string, message: string) {
     const currentUser = await requireCurrentUser()
 
     const isSelfNotification = currentUser.id === userId
     const isAdmin = currentUser.role === "ADMIN"
-    const isSystemEvent = options?.asSystemEvent === true
 
-    if (!isSelfNotification && !isAdmin && !isSystemEvent) {
+    if (!isSelfNotification && !isAdmin) {
         throw new Error("Forbidden")
     }
-export async function createNotification(userId: string, title: string, message: string) {
-    await requireCurrentUser()
 
     return prisma.notification.create({
         data: {

@@ -12,25 +12,6 @@ import { createWithUniqueRetry, generateDocumentNumber } from "@/lib/document-nu
 
 export { ORDER_STATUS_FLOW }
 
-const ORDER_STATUS_FLOW: Record<OrderStatus, OrderStatus[]> = {
-    PENDING: ["PROCESSING", "CANCELLED"],
-    PROCESSING: ["SHIPPED", "CANCELLED"],
-    SHIPPED: ["DELIVERED"],
-    DELIVERED: [],
-    CANCELLED: [],
-}
-
-async function requireCurrentUser() {
-    const user = await getCurrentUser()
-    if (!user) throw new Error("Unauthorized")
-    return user
-}
-
-function canTransitionOrderStatus(from: OrderStatus, to: OrderStatus) {
-    if (from === to) return true
-    return ORDER_STATUS_FLOW[from].includes(to)
-}
-
 export type OrderDTO = {
     id: string
     orderNo: string
@@ -147,30 +128,40 @@ export async function createOrder(data: OrderCreateDTO) {
     })
 
     const total = calculatedItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
-    const orderNo = `ORD-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
 
-    const order = await prisma.$transaction(async (tx) => {
-        const created = await tx.order.create({
-            data: {
-                customer: data.customer,
-                orderNo,
-                total,
-                createdById: user.id,
-                items: {
-                    create: calculatedItems,
+    const order = await createWithUniqueRetry(() =>
+        prisma.$transaction(async (tx) => {
+            const created = await tx.order.create({
+                data: {
+                    customer: data.customer,
+                    orderNo: generateDocumentNumber("ORD"),
+                    total,
+                    createdById: user.id,
+                    items: {
+                        create: calculatedItems,
+                    },
                 },
-            },
-        })
-
-        for (const item of calculatedItems) {
-            await tx.product.update({
-                where: { id: item.productId },
-                data: { quantity: { decrement: item.quantity } },
             })
-        }
 
-        return created
-    })
+            for (const item of calculatedItems) {
+                const updateResult = await tx.product.updateMany({
+                    where: {
+                        id: item.productId,
+                        quantity: { gte: item.quantity },
+                    },
+                    data: { quantity: { decrement: item.quantity } },
+                })
+
+                if (updateResult.count !== 1) {
+                    const product = productById.get(item.productId)
+                    const name = product?.name ?? "selected product"
+                    throw new Error(`Insufficient stock for ${name}`)
+                }
+            }
+
+            return created
+        })
+    )
 
     await createSystemLog(user.id, "CREATE", "ORDER", order.id, JSON.stringify(data))
     return order
@@ -182,27 +173,25 @@ export async function updateOrderStatus(
 ) {
     const user = await requireCurrentUser()
 
-    const existingOrder = await prisma.order.findUnique({
-        where: { id },
-        include: { items: true },
-    })
-
-    if (!existingOrder) {
-        throw new Error("Order not found")
-    }
-
-    if (!canTransitionOrderStatus(existingOrder.status, status)) {
-        throw new Error(`Invalid status transition: ${existingOrder.status} -> ${status}`)
-    }
-
     const order = await prisma.$transaction(async (tx) => {
+        const existing = await tx.order.findUnique({
+            where: { id },
+            include: { items: true },
+        })
+
+        if (!existing) throw new Error("Order not found")
+
+        if (!canTransitionOrderStatus(existing.status, status)) {
+            throw new Error(`Invalid status transition: ${existing.status} -> ${status}`)
+        }
+
         const updated = await tx.order.update({
             where: { id },
             data: { status },
         })
 
-        if (status === "CANCELLED") {
-            for (const item of existingOrder.items) {
+        if (status === "CANCELLED" && existing.status !== "CANCELLED") {
+            for (const item of existing.items) {
                 await tx.product.update({
                     where: { id: item.productId },
                     data: { quantity: { increment: item.quantity } },
@@ -220,18 +209,16 @@ export async function updateOrderStatus(
 export async function deleteOrder(id: string) {
     const user = await requireCurrentUser()
 
-    const existingOrder = await prisma.order.findUnique({
-        where: { id },
-        include: { items: true },
-    })
-
-    if (!existingOrder) {
-        throw new Error("Order not found")
-    }
-
     const order = await prisma.$transaction(async (tx) => {
-        if (existingOrder.status !== "CANCELLED") {
-            for (const item of existingOrder.items) {
+        const existing = await tx.order.findUnique({
+            where: { id },
+            include: { items: true },
+        })
+
+        if (!existing) throw new Error("Order not found")
+
+        if (existing.status !== "CANCELLED") {
+            for (const item of existing.items) {
                 await tx.product.update({
                     where: { id: item.productId },
                     data: { quantity: { increment: item.quantity } },
