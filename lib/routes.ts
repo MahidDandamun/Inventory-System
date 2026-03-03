@@ -14,6 +14,8 @@ export const ROUTES = {
     INVOICES: "/invoices",
     USERS: "/users",
     RAW_MATERIALS: "/raw-materials",
+    BILL_OF_MATERIALS: "/bill-of-materials",
+    STOCK_MOVEMENTS: "/stock-movements",
     SYSTEM_LOGS: "/system-logs",
     SETTINGS: "/settings",
 } as const;

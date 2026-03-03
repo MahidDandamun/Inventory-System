@@ -116,7 +116,7 @@ Database (Prisma Client singleton → Neon PostgreSQL)
 
 ## Latest Context
 
-_Last updated: 2026-03-02_
+_Last updated: 2026-03-03_
 
 - All DAL files use `requireCurrentUser()` guard — no inline auth
 - DTO violations fixed across all DAL files
@@ -126,6 +126,7 @@ _Last updated: 2026-03-02_
 - Low stock alert auto-trigger (`checkLowStock()`) in order/product mutations
 - Vitest + Playwright configured; baseline test files exist
 - Features: Products, Orders, Invoices, Warehouses, Raw Materials, Users, Notifications, System Logs
+- Added UI slices for Bill of Materials and Stock Movements, updating sidebar routing
 
 ---
 

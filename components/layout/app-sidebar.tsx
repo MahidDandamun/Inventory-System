@@ -18,6 +18,8 @@ import {
     IconUsers,
     IconSettings,
     IconHistory,
+    IconStack3,
+    IconArrowsRightLeft,
 } from "@tabler/icons-react"
 import { ActiveLink } from "./active-link"
 import Image from "next/image"
@@ -27,6 +29,8 @@ const adminNavigation = [
     { label: "Products", href: "/products", icon: IconPackage },
     { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
+    { label: "Bill of Materials", href: ROUTES.BILL_OF_MATERIALS, icon: IconStack3 },
+    { label: "Stock Movements", href: ROUTES.STOCK_MOVEMENTS, icon: IconArrowsRightLeft },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
     { label: "System Logs", href: "/system-logs", icon: IconHistory },
@@ -39,6 +43,8 @@ const userNavigation = [
     { label: "Products", href: "/products", icon: IconPackage },
     { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
+    { label: "Bill of Materials", href: ROUTES.BILL_OF_MATERIALS, icon: IconStack3 },
+    { label: "Stock Movements", href: ROUTES.STOCK_MOVEMENTS, icon: IconArrowsRightLeft },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
     { label: "Settings", href: "/settings", icon: IconSettings },

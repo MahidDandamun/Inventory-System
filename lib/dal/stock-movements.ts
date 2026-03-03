@@ -42,6 +42,18 @@ export const getMovementsByEntity = cache(async (entity: string, entityId: strin
     return movements.map((m) => toStockMovementDTO(m))
 })
 
+export const getAllStockMovements = cache(async (): Promise<StockMovementDTO[]> => {
+    await requireCurrentUser()
+
+    const movements = await prisma.stockMovement.findMany({
+        include: { user: { select: { name: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 100 // Reasonable limit for generic dashboard view
+    })
+
+    return movements.map((m) => toStockMovementDTO(m))
+})
+
 export type PrismaTx = Omit<
     typeof prisma,
     "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
@@ -70,4 +82,45 @@ export async function recordStockMovement(
         },
     })
     return toStockMovementDTO(movement)
+}
+
+export async function executeStockMovement(data: {
+    entity: "PRODUCT" | "RAW_MATERIAL"
+    entityId: string
+    type: "IN" | "OUT" | "ADJUST"
+    quantity: number
+    reason: string
+}): Promise<StockMovementDTO> {
+    const user = await requireCurrentUser()
+
+    return prisma.$transaction(async (tx) => {
+        if (data.entity === "PRODUCT") {
+            await tx.product.update({
+                where: { id: data.entityId },
+                data: {
+                    quantity: data.type === "IN"
+                        ? { increment: data.quantity }
+                        : data.type === "OUT"
+                            ? { decrement: data.quantity }
+                            : data.quantity
+                }
+            })
+        } else if (data.entity === "RAW_MATERIAL") {
+            await tx.rawMaterial.update({
+                where: { id: data.entityId },
+                data: {
+                    quantity: data.type === "IN"
+                        ? { increment: data.quantity }
+                        : data.type === "OUT"
+                            ? { decrement: data.quantity }
+                            : data.quantity
+                }
+            })
+        }
+
+        return await recordStockMovement({
+            ...data,
+            userId: user.id
+        }, tx)
+    })
 }

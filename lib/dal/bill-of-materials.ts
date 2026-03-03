@@ -75,3 +75,17 @@ export async function deleteBillOfMaterial(id: string): Promise<BillOfMaterialDT
     await createSystemLog(user.id, "DELETE", "BOM", id)
     return toBillOfMaterialDTO(bom)
 }
+
+export const getAllBillOfMaterials = cache(async (): Promise<BillOfMaterialDTO[]> => {
+    await requireCurrentUser()
+
+    const boms = await prisma.billOfMaterial.findMany({
+        include: {
+            product: { select: { name: true } },
+            rawMaterial: { select: { name: true } },
+        },
+        orderBy: { product: { name: "asc" } },
+    })
+
+    return boms.map(toBillOfMaterialDTO)
+})
