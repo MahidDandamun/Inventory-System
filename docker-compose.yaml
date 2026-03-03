@@ -5,8 +5,6 @@
 # ============================================================
 services:
   app:
-    image: inventory-system:${IMAGE_TAG:-latest}
-    container_name: inventory-system
     ports:
       - "3000:3000"
     environment:
