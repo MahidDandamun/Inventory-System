@@ -71,8 +71,8 @@ describe('DAL: Products', () => {
             const result = await createProduct(baseProductData)
 
             expect(result.id).toBe('prod-1')
-            expect(prisma.product.create).toHaveBeenCalledWith({
-                data: {
+            expect(prisma.product.create).toHaveBeenCalledWith(expect.objectContaining({
+                data: expect.objectContaining({
                     name: 'Widget',
                     sku: 'WDG-001',
                     description: 'A fine widget',
@@ -80,8 +80,9 @@ describe('DAL: Products', () => {
                     quantity: 50,
                     warehouseId: 'wh-1',
                     createdById: 'user-1',
-                },
-            })
+                }),
+                include: { warehouse: { select: { location: true } } },
+            }))
             expect(createSystemLog).toHaveBeenCalledWith(
                 'user-1', 'CREATE', 'PRODUCT', 'prod-1', expect.any(String)
             )
@@ -197,7 +198,10 @@ describe('DAL: Products', () => {
 
             await deleteProduct('prod-1')
 
-            expect(prisma.product.delete).toHaveBeenCalledWith({ where: { id: 'prod-1' } })
+            expect(prisma.product.delete).toHaveBeenCalledWith(expect.objectContaining({
+                where: { id: 'prod-1' },
+                include: { warehouse: { select: { location: true } } },
+            }))
             expect(createSystemLog).toHaveBeenCalledWith(
                 'user-1', 'DELETE', 'PRODUCT', 'prod-1'
             )
