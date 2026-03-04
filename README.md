@@ -1,243 +1,188 @@
-# Inventory System
+# Enterprise Inventory Management System
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma&logoColor=white)
-![Auth.js](https://img.shields.io/badge/Auth.js-5-purple?logo=authjs)
-![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs&style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white&style=flat-square)
+![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma&logoColor=white&style=flat-square)
+![Auth.js](https://img.shields.io/badge/Auth.js-5-purple?logo=authjs&style=flat-square)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black?style=flat-square)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square)
+![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-A **production-grade inventory management system** built as a portfolio project to demonstrate modern full-stack architecture patterns: Data Access Layer (DAL), server actions, role-based access control, two-factor authentication, and a clean feature-based folder structure.
-
----
-
-## Features
-
-- **Full CRUD** — Warehouses, Products, Raw Materials, Orders, Invoices, Users
-- **Dashboard** — Real-time stats cards and an interactive overview chart (Recharts)
-- **Authentication** — Email/password login, Google & GitHub OAuth (Auth.js v5)
-- **Two-Factor Auth (2FA)** — TOTP-style email OTP with confirmation flow
-- **Role-Based Access** — `ADMIN` / `USER` roles enforced at the Data Access Layer
-- **Email** — Verification, password reset, and 2FA emails via Resend
-- **Data Access Layer** — All DB queries behind a security boundary with DTO projection
-- **Dark / Light Mode** — System-aware theme switcher built with `next-themes`
+A **production-grade, scalable inventory management system** built to demonstrate modern full-stack architecture patterns. This project features a robust Data Access Layer (DAL), role-based access control, server actions, a cleanly organized feature-based folder structure, and a thorough set of interconnected supply-chain functionalities.
 
 ---
 
-## Architecture
+## 🌟 Key Functionalities
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    UI Layer                             │
-│  Server Components (pages) → Client Components (forms)  │
-│  Consumes DTOs only — never raw DB objects              │
-└──────────────────────────┬──────────────────────────────┘
-                           │ calls
-┌──────────────────────────▼──────────────────────────────┐
-│                 Server Actions Layer                    │
-│  Thin orchestration: validate (Zod) → DAL → revalidate  │
-│  Located in: app/(dashboard)/[feature]/_actions/        │
-└──────────────────────────┬──────────────────────────────┘
-                           │ calls
-┌──────────────────────────▼──────────────────────────────┐
-│              Data Access Layer (DAL)                    │
-│  All DB queries live here — the security boundary       │
-│  Auth checks before every query                         │
-│  Returns DTOs (never raw Prisma models)                 │
-│  Guarded with `import 'server-only'`                    │
-│  Located in: lib/dal/                                   │
-└──────────────────────────┬──────────────────────────────┘
-                           │ queries
-┌──────────────────────────▼──────────────────────────────┐
-│                   Database Layer                        │
-│  Prisma Client (singleton) → Neon PostgreSQL            │
-└─────────────────────────────────────────────────────────┘
-```
+This system goes beyond simple CRUD, modeling a realistic supply chain and warehouse operation.
 
-> **Why a DAL?** Every DB query goes through `lib/dal/`. Components never import Prisma directly, auth checks happen at the data layer (not the UI), and DTOs prevent accidental exposure of sensitive fields like `password` or internal tokens.
+### 📦 Inventory & Manufacturing
+- **Products & Raw Materials**: Manage finished goods and the raw materials used to create them, complete with SKUs, reorder points, and max quantities.
+- **Bill of Materials (BOM)**: Define recipes indicating exactly which raw materials (and what quantities) are required to manufacture a specific product.
+- **Lots & Tracking**: Group products into batches with manufacturing and expiration dates.
+- **Serial Numbers**: Track individual items exactly, managing statuses like `IN_STOCK`, `SOLD`, or `RMA`.
+
+### 🏭 Warehouse Operations
+- **Varied Warehouses**: Manage multiple warehouse locations and assignments.
+- **Warehouse Transfers**: Move stock seamlessly across different warehouses with tracked statuses (`REQUESTED`, `IN_TRANSIT`, `RECEIVED`).
+- **Cycle Counts**: Perform routine inventory audits. Record expected vs. actual quantities and track variances.
+- **Stock Movements**: An immutable audit log of every quantity change (IN, OUT, ADJUST) with specific user attribution.
+
+### 🚚 Purchasing & Supply Chain
+- **Suppliers**: Manage vendor catalogs, contact info, and lead times.
+- **Purchase Orders (POs)**: Issue orders to suppliers for raw materials.
+- **Goods Receipts**: Process deliveries against POs, ensuring precise recording of incoming raw materials.
+
+### 🤝 Sales & Fulfillment
+- **Customers & Orders**: Track customer information and manage their lifecycle from placing an `Order` to fulfillment (`PROCESSING`, `SHIPPED`, `DELIVERED`).
+- **Invoices & Payments**: Generate invoices based on orders, process payments, and track outstanding balances.
+
+### 🛡️ Security, Governance & Approvals
+- **Approval Workflows**: Built-in flow for administrative sign-offs (e.g., approving large inventory cycle-count variances).
+- **Authentication & 2FA**: Password + OAuth login strategies using Auth.js, fortified with Two-Factor Authentication via email OTPs.
+- **Role-Based Access Control (RBAC)**: Strict `ADMIN` vs. `USER` roles enforced entirely at the Data Access Layer—never relying exclusively on UI hiding.
+- **System Logs**: Fully comprehensive administrative tracking detailing exactly who changed what, when, and comparing previous vs. new data states.
 
 ---
 
-## System Flow
+## 🏗️ Architecture Design
 
 ```text
-Raw Materials ──[BOM]──► Products ──[Orders]──► Order Items
-                                                    │
-                                                    ▼
-                                               Invoices
-                                                    │
-                                                    ▼
-                                             Stock Movements
-                                            (audit trail)
+┌──────────────────────────────────────────────────────────────┐
+│                        UI Layer                              │
+│  Server Components (pages)  →  Client Components (forms)     │
+│  [ Always consumes DTOs — NEVER raw Database Entities ]      │
+└────────────────────────────┬─────────────────────────────────┘
+                             │ calls
+┌────────────────────────────▼─────────────────────────────────┐
+│                   Server Actions Layer                       │
+│  Thin boundary: Validates Inputs (Zod) → Calls DAL → Re-val  │
+│  Location: `app/(dashboard)/[feature]/_actions/`             │
+└────────────────────────────┬─────────────────────────────────┘
+                             │ calls
+┌────────────────────────────▼─────────────────────────────────┐
+│                 Data Access Layer (DAL)                      │
+│  The ultimate security & data-gathering boundary.            │
+│  - Auth/Role checks happen here BEFORE any query             │
+│  - Guarded globally by `import 'server-only'`                │
+│  - Location: `lib/dal/`                                      │
+└────────────────────────────┬─────────────────────────────────┘
+                             │ queries
+┌────────────────────────────▼─────────────────────────────────┐
+│                     Database Layer                           │
+│  Prisma Client Singleton  →  Neon Serverless PostgreSQL      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## Tech Stack
-
-| Technology | Version | Purpose |
-|---|---|---|
-| [Next.js](https://nextjs.org/) | 16 | App Router, Server Components, Server Actions |
-| [TypeScript](https://www.typescriptlang.org/) | 5 | Full type safety across all layers |
-| [Prisma](https://www.prisma.io/) | 6 | ORM + schema management |
-| [Neon](https://neon.tech/) | — | Serverless PostgreSQL |
-| [Auth.js](https://authjs.dev/) | 5 (beta) | Authentication, OAuth, session management |
-| [shadcn/ui](https://ui.shadcn.com/) | latest | Accessible, composable component library |
-| [Tailwind CSS](https://tailwindcss.com/) | v4 | Utility-first styling |
-| [Recharts](https://recharts.org/) | 3 | Dashboard data visualisation |
-| [React Hook Form](https://react-hook-form.com/) | 7 | Client-side form state |
-| [Zod](https://zod.dev/) | 4 | Schema validation (server + client) |
-| [Resend](https://resend.com/) | 6 | Transactional email |
-| [react-table](https://tanstack.com/table) | 8 | Headless data tables |
+> **Why a DAL?** Placing all database communication in `lib/dal/` ensures React Components and Server Actions never directly ping Prisma. By projecting outputs into DTOs (Data Transfer Objects), we prevent exposing sensitive schema details (e.g., passwords, internal system IDs) to the broader application.
 
 ---
 
-## Getting Started
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| **[Next.js 16](https://nextjs.org/)** | App Router, Server Components, and secure Server Actions |
+| **[TypeScript 5](https://www.typescriptlang.org/)** | End-to-end type safety |
+| **[Prisma 6](https://www.prisma.io/)** | Highly-typed ORM & database migrations |
+| **[Neon PostgreSQL](https://neon.tech/)** | Fast, serverless relational database engine |
+| **[Auth.js (v5)](https://authjs.dev/)** | Sessions, OAuth, and credential management |
+| **[shadcn/ui](https://ui.shadcn.com/)** | Accessible, copy-paste Tailwind component primitives |
+| **[Tailwind CSS v4](https://tailwindcss.com/)** | Fast utility styling |
+| **[Zod](https://zod.dev/)** | Synchronous schema validation used across client/server |
+| **[React Table (v8)](https://tanstack.com/table)** | Robust headless data tables |
+| **[Recharts](https://recharts.org/)** | Gorgeous data plotting for dashboard overviews |
+| **[Resend](https://resend.com/)** | Fast and reliable transactional email provider |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
+- **Node.js**: v20 or higher
+- **Postgres Database**: Create a free instance on [Neon.tech](https://neon.tech/)
+- **Resend API Key**: Free tier available on [Resend.com](https://resend.com/)
 
-- Node.js ≥ 20
-- [Neon](https://neon.tech/) PostgreSQL database (free tier works)
-- [Resend](https://resend.com/) API key (free tier works)
-- GitHub and/or Google OAuth app credentials (optional)
-
-### 1. Clone the repository
-
+### 1. Clone & Install
 ```bash
-git clone https://github.com/<your-username>/inventory-system.git
+git clone https://github.com/your-username/inventory-system.git
 cd inventory-system
-```
-
-### 2. Install dependencies
-
-```bash
 npm install
 ```
 
-### 3. Configure environment variables
-
+### 2. Environment Configuration
+Duplicate the example variables config:
 ```bash
 cp .env.example .env
 ```
-
-Fill in your values in `.env`:
-
+Fill in `.env` with your secure keys:
 ```env
-# Database (Neon PostgreSQL)
+# Database Credentials
 NEON_DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require&pgbouncer=true"
 DIRECT_URL="postgresql://user:password@host/dbname?sslmode=require"
 
-# Auth secret — generate with: npx auth secret
-AUTH_SECRET="your-secret"
+# Generate Auth secret: npx auth secret
+AUTH_SECRET="your-secure-random-string"
 
-# OAuth (optional)
-GITHUB_CLIENT_ID="..."
-GITHUB_CLIENT_SECRET="..."
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-
-# Email (Resend)
-RESEND_API_KEY="re_..."
+# Resend for Notifications & 2FA
+RESEND_API_KEY="re_123456789"
 ```
 
-### 4. Set up the database
-
+### 3. Bootstrap the Database
+Generate your Prisma types and sync the schema with your active database:
 ```bash
-npx prisma generate   # Generate the Prisma Client
-npx prisma db push    # Push schema to your Neon database
+npx prisma generate
+npx prisma db push
 ```
 
-### 5. Run the development server
-
+### 4. Run Development Server
 ```bash
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Navigate to **[http://localhost:3000](http://localhost:3000)** and log in!
 
 ---
 
-## Folder Structure
+## 📁 System Folder Structure
+
+The project is structured entirely by **feature** rather than file-type, keeping components and actions co-located next to the pages they serve.
 
 ```
 inventory-system/
 ├── app/
-│   ├── (auth)/                   # Auth pages (login, register, reset…)
-│   │   ├── layout.tsx            # Centered card layout
-│   │   ├── login/page.tsx
-│   │   ├── register/page.tsx
-│   │   ├── reset/page.tsx
-│   │   ├── new-password/page.tsx
-│   │   └── verify/page.tsx
-│   │
-│   └── (dashboard)/              # Protected app shell
-│       ├── layout.tsx            # Sidebar + Navbar wrapper
-│       ├── dashboard/page.tsx    # Stats + chart overview
-│       ├── products/             # ← pattern repeated per feature
-│       │   ├── page.tsx          #   Data table page
-│       │   ├── new/page.tsx      #   Create form
-│       │   ├── [id]/page.tsx     #   Edit form
-│       │   ├── _actions/         #   Server actions (thin, Zod-validated)
-│       │   └── _components/      #   Feature-scoped components
-│       ├── warehouse/
-│       ├── raw-materials/
-│       ├── orders/
+│   ├── (auth)/                   # Public auth routes (login, register...)
+│   └── (dashboard)/              # The secure App Shell 
+│       ├── dashboard/            # Home overview & charts
+│       ├── cycle-counts/         # Feature Example
+│       │   ├── page.tsx          #   Main views
+│       │   ├── new/page.tsx      #   Creation routes
+│       │   ├── _actions/         #   Action endpoints (mutations)
+│       │   └── _components/      #   Feature-specific UI elements 
+│       ├── approvals/
+│       ├── goods-receipts/
 │       ├── invoices/
+│       ├── orders/
+│       ├── products/
+│       ├── purchase-orders/
+│       ├── raw-materials/
+│       ├── settings/
+│       ├── stock-movements/
+│       ├── suppliers/
+│       ├── system-logs/
 │       ├── users/
-│       └── settings/
+│       └── warehouse/
 │
-├── components/
-│   ├── ui/                       # shadcn/ui primitives (auto-generated)
-│   └── layout/                   # App shell: sidebar, navbar, theme switcher
-│
+├── components/                   # Shared shell components & shadcn primitives
 ├── lib/
-│   ├── dal/                      # ← Data Access Layer (security boundary)
-│   │   ├── guards.ts             # requireCurrentUser(), requireAdminUser()
-│   │   ├── users.ts
-│   │   ├── products.ts
-│   │   ├── warehouses.ts
-│   │   ├── raw-materials.ts
-│   │   ├── orders.ts
-│   │   ├── invoices.ts
-│   │   ├── bill-of-materials.ts
-│   │   ├── stock-movements.ts
-│   │   ├── notifications.ts
-│   │   └── system-logs.ts
-│   ├── auth.ts                   # getCurrentUser() — React.cache() wrapped
-│   ├── document-number.ts        # Document number generation
-│   ├── error-handling.ts         # handleServerError() for action catch blocks
-│   ├── mail.ts                   # Resend email service
-│   ├── order-status.ts           # Status transition map + validation
-│   ├── rate-limit.ts             # Rate limiting helper
-│   ├── tokens.ts                 # Token generation helpers
-│   └── prisma.ts                 # Prisma singleton
-│
-├── schemas/                      # Zod validation schemas (shared)
-├── types/                        # TypeScript interfaces & DTO types
-│
-├── __tests__/                    # Vitest unit tests
-│   ├── dal/                      # DAL unit tests
-│   └── lib/                      # lib utility unit tests
-│
-├── e2e/                          # Playwright E2E tests
-│
-├── _agent/                       # AI agent context & workflow definitions
-│   ├── rules/rules.md            # Canonical project rules & file index
-│   ├── context/architecture.md  # System architecture reference
-│   ├── context/patterns.md      # Copy-paste code templates
-│   └── workflows/               # Slash-command workflow definitions
-│
-├── prisma/                       # Prisma schema & migrations
-├── public/                       # Static assets
-├── auth.ts                       # NextAuth.js configuration
-├── auth.config.ts                # OAuth provider setup
-├── middleware.ts                 # Route protection (public / private)
-└── routes.ts                     # Centralised route constants
+│   ├── dal/                      # Core Data Access Layer
+│   ├── tests/                    # Vitest utilities & DAL unit tests
+│   └── utils.ts
+├── prisma/                       # Prisma Schema definitions
+└── schemas/                      # Global Zod schemas
 ```
 
 ---
 
-## License
+## 📜 License
 
-MIT — see [LICENSE](./LICENSE) for details.
+This system is open-source and released under the **[MIT License](./LICENSE)**. Feel free to use and heavily modify it to fit your exact business use case!
