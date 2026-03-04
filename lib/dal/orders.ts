@@ -23,6 +23,11 @@ export type OrderDTO = {
     status: OrderStatus
     total: number
     itemCount: number
+    confirmedAt: Date | null
+    shippedAt: Date | null
+    deliveredAt: Date | null
+    cancelledAt: Date | null
+    notes: string | null
     createdAt: Date
 }
 
@@ -45,6 +50,11 @@ export function toOrderDTO(order: Order & { _count?: { items: number }, customer
         status: order.status as OrderStatus,
         total: typeof order.total?.toNumber === 'function' ? order.total.toNumber() : Number(order.total),
         itemCount: order._count?.items ?? 0,
+        confirmedAt: order.confirmedAt ?? null,
+        shippedAt: order.shippedAt ?? null,
+        deliveredAt: order.deliveredAt ?? null,
+        cancelledAt: order.cancelledAt ?? null,
+        notes: order.notes ?? null,
         createdAt: order.createdAt,
     }
 }
@@ -96,6 +106,7 @@ export async function getOrderById(
 export type OrderCreateDTO = {
     customerName?: string
     customerId?: string
+    notes?: string
     items: { productId: string; quantity: number; unitPrice: number }[]
 }
 
@@ -144,6 +155,7 @@ export async function createOrder(data: OrderCreateDTO): Promise<OrderDetailDTO>
             data: {
                 customerName: data.customerName,
                 customerId: data.customerId,
+                notes: data.notes,
                 orderNo,
                 total,
                 createdById: user.id,
@@ -202,10 +214,25 @@ export async function updateOrderStatus(
         throw new Error(`Invalid status transition: ${existingOrder.status} -> ${status}`)
     }
 
+    const now = new Date()
+    const timestampUpdates: Partial<{
+        confirmedAt: Date
+        shippedAt: Date
+        deliveredAt: Date
+        cancelledAt: Date
+    }> = {}
+    if (status === "PROCESSING") timestampUpdates.confirmedAt = now
+    if (status === "SHIPPED") timestampUpdates.shippedAt = now
+    if (status === "DELIVERED") timestampUpdates.deliveredAt = now
+    if (status === "CANCELLED") timestampUpdates.cancelledAt = now
+
     const order = await prisma.$transaction(async (tx) => {
         const updated = await tx.order.update({
             where: { id },
-            data: { status },
+            data: {
+                status,
+                ...timestampUpdates
+            },
             include: {
                 items: {
                     include: { product: { select: { name: true } } }

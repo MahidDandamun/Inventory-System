@@ -9,7 +9,10 @@ import { validatedAction } from "@/lib/actions/safe-action"
 import { z } from "zod"
 
 export async function createOrderAction(formData: FormData) {
-    const customer = formData.get("customer") as string
+    const customerName = formData.get("customerName") as string
+    const customerId = formData.get("customerId") as string
+    const notesOriginal = formData.get("notes")
+    const notes = typeof notesOriginal === "string" ? notesOriginal : undefined
     const itemsRaw = formData.get("items") as string
 
     let items = []
@@ -19,7 +22,7 @@ export async function createOrderAction(formData: FormData) {
         return { success: false, error: "Invalid items format", fieldErrors: { root: ["Invalid items format"] } } as const
     }
 
-    return validatedAction(orderSchema, { customer, items }, async (data) => {
+    return validatedAction(orderSchema, { customerName, customerId, notes, items }, async (data) => {
         const order = await createOrder(data)
 
         const users = await getAllUsers()

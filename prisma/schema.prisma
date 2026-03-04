@@ -151,6 +151,11 @@ model Order {
   customerId   String?
   status       OrderStatus @default(PENDING)
   total        Decimal     @db.Decimal(10, 2)
+  confirmedAt  DateTime?
+  shippedAt    DateTime?
+  deliveredAt  DateTime?
+  cancelledAt  DateTime?
+  notes        String?     @db.Text
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   createdById  String?

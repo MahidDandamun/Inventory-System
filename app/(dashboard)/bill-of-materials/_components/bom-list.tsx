@@ -41,6 +41,20 @@ export function BomList({ items }: { items: BillOfMaterialDTO[] }) {
         )
     }
 
+    const groupedList = Object.values(
+        items.reduce((acc, item) => {
+            if (!acc[item.productId]) {
+                acc[item.productId] = {
+                    productId: item.productId,
+                    productName: item.productName,
+                    materials: []
+                }
+            }
+            acc[item.productId].materials.push(item)
+            return acc
+        }, {} as Record<string, { productId: string, productName: string, materials: BillOfMaterialDTO[] }>)
+    )
+
     return (
         <div className="mt-4 rounded-md border">
             <Table>
@@ -53,23 +67,32 @@ export function BomList({ items }: { items: BillOfMaterialDTO[] }) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {items.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell className="font-medium">{item.productName}</TableCell>
-                            <TableCell>{item.rawMaterialName}</TableCell>
-                            <TableCell>{item.quantity}</TableCell>
-                            <TableCell className="text-right">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleDelete(item.id)}
-                                    disabled={deleting === item.id}
-                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                >
-                                    <IconTrash className="h-4 w-4" />
-                                </Button>
-                            </TableCell>
-                        </TableRow>
+                    {groupedList.map((group) => (
+                        group.materials.map((item, index) => (
+                            <TableRow key={item.id} className={index === group.materials.length - 1 ? "" : "border-b-0"}>
+                                {index === 0 && (
+                                    <TableCell
+                                        rowSpan={group.materials.length}
+                                        className="font-medium align-top pt-4 border-r"
+                                    >
+                                        {group.productName}
+                                    </TableCell>
+                                )}
+                                <TableCell className="py-2">{item.rawMaterialName}</TableCell>
+                                <TableCell className="py-2">{item.quantity}</TableCell>
+                                <TableCell className="text-right py-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleDelete(item.id)}
+                                        disabled={deleting === item.id}
+                                        className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                                    >
+                                        <IconTrash className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))
                     ))}
                 </TableBody>
             </Table>

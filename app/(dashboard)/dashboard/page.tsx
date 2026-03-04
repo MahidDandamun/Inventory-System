@@ -113,9 +113,6 @@ export default async function DashboardPage() {
         <div className="space-y-6">
             <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h1>
 
-            {/* Replenishment Widget */}
-            <ReplenishmentWidget suggestions={suggestions} suppliers={suppliers} />
-
             {/* Stat cards */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat) => (
@@ -137,52 +134,59 @@ export default async function DashboardPage() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
-                    <CardHeader>
-                        <CardTitle className="text-primary">Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pl-2">
-                        {hasChartData ? (
-                            <OverviewChart data={chartData} />
-                        ) : (
-                            <div className="flex items-center justify-center h-[350px] text-muted-foreground">
-                                <div className="text-center space-y-2">
-                                    <IconShoppingCart className="h-10 w-10 mx-auto opacity-30" />
-                                    <p className="text-sm">No order data available yet.</p>
-                                    <p className="text-xs">Create your first order to see revenue trends.</p>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card className="col-span-3">
-                    <CardHeader>
-                        <CardTitle className="text-primary">Recent Orders</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-8">
-                            {orders.slice(0, 5).map(order => (
-                                <div key={order.id} className="flex items-center">
-                                    <div className="ml-4 space-y-1">
-                                        <p className="text-sm font-medium leading-none text-primary">{order.customer}</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {order.orderNo}
-                                        </p>
+                <div className="col-span-4 space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-primary">Overview</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                            {hasChartData ? (
+                                <OverviewChart data={chartData} />
+                            ) : (
+                                <div className="flex items-center justify-center h-[350px] text-muted-foreground">
+                                    <div className="text-center space-y-2">
+                                        <IconShoppingCart className="h-10 w-10 mx-auto opacity-30" />
+                                        <p className="text-sm">No order data available yet.</p>
+                                        <p className="text-xs">Create your first order to see revenue trends.</p>
                                     </div>
-                                    <div className="ml-auto font-medium">
-                                        +${order.total.toFixed(2)}
-                                    </div>
-                                </div>
-                            ))}
-                            {orders.length === 0 && (
-                                <div className="text-sm text-muted-foreground text-center py-4">
-                                    No orders yet.
                                 </div>
                             )}
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="col-span-3 space-y-4">
+                    {/* Replenishment Widget */}
+                    <ReplenishmentWidget suggestions={suggestions} suppliers={suppliers} />
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-primary">Recent Orders</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-8">
+                                {orders.slice(0, 5).map(order => (
+                                    <div key={order.id} className="flex items-center">
+                                        <div className="ml-4 space-y-1">
+                                            <p className="text-sm font-medium leading-none text-primary">{order.customer}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {order.orderNo}
+                                            </p>
+                                        </div>
+                                        <div className="ml-auto font-medium">
+                                            +${order.total.toFixed(2)}
+                                        </div>
+                                    </div>
+                                ))}
+                                {orders.length === 0 && (
+                                    <div className="text-sm text-muted-foreground text-center py-4">
+                                        No orders yet.
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     )

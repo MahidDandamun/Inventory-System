@@ -18,6 +18,7 @@ export const orderItemSchema = z.object({
 export const orderSchema = z.object({
     customerName: z.string().optional(),
     customerId: z.string().optional(),
+    notes: z.string().optional(),
     items: z
         .array(orderItemSchema)
         .min(1, { message: "At least one item is required" }),

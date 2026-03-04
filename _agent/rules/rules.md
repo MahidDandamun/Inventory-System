@@ -132,6 +132,7 @@ _Last updated: 2026-03-04_
 - **Phase 1B: Invoice/Payment Lifecycle** — added `InvoiceStatus` flow, `Payment` model, invoice `dueDate` + status-aware DAL/actions/UI, payment recording form, overdue indicators, and unit tests for invoice status transitions
 - **Phase 1C: Supplier + Purchase Order Skeleton** — added `Supplier`, `PurchaseOrder`, `PurchaseOrderItem` models, `PurchaseOrderStatus` enum, PO status transition map (`lib/po-status.ts`), DAL with transactional PO creation, status transitions, delete (DRAFT only), server actions, supplier/PO pages with DataTable + CRUD dialogs, sidebar nav entries
 - **Phase 2A: Goods Receipts + Stock Integration** — added `GoodsReceipt` and `GoodsReceiptItem` models, built `receiveGoods` DAL with `$transaction` tracking `RAW_MATERIAL` stock movements (increments), dynamic PO status updates (`RECEIVED` / `PARTIALLY_RECEIVED`), and PO detail page UI with `ReceiveGoodsDialog`.
+- **Phase 2D: Customer Order Lifecycle Enhancement** — added Order status timestamps (`confirmedAt`, `shippedAt`, `deliveredAt`, `cancelledAt`) and `notes` to schema, automatic status transition timestamps in DAL, `notes` field in Order form, and Order Timeline view on Order Details page.
 
 ---
 

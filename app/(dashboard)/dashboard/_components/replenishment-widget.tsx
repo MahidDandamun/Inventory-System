@@ -97,7 +97,7 @@ export function ReplenishmentWidget({
                     {suggestions.length} items
                 </Badge>
             </CardHeader>
-            <CardContent>
+            <CardContent className="max-h-[400px] overflow-y-auto pr-4">
                 <div className="space-y-4">
                     {suggestions.map((item) => (
                         <div key={item.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border bg-card/50">

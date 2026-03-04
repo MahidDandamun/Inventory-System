@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
     Select,
     SelectContent,
@@ -56,6 +57,7 @@ function CreateOrderForm({ products, customers }: { products: ProductDTO[]; cust
         defaultValues: {
             customerName: "",
             customerId: "",
+            notes: "",
             items: [{ productId: "", quantity: 1, unitPrice: 0 }],
         },
     })
@@ -83,6 +85,7 @@ function CreateOrderForm({ products, customers }: { products: ProductDTO[]; cust
             const formData = new FormData()
             if (values.customerName) formData.append("customerName", values.customerName)
             if (values.customerId) formData.append("customerId", values.customerId)
+            if (values.notes) formData.append("notes", values.notes)
             formData.append("items", JSON.stringify(values.items))
 
             const result = await createOrderAction(formData)
@@ -157,6 +160,17 @@ function CreateOrderForm({ products, customers }: { products: ProductDTO[]; cust
                     )}
                 </div>
             )}
+
+            <div className="space-y-2">
+                <Label htmlFor="notes">Order Notes (Optional)</Label>
+                <Textarea
+                    id="notes"
+                    placeholder="Delivery instructions or other notes..."
+                    disabled={isPending}
+                    rows={2}
+                    {...register("notes")}
+                />
+            </div>
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
