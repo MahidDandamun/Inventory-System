@@ -5,8 +5,6 @@ import { GoodsReceiptInput } from "@/schemas/goods-receipt"
 import { generateDocumentNumber, createWithUniqueRetry } from "@/lib/document-number"
 import { createSystemLog } from "@/lib/dal/system-logs"
 import { recordStockMovement } from "@/lib/dal/stock-movements"
-import { PO_STATUS_FLOW } from "@/lib/po-status"
-import { checkLowStock } from "@/lib/dal/notifications"
 import { cache } from "react"
 
 export type GoodsReceiptItemDTO = {
@@ -40,9 +38,7 @@ export async function receiveGoods(data: GoodsReceiptInput): Promise<GoodsReceip
 
             if (!po) throw new Error("Purchase order not found")
 
-            // Wait, what statuses can we receive from? DRAFT -> SENT -> PARTIALLY_RECEIVED -> RECEIVED
-            // We can only receive if it's SENT or PARTIALLY_RECEIVED. Wait, PO_STATUS_FLOW applies here.
-            // DRAFT should be "SENT" first. The user should "SEND" the PO. But wait, can we receive a SENT or PARTIALLY_RECEIVED PO?
+            // Ensure PO status allows receiving
             if (po.status !== "SENT" && po.status !== "PARTIALLY_RECEIVED") {
                 throw new Error(`Cannot receive goods for PO in status: ${po.status}`)
             }
@@ -80,13 +76,10 @@ export async function receiveGoods(data: GoodsReceiptInput): Promise<GoodsReceip
                     quantity: item.quantityReceived,
                     reason: `Goods receipt ${receiptNumber} for PO ${po.poNumber}`,
                     userId: user.id,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                }, tx as any) // Type assertion if needed
+                }, tx)
             }
 
-            // Figure out the new PO status
-            // Check all receipt items across all receipts to see if it's fully received
-            // `receipts` from `po` does not include the current `receipt`, so we combine them
+            // Figure out the new PO status by checking all receipt items
             const allReceiptItems = [...po.receipts.flatMap((r) => r.items), ...receipt.items]
 
             const receivedQtyByItemId = allReceiptItems.reduce((acc, current) => {
@@ -110,12 +103,8 @@ export async function receiveGoods(data: GoodsReceiptInput): Promise<GoodsReceip
                 data: { status: newStatus },
             })
 
-            // System log created outside the tx boundary, which is fine since the function doesn't support tx
+            // Log the creation of the goods receipt
             createSystemLog(user.id, "CREATE", "GOODS_RECEIPT", receipt.id, JSON.stringify({ receiptNumber, po: po.poNumber }))
-
-            // Notifications. checkLowStock expects no args, reads DB, safe to call outside tx, but we can do it after tx
-            // Wait, we receive stock so checkLowStock isn't strictly necessary, but good practice if it clears notifications
-            // Actually checkLowStock creates notifications, it doesn't clear them natively. But let's leave it out or run it later.
 
             return {
                 id: receipt.id,
@@ -124,8 +113,7 @@ export async function receiveGoods(data: GoodsReceiptInput): Promise<GoodsReceip
                 notes: receipt.notes,
                 receivedAt: receipt.receivedAt,
                 createdById: receipt.createdById,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                items: receipt.items.map((i: any) => ({
+                items: receipt.items.map((i) => ({
                     id: i.id,
                     goodsReceiptId: i.goodsReceiptId,
                     purchaseOrderItemId: i.purchaseOrderItemId,
@@ -149,16 +137,14 @@ export const getReceiptsByPurchaseOrderId = cache(async (poId: string): Promise<
         orderBy: { receivedAt: "desc" }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return receipts.map((r: any) => ({
+    return receipts.map((r) => ({
         id: r.id,
         receiptNumber: r.receiptNumber,
         purchaseOrderId: r.purchaseOrderId,
         notes: r.notes,
         receivedAt: r.receivedAt,
         createdById: r.createdById,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        items: r.items.map((i: any) => ({
+        items: r.items.map((i) => ({
             id: i.id,
             goodsReceiptId: i.goodsReceiptId,
             purchaseOrderItemId: i.purchaseOrderItemId,

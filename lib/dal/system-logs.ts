@@ -1,7 +1,7 @@
 import "server-only"
 import { prisma } from "@/lib/prisma"
-import { requireAdminUser, requireCurrentUser } from "@/lib/dal/guards"
-import type { SystemLog } from "@prisma/client"
+import { requireAdminUser } from "@/lib/dal/guards"
+import type { SystemLog, Prisma } from "@prisma/client"
 
 export type SystemLogDTO = {
     id: string
@@ -30,12 +30,12 @@ export async function createSystemLog(
     action: string,
     entity: string,
     entityId?: string,
-    details?: string
+    details?: string,
+    tx?: Prisma.TransactionClient
 ): Promise<void> {
     try {
-        await requireCurrentUser()
-
-        await prisma.systemLog.create({
+        const db = tx || prisma
+        await db.systemLog.create({
             data: {
                 userId: userId || null,
                 action,

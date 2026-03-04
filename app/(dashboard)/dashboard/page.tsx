@@ -8,7 +8,10 @@ import {
 import { getProducts } from "@/lib/dal/products"
 import { getWarehouses } from "@/lib/dal/warehouses"
 import { getOrders } from "@/lib/dal/orders"
+import { getReplenishmentSuggestions } from "@/lib/dal/replenishment"
+import { getSuppliers } from "@/lib/dal/suppliers"
 import { OverviewChart } from "./_components/overview-chart"
+import { ReplenishmentWidget } from "./_components/replenishment-widget"
 
 export const metadata = {
     title: "Dashboard",
@@ -16,10 +19,12 @@ export const metadata = {
 
 export default async function DashboardPage() {
     // Parallel fetching for performance
-    const [products, warehouses, orders] = await Promise.all([
+    const [products, warehouses, orders, suggestions, suppliers] = await Promise.all([
         getProducts(),
         getWarehouses(),
         getOrders(),
+        getReplenishmentSuggestions(),
+        getSuppliers(),
     ])
 
     const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
@@ -107,6 +112,9 @@ export default async function DashboardPage() {
     return (
         <div className="space-y-6">
             <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h1>
+
+            {/* Replenishment Widget */}
+            <ReplenishmentWidget suggestions={suggestions} suppliers={suppliers} />
 
             {/* Stat cards */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
