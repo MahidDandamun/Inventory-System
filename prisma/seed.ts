@@ -229,7 +229,7 @@ async function seedOrdersAndInvoices(products: Awaited<ReturnType<typeof seedPro
         const order = await prisma.order.create({
             data: {
                 orderNo: generateOrderNo(),
-                customer: randomItem(customers),
+                customerName: randomItem(customers),
                 status,
                 total,
                 items: { create: itemsData },
@@ -248,7 +248,7 @@ async function seedOrdersAndInvoices(products: Awaited<ReturnType<typeof seedPro
             })
         }
 
-        console.log(`   ✅  Order ${order.orderNo}  [${status}]  — ${order.customer}`)
+        console.log(`   ✅  Order ${order.orderNo}  [${status}]  — ${order.customerName}`)
     }
 }
 

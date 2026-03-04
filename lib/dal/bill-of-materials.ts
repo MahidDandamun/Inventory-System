@@ -89,3 +89,39 @@ export const getAllBillOfMaterials = cache(async (): Promise<BillOfMaterialDTO[]
 
     return boms.map(toBillOfMaterialDTO)
 })
+
+export async function createBillOfMaterials(data: {
+    productId: string
+    items: { rawMaterialId: string; quantity: number }[]
+}): Promise<BillOfMaterialDTO[]> {
+    const user = await requireCurrentUser()
+
+    const boms = await prisma.$transaction(async (tx) => {
+        const results = []
+        for (const item of data.items) {
+            const bom = await tx.billOfMaterial.create({
+                data: {
+                    productId: data.productId,
+                    rawMaterialId: item.rawMaterialId,
+                    quantity: item.quantity,
+                },
+                include: {
+                    product: { select: { name: true } },
+                    rawMaterial: { select: { name: true } },
+                },
+            })
+            results.push(bom)
+        }
+        return results
+    })
+
+    await createSystemLog(
+        user.id,
+        "CREATE",
+        "BOM",
+        data.productId,
+        `Batch created ${boms.length} BOM entries for product ${boms[0]?.product.name}`
+    )
+
+    return boms.map(toBillOfMaterialDTO)
+}

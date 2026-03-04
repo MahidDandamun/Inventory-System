@@ -18,7 +18,8 @@ export { ORDER_STATUS_FLOW }
 export type OrderDTO = {
     id: string
     orderNo: string
-    customer: string
+    customer: string | null
+    customerId: string | null
     status: OrderStatus
     total: number
     itemCount: number
@@ -35,11 +36,12 @@ export type OrderDetailDTO = OrderDTO & {
     }[]
 }
 
-export function toOrderDTO(order: Order & { _count?: { items: number } }): OrderDTO {
+export function toOrderDTO(order: Order & { _count?: { items: number }, customerRef?: { name: string } | null }): OrderDTO {
     return {
         id: order.id,
         orderNo: order.orderNo,
-        customer: order.customer,
+        customer: order.customerRef?.name || order.customerName || null,
+        customerId: order.customerId,
         status: order.status as OrderStatus,
         total: typeof order.total?.toNumber === 'function' ? order.total.toNumber() : Number(order.total),
         itemCount: order._count?.items ?? 0,
@@ -47,7 +49,7 @@ export function toOrderDTO(order: Order & { _count?: { items: number } }): Order
     }
 }
 
-export function toOrderDetailDTO(order: Order & { _count?: { items: number }, items: (OrderItem & { product: { name: string } })[] }): OrderDetailDTO {
+export function toOrderDetailDTO(order: Order & { _count?: { items: number }, customerRef?: { name: string } | null, items: (OrderItem & { product: { name: string } })[] }): OrderDetailDTO {
     return {
         ...toOrderDTO(order),
         items: order.items.map(item => ({
@@ -64,7 +66,7 @@ export const getOrders = cache(async (): Promise<OrderDTO[]> => {
     await requireCurrentUser()
 
     const orders = await prisma.order.findMany({
-        include: { _count: { select: { items: true } } },
+        include: { _count: { select: { items: true } }, customerRef: { select: { name: true } } },
         orderBy: { createdAt: "desc" },
     })
 
@@ -83,6 +85,7 @@ export async function getOrderById(
                 include: { product: { select: { name: true } } },
             },
             _count: { select: { items: true } },
+            customerRef: { select: { name: true } },
         },
     })
     if (!o) return null
@@ -91,7 +94,8 @@ export async function getOrderById(
 }
 
 export type OrderCreateDTO = {
-    customer: string
+    customerName?: string
+    customerId?: string
     items: { productId: string; quantity: number; unitPrice: number }[]
 }
 
@@ -138,7 +142,8 @@ export async function createOrder(data: OrderCreateDTO): Promise<OrderDetailDTO>
     const order = await prisma.$transaction(async (tx) => {
         const created = await tx.order.create({
             data: {
-                customer: data.customer,
+                customerName: data.customerName,
+                customerId: data.customerId,
                 orderNo,
                 total,
                 createdById: user.id,
@@ -150,7 +155,8 @@ export async function createOrder(data: OrderCreateDTO): Promise<OrderDetailDTO>
                 items: {
                     include: { product: { select: { name: true } } }
                 },
-                _count: { select: { items: true } }
+                _count: { select: { items: true } },
+                customerRef: { select: { name: true } }
             }
         })
 
@@ -204,7 +210,8 @@ export async function updateOrderStatus(
                 items: {
                     include: { product: { select: { name: true } } }
                 },
-                _count: { select: { items: true } }
+                _count: { select: { items: true } },
+                customerRef: { select: { name: true } }
             }
         })
 
@@ -269,7 +276,8 @@ export async function deleteOrder(id: string): Promise<OrderDetailDTO> {
                 items: {
                     include: { product: { select: { name: true } } }
                 },
-                _count: { select: { items: true } }
+                _count: { select: { items: true } },
+                customerRef: { select: { name: true } }
             }
         })
     })

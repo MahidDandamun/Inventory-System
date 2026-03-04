@@ -8,6 +8,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      AUTH_URL: "${AUTH_URL:-http://localhost:3000}"
       NEON_DATABASE_URL: "${NEON_DATABASE_URL}"
       DIRECT_URL: "${DIRECT_URL}"
       AUTH_SECRET: "${AUTH_SECRET}"

@@ -7,5 +7,8 @@
 services:
   app:
     image: mahiddandamun/inventory-system-prod:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     container_name: inventory-system-prod
     restart: always

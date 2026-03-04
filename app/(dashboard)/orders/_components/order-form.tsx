@@ -24,21 +24,23 @@ import { type OrderStatus } from "@/lib/dal/orders"
 import { OrderDetailDTO } from "@/lib/dal/orders"
 import { ORDER_STATUS_VALUES, getAllowedOrderStatuses } from "@/lib/order-status"
 import { ProductDTO } from "@/lib/dal/products"
+import { CustomerDTO } from "@/lib/dal/customers"
 
 interface OrderFormProps {
     order?: OrderDetailDTO | null
     products: ProductDTO[]
+    customers?: CustomerDTO[]
 }
 
-export function OrderForm({ order, products }: OrderFormProps) {
+export function OrderForm({ order, products, customers = [] }: OrderFormProps) {
     if (order) {
         return <OrderStatusForm order={order} />
     }
 
-    return <CreateOrderForm products={products} />
+    return <CreateOrderForm products={products} customers={customers} />
 }
 
-function CreateOrderForm({ products }: { products: ProductDTO[] }) {
+function CreateOrderForm({ products, customers }: { products: ProductDTO[]; customers: CustomerDTO[] }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | undefined>()
@@ -52,10 +54,13 @@ function CreateOrderForm({ products }: { products: ProductDTO[] }) {
     } = useForm<OrderInput>({
         resolver: zodResolver(orderSchema) as never,
         defaultValues: {
-            customer: "",
+            customerName: "",
+            customerId: "",
             items: [{ productId: "", quantity: 1, unitPrice: 0 }],
         },
     })
+
+    const watchCustomerId = useWatch({ control, name: "customerId" })
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -76,7 +81,8 @@ function CreateOrderForm({ products }: { products: ProductDTO[] }) {
         setError(undefined)
         startTransition(async () => {
             const formData = new FormData()
-            formData.append("customer", values.customer)
+            if (values.customerName) formData.append("customerName", values.customerName)
+            if (values.customerId) formData.append("customerId", values.customerId)
             formData.append("items", JSON.stringify(values.items))
 
             const result = await createOrderAction(formData)
@@ -108,18 +114,49 @@ function CreateOrderForm({ products }: { products: ProductDTO[] }) {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-                <Label htmlFor="customer">Customer Name *</Label>
-                <Input
-                    id="customer"
-                    placeholder="Acme Corp"
-                    disabled={isPending}
-                    {...register("customer")}
-                />
-                {errors.customer && (
-                    <p className="text-sm text-destructive">{errors.customer.message}</p>
-                )}
-            </div>
+            {customers.length > 0 ? (
+                <div className="space-y-2">
+                    <Label htmlFor="customerId">Customer *</Label>
+                    <Select
+                        disabled={isPending}
+                        value={watchCustomerId || ""}
+                        onValueChange={(val) => {
+                            setValue("customerId", val)
+                            const selected = customers.find((c) => c.id === val)
+                            if (selected) {
+                                setValue("customerName", selected.name)
+                            }
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a customer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {customers.map((c) => (
+                                <SelectItem key={c.id} value={c.id}>
+                                    {c.name}{c.email ? ` (${c.email})` : ""}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {errors.customerId && (
+                        <p className="text-sm text-destructive">{errors.customerId.message}</p>
+                    )}
+                </div>
+            ) : (
+                <div className="space-y-2">
+                    <Label htmlFor="customerName">Customer Name</Label>
+                    <Input
+                        id="customerName"
+                        placeholder="Acme Corp"
+                        disabled={isPending}
+                        {...register("customerName")}
+                    />
+                    {errors.customerName && (
+                        <p className="text-sm text-destructive">{errors.customerName.message}</p>
+                    )}
+                </div>
+            )}
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between">

@@ -3,7 +3,8 @@ import { getProducts } from "@/lib/dal/products"
 import { getRawMaterials } from "@/lib/dal/raw-materials"
 import { getAllStockMovements } from "@/lib/dal/stock-movements"
 import { CreateMovementDialog } from "./_components/create-movement-dialog"
-import { MovementList } from "./_components/movement-list"
+import { DataTable } from "@/components/ui/data-table"
+import { columns } from "./_components/columns"
 
 export const metadata = {
     title: "Stock Movements | Inventory System",
@@ -30,9 +31,30 @@ export default async function StockMovementsPage() {
                 <CreateMovementDialog products={products} rawMaterials={rawMaterials} />
             </div>
 
-            <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
-                <MovementList items={movements} products={products} rawMaterials={rawMaterials} />
-            </div>
+            <DataTable
+                columns={columns}
+                data={movements}
+                searchKey="reason"
+                filterColumns={[
+                    {
+                        id: "type",
+                        title: "Type",
+                        options: [
+                            { label: "Stock In", value: "IN" },
+                            { label: "Stock Out", value: "OUT" },
+                            { label: "Adjustment", value: "ADJUST" },
+                        ],
+                    },
+                    {
+                        id: "entity",
+                        title: "Category",
+                        options: [
+                            { label: "Product", value: "PRODUCT" },
+                            { label: "Raw Material", value: "RAW_MATERIAL" },
+                        ],
+                    },
+                ]}
+            />
         </div>
     )
 }

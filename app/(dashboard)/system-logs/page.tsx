@@ -34,7 +34,36 @@ export default async function SystemLogsPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DataTable searchKey="entity" columns={columns} data={logs} />
+                    <DataTable
+                        searchKey="entity"
+                        columns={columns}
+                        data={logs}
+                        filterColumns={[
+                            {
+                                id: "action",
+                                title: "Action",
+                                options: [
+                                    { label: "Create", value: "CREATE" },
+                                    { label: "Update", value: "UPDATE" },
+                                    { label: "Delete", value: "DELETE" },
+                                ],
+                            },
+                            {
+                                id: "entity",
+                                title: "Entity",
+                                options: [
+                                    { label: "Product", value: "PRODUCT" },
+                                    { label: "Order", value: "ORDER" },
+                                    { label: "Invoice", value: "INVOICE" },
+                                    { label: "Warehouse", value: "WAREHOUSE" },
+                                    { label: "Raw Material", value: "RAW_MATERIAL" },
+                                    { label: "BOM", value: "BOM" },
+                                    { label: "Customer", value: "CUSTOMER" },
+                                    { label: "User", value: "USER" },
+                                ],
+                            },
+                        ]}
+                    />
                 </CardContent>
             </Card>
         </div>

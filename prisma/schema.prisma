@@ -30,6 +30,7 @@ model User {
   createdInvoices   Invoice[]
   systemLogs        SystemLog[]
   stockMovements    StockMovement[]
+  createdCustomers  Customer[]
 }
 
 model Account {
@@ -134,7 +135,8 @@ model RawMaterial {
 model Order {
   id          String      @id @default(cuid())
   orderNo     String      @unique
-  customer    String
+  customerName String?    @map("customer")
+  customerId  String?
   status      OrderStatus @default(PENDING)
   total       Decimal     @db.Decimal(10, 2)
   createdAt   DateTime    @default(now())
@@ -143,6 +145,9 @@ model Order {
   invoice     Invoice?
   items       OrderItem[]
   createdBy   User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  customerRef Customer?   @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
 }
 
 model OrderItem {
@@ -242,4 +247,22 @@ model StockMovement {
 
   @@index([entity, entityId])
   @@index([userId])
+}
+
+model Customer {
+  id              String   @id @default(cuid())
+  name            String
+  email           String?  @unique
+  phone           String?
+  billingAddress  String?
+  shippingAddress String?
+  terms           String?
+  status          Status   @default(ACTIVE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdById     String?
+  orders          Order[]
+  createdBy       User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([createdById])
 }

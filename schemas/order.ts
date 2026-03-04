@@ -16,10 +16,14 @@ export const orderItemSchema = z.object({
 })
 
 export const orderSchema = z.object({
-    customer: z.string().min(1, { message: "Customer name is required" }),
+    customerName: z.string().optional(),
+    customerId: z.string().optional(),
     items: z
         .array(orderItemSchema)
         .min(1, { message: "At least one item is required" }),
+}).refine(data => data.customerName || data.customerId, {
+    message: "Customer name or selection is required",
+    path: ["customerId"]
 })
 
 export const orderStatusSchema = z.enum(ORDER_STATUS_VALUES)

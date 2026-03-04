@@ -24,6 +24,39 @@ export default async function DashboardPage() {
 
     const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
 
+    // Calculate real period-over-period revenue growth
+    const now = new Date()
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+
+    const thisMonthRevenue = orders
+        .filter((o) => {
+            const d = new Date(o.createdAt)
+            return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+        })
+        .reduce((sum, o) => sum + (o.total || 0), 0)
+
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+
+    const lastMonthRevenue = orders
+        .filter((o) => {
+            const d = new Date(o.createdAt)
+            return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear
+        })
+        .reduce((sum, o) => sum + (o.total || 0), 0)
+
+    let revenueDescription: string
+    if (lastMonthRevenue === 0 && thisMonthRevenue > 0) {
+        revenueDescription = "New revenue this month"
+    } else if (lastMonthRevenue === 0) {
+        revenueDescription = "No revenue data yet"
+    } else {
+        const growthPct = ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+        const sign = growthPct >= 0 ? "+" : ""
+        revenueDescription = `${sign}${growthPct.toFixed(1)}% from last month`
+    }
+
     // Format revenue
     const formattedRevenue = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -35,7 +68,7 @@ export default async function DashboardPage() {
         {
             title: "Total Revenue",
             value: formattedRevenue,
-            description: "+20.1% from last month", // Hardcoded mock growth
+            description: revenueDescription,
             icon: IconCurrencyDollar,
         },
         {
@@ -59,8 +92,6 @@ export default async function DashboardPage() {
     ]
 
     // Generate chart data: grouped by month from orders
-    // In a real app we'd do a complex SQL GROUP BY on the timeline.
-    // For this boilerplate we'll just mock a 12-month array and fill it with our current orders.
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     const chartData = months.map(m => ({ name: m, total: 0 }))
 
@@ -71,13 +102,7 @@ export default async function DashboardPage() {
         chartData[monthIndex].total += order.total
     })
 
-    // If there are no orders, give it some fake data so the chart isn't empty on first run
-    if (orders.length === 0) {
-        chartData.forEach((data, i) => {
-            const mockFactor = (i * 13) % 10;
-            data.total = Math.floor((mockFactor / 10) * 5000) + 1000 + (i * 500)
-        })
-    }
+    const hasChartData = orders.length > 0
 
     return (
         <div className="space-y-6">
@@ -109,7 +134,17 @@ export default async function DashboardPage() {
                         <CardTitle className="text-primary">Overview</CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
-                        <OverviewChart data={chartData} />
+                        {hasChartData ? (
+                            <OverviewChart data={chartData} />
+                        ) : (
+                            <div className="flex items-center justify-center h-[350px] text-muted-foreground">
+                                <div className="text-center space-y-2">
+                                    <IconShoppingCart className="h-10 w-10 mx-auto opacity-30" />
+                                    <p className="text-sm">No order data available yet.</p>
+                                    <p className="text-xs">Create your first order to see revenue trends.</p>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 

@@ -116,7 +116,7 @@ Database (Prisma Client singleton → Neon PostgreSQL)
 
 ## Latest Context
 
-_Last updated: 2026-03-03_
+_Last updated: 2026-03-04_
 
 - All DAL files use `requireCurrentUser()` guard — no inline auth
 - DTO violations fixed across all DAL files
@@ -127,6 +127,8 @@ _Last updated: 2026-03-03_
 - Vitest + Playwright configured; baseline test files exist
 - Features: Products, Orders, Invoices, Warehouses, Raw Materials, Users, Notifications, System Logs
 - Added UI slices for Bill of Materials and Stock Movements, updating sidebar routing
+- **Phase 1A: Customer Entity** — schema, DAL, actions, page, table, create/edit dialogs, sidebar nav, order form customer selector
+- **Phase 1D: Quick Wins** — BOM multi-material dialog, system logs filters, stock movements DataTable with filters, dashboard real growth calc + chart empty state
 
 ---
 

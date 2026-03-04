@@ -40,11 +40,17 @@ export const columns: ColumnDef<SystemLogDTO>[] = [
 
             return <Badge variant={variant}>{action}</Badge>
         },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
     },
     {
         accessorKey: "entity",
         header: "Entity",
         cell: ({ row }) => <span className="font-mono text-xs">{row.getValue("entity")}</span>,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
     },
     {
         accessorKey: "entityId",

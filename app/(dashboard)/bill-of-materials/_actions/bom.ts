@@ -39,3 +39,22 @@ export async function deleteBillOfMaterialAction(id: string) {
         return handleServerError(error)
     }
 }
+
+export async function createBillOfMaterialsBatchAction(
+    productId: string,
+    items: { rawMaterialId: string; quantity: number }[]
+) {
+    if (!productId || items.length === 0) {
+        return { error: "Product and at least one material are required" }
+    }
+
+    try {
+        const { createBillOfMaterials } = await import("@/lib/dal/bill-of-materials")
+        const result = await createBillOfMaterials({ productId, items })
+        revalidatePath(BOM_ROUTE)
+        revalidatePath(`${ROUTES.PRODUCTS}/${productId}`)
+        return { success: true, data: result }
+    } catch (error: unknown) {
+        return handleServerError(error)
+    }
+}

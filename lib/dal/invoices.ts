@@ -20,19 +20,19 @@ export type InvoiceDetailDTO = InvoiceDTO & {
     orderId: string
 }
 
-export function toInvoiceDTO(invoice: Invoice & { order: { orderNo: string, customer: string } }): InvoiceDTO {
+export function toInvoiceDTO(invoice: Invoice & { order: { orderNo: string, customerName: string | null, customerRef?: { name: string } | null } }): InvoiceDTO {
     return {
         id: invoice.id,
         invoiceNo: invoice.invoiceNo,
         orderNo: invoice.order.orderNo,
-        customer: invoice.order.customer,
+        customer: invoice.order.customerRef?.name || invoice.order.customerName || '',
         total: typeof invoice.total?.toNumber === 'function' ? invoice.total.toNumber() : Number(invoice.total),
         paidAt: invoice.paidAt,
         createdAt: invoice.createdAt,
     }
 }
 
-export function toInvoiceDetailDTO(invoice: Invoice & { order: { orderNo: string, customer: string } }): InvoiceDetailDTO {
+export function toInvoiceDetailDTO(invoice: Invoice & { order: { orderNo: string, customerName: string | null, customerRef?: { name: string } | null } }): InvoiceDetailDTO {
     return {
         ...toInvoiceDTO(invoice),
         orderId: invoice.orderId,
@@ -44,7 +44,7 @@ export const getInvoices = cache(async (): Promise<InvoiceDTO[]> => {
 
     const invoices = await prisma.invoice.findMany({
         include: {
-            order: { select: { orderNo: true, customer: true } },
+            order: { select: { orderNo: true, customerName: true, customerRef: { select: { name: true } } } },
         },
         orderBy: { createdAt: "desc" },
     })
@@ -57,7 +57,7 @@ export async function getInvoiceById(id: string): Promise<InvoiceDetailDTO | nul
 
     const inv = await prisma.invoice.findUnique({
         where: { id },
-        include: { order: { select: { orderNo: true, customer: true } } }
+        include: { order: { select: { orderNo: true, customerName: true, customerRef: { select: { name: true } } } } }
     })
     if (!inv) return null
 
@@ -78,7 +78,7 @@ export async function createInvoice(data: { orderId: string, markAsPaid?: boolea
             paidAt: data.markAsPaid ? new Date() : null,
             createdById: user.id,
         },
-        include: { order: { select: { orderNo: true, customer: true } } }
+        include: { order: { select: { orderNo: true, customerName: true, customerRef: { select: { name: true } } } } }
     }))
 
     await createSystemLog(user.id, "CREATE", "INVOICE", invoice.id, JSON.stringify(data))
@@ -93,7 +93,7 @@ export async function updateInvoice(id: string, data: { markAsPaid?: boolean }):
         data: {
             paidAt: data.markAsPaid ? new Date() : null,
         },
-        include: { order: { select: { orderNo: true, customer: true } } }
+        include: { order: { select: { orderNo: true, customerName: true, customerRef: { select: { name: true } } } } }
     })
     await createSystemLog(user.id, "UPDATE", "INVOICE", id, JSON.stringify(data))
     return toInvoiceDetailDTO(invoice)
@@ -104,7 +104,7 @@ export async function deleteInvoice(id: string): Promise<InvoiceDetailDTO> {
 
     const invoice = await prisma.invoice.delete({
         where: { id },
-        include: { order: { select: { orderNo: true, customer: true } } }
+        include: { order: { select: { orderNo: true, customerName: true, customerRef: { select: { name: true } } } } }
     })
     await createSystemLog(user.id, "DELETE", "INVOICE", id)
     return toInvoiceDetailDTO(invoice)

@@ -56,7 +56,8 @@ function mockOrder(id: string, overrides = {}) {
     return {
         id,
         orderNo: 'ORD-123-ABCD1234',
-        customer: 'John Doe',
+        customerName: 'John Doe',
+        customerId: null,
         status: 'PENDING' as const,
         total: new Decimal(100),
         items: [],
@@ -82,7 +83,7 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.product.findMany).mockResolvedValue([])
 
             await expect(createOrder({
-                customer: 'John Doe',
+                customerName: 'John Doe',
                 items: [{ productId: 'prod-1', quantity: 2, unitPrice: 10 }]
             })).rejects.toThrow('One or more selected products were not found')
         })
@@ -93,7 +94,7 @@ describe('DAL: Orders', () => {
             ])
 
             await expect(createOrder({
-                customer: 'John Doe',
+                customerName: 'John Doe',
                 items: [{ productId: 'prod-1', quantity: 5, unitPrice: 10 }]
             })).rejects.toThrow('Insufficient stock for Widget')
         })
@@ -106,7 +107,7 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.product.update).mockResolvedValue({} as never)
 
             const result = await createOrder({
-                customer: 'Jane',
+                customerName: 'Jane',
                 items: [{ productId: 'prod-1', quantity: 3, unitPrice: 25 }]
             })
 
@@ -135,7 +136,7 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.product.update).mockResolvedValue({} as never)
 
             await createOrder({
-                customer: 'Jane',
+                customerName: 'Jane',
                 items: [{ productId: 'prod-1', quantity: 1, unitPrice: 10 }]
             })
 

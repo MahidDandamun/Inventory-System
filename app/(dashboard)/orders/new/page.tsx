@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/dal/products"
+import { getCustomers } from "@/lib/dal/customers"
 import { OrderForm } from "../_components/order-form"
 
 export const metadata = {
@@ -10,6 +11,10 @@ export default async function NewOrderPage() {
     const allProducts = await getProducts()
     const availableProducts = allProducts.filter(p => p.status === "ACTIVE")
 
+    // Fetch active customers for the customer selector
+    const allCustomers = await getCustomers()
+    const activeCustomers = allCustomers.filter(c => c.status === "ACTIVE")
+
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
@@ -20,7 +25,7 @@ export default async function NewOrderPage() {
             </div>
 
             <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
-                <OrderForm products={availableProducts} />
+                <OrderForm products={availableProducts} customers={activeCustomers} />
             </div>
         </div>
     )
