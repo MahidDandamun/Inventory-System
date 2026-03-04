@@ -35,7 +35,9 @@ export default async function EditInvoicePage({
                     invoice={{
                         id: invoice.id,
                         orderId: invoice.orderId,
-                        paidAt: invoice.paidAt
+                        status: invoice.status,
+                        dueDate: invoice.dueDate,
+                        balance: invoice.balance,
                     }}
                     orders={allOrders as OrderDTO[]}
                 />

@@ -21,6 +21,8 @@ import {
     IconStack3,
     IconArrowsRightLeft,
     IconUserCircle,
+    IconTruckDelivery,
+    IconClipboardList,
 } from "@tabler/icons-react"
 import { ActiveLink } from "./active-link"
 import Image from "next/image"
@@ -33,6 +35,8 @@ const adminNavigation = [
     { label: "Bill of Materials", href: ROUTES.BILL_OF_MATERIALS, icon: IconStack3 },
     { label: "Stock Movements", href: ROUTES.STOCK_MOVEMENTS, icon: IconArrowsRightLeft },
     { label: "Customers", href: ROUTES.CUSTOMERS, icon: IconUserCircle },
+    { label: "Suppliers", href: ROUTES.SUPPLIERS, icon: IconTruckDelivery },
+    { label: "Purchase Orders", href: ROUTES.PURCHASE_ORDERS, icon: IconClipboardList },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
     { label: "System Logs", href: "/system-logs", icon: IconHistory },
@@ -48,6 +52,8 @@ const userNavigation = [
     { label: "Bill of Materials", href: ROUTES.BILL_OF_MATERIALS, icon: IconStack3 },
     { label: "Stock Movements", href: ROUTES.STOCK_MOVEMENTS, icon: IconArrowsRightLeft },
     { label: "Customers", href: ROUTES.CUSTOMERS, icon: IconUserCircle },
+    { label: "Suppliers", href: ROUTES.SUPPLIERS, icon: IconTruckDelivery },
+    { label: "Purchase Orders", href: ROUTES.PURCHASE_ORDERS, icon: IconClipboardList },
     { label: "Orders", href: "/orders", icon: IconShoppingCart },
     { label: "Invoices", href: "/invoices", icon: IconFileInvoice },
     { label: "Settings", href: "/settings", icon: IconSettings },

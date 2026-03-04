@@ -31,6 +31,8 @@ model User {
   systemLogs        SystemLog[]
   stockMovements    StockMovement[]
   createdCustomers  Customer[]
+  createdSuppliers       Supplier[]
+  createdPurchaseOrders  PurchaseOrder[]
 }
 
 model Account {
@@ -96,20 +98,20 @@ model Warehouse {
 }
 
 model Product {
-  id          String      @id @default(cuid())
-  name        String
-  sku         String      @unique
-  description String?
-  price       Decimal     @db.Decimal(10, 2)
-  quantity    Int         @default(0)
-  status      Status      @default(ACTIVE)
-  warehouseId String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  createdById String?
-  orderItems  OrderItem[]
-  warehouse   Warehouse        @relation(fields: [warehouseId], references: [id])
-  createdBy   User?            @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  id              String           @id @default(cuid())
+  name            String
+  sku             String           @unique
+  description     String?
+  price           Decimal          @db.Decimal(10, 2)
+  quantity        Int              @default(0)
+  status          Status           @default(ACTIVE)
+  warehouseId     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdById     String?
+  orderItems      OrderItem[]
+  warehouse       Warehouse        @relation(fields: [warehouseId], references: [id])
+  createdBy       User?            @relation(fields: [createdById], references: [id], onDelete: SetNull)
   billsOfMaterial BillOfMaterial[]
 
   @@index([warehouseId])
@@ -117,35 +119,36 @@ model Product {
 }
 
 model RawMaterial {
-  id          String   @id @default(cuid())
-  name        String
-  sku         String   @unique
-  description String?
-  unit        String   @default("pcs")
-  quantity    Int      @default(0)
-  reorderAt   Int      @default(10)
-  status      Status   @default(ACTIVE)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdById String?
-  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  billsOfMaterial BillOfMaterial[]
+  id              String           @id @default(cuid())
+  name            String
+  sku             String           @unique
+  description     String?
+  unit            String           @default("pcs")
+  quantity        Int              @default(0)
+  reorderAt       Int              @default(10)
+  status          Status           @default(ACTIVE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdById     String?
+  createdBy          User?              @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  billsOfMaterial    BillOfMaterial[]
+  purchaseOrderItems PurchaseOrderItem[]
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  orderNo     String      @unique
-  customerName String?    @map("customer")
-  customerId  String?
-  status      OrderStatus @default(PENDING)
-  total       Decimal     @db.Decimal(10, 2)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  createdById String?
-  invoice     Invoice?
-  items       OrderItem[]
-  createdBy   User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  customerRef Customer?   @relation(fields: [customerId], references: [id])
+  id           String      @id @default(cuid())
+  orderNo      String      @unique
+  customerName String?     @map("customer")
+  customerId   String?
+  status       OrderStatus @default(PENDING)
+  total        Decimal     @db.Decimal(10, 2)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  createdById  String?
+  invoice      Invoice?
+  items        OrderItem[]
+  createdBy    User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  customerRef  Customer?   @relation(fields: [customerId], references: [id])
 
   @@index([customerId])
 }
@@ -164,16 +167,30 @@ model OrderItem {
 }
 
 model Invoice {
-  id          String    @id @default(cuid())
-  invoiceNo   String    @unique
-  orderId     String    @unique
-  total       Decimal   @db.Decimal(10, 2)
-  paidAt      DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          String        @id @default(cuid())
+  invoiceNo   String        @unique
+  orderId     String        @unique
+  total       Decimal       @db.Decimal(10, 2)
+  status      InvoiceStatus @default(DRAFT)
+  dueDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   createdById String?
-  order       Order     @relation(fields: [orderId], references: [id])
-  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  payments    Payment[]
+  order       Order         @relation(fields: [orderId], references: [id])
+  createdBy   User?         @relation(fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  invoiceId String
+  amount    Decimal  @db.Decimal(10, 2)
+  method    String
+  reference String?
+  paidAt    DateTime @default(now())
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
 }
 
 enum UserRole {
@@ -191,6 +208,24 @@ enum OrderStatus {
   PROCESSING
   SHIPPED
   DELIVERED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  SENT
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CLOSED
   CANCELLED
 }
 
@@ -236,9 +271,9 @@ model BillOfMaterial {
 
 model StockMovement {
   id        String   @id @default(cuid())
-  entity    String   // "PRODUCT" | "RAW_MATERIAL"
+  entity    String // "PRODUCT" | "RAW_MATERIAL"
   entityId  String
-  type      String   // "IN" | "OUT" | "ADJUST"
+  type      String // "IN" | "OUT" | "ADJUST"
   quantity  Int
   reason    String
   userId    String?
@@ -265,4 +300,53 @@ model Customer {
   createdBy       User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([createdById])
+}
+
+model Supplier {
+  id             String          @id @default(cuid())
+  name           String
+  contactEmail   String?
+  phone          String?
+  address        String?
+  terms          String?
+  leadTimeDays   Int?
+  status         Status          @default(ACTIVE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  createdById    String?
+  purchaseOrders PurchaseOrder[]
+  createdBy      User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([createdById])
+}
+
+model PurchaseOrder {
+  id         String              @id @default(cuid())
+  poNumber   String              @unique
+  supplierId String
+  status     PurchaseOrderStatus @default(DRAFT)
+  total      Decimal             @db.Decimal(10, 2)
+  notes      String?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  createdById String?
+  supplier   Supplier            @relation(fields: [supplierId], references: [id])
+  items      PurchaseOrderItem[]
+  createdBy  User?               @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([supplierId])
+  @@index([createdById])
+}
+
+model PurchaseOrderItem {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  rawMaterialId   String
+  quantity        Int
+  unitCost        Decimal       @db.Decimal(10, 2)
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  rawMaterial     RawMaterial   @relation(fields: [rawMaterialId], references: [id])
+
+  @@index([purchaseOrderId])
+  @@index([rawMaterialId])
 }

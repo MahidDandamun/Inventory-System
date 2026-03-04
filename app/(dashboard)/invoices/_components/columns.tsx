@@ -53,8 +53,22 @@ export const columns: ColumnDef<InvoiceDTO>[] = [
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
-            const isPaid = !!row.original.paidAt
-            return <StatusBadge status={isPaid ? "PAID" : "UNPAID"} />
+            return <StatusBadge status={row.original.status} />
+        },
+    },
+    {
+        accessorKey: "dueDate",
+        header: "Due Date",
+        cell: ({ row }) => {
+            const dueDate = row.original.dueDate
+            if (!dueDate) return <div className="text-muted-foreground">—</div>
+
+            const formatted = new Date(dueDate).toLocaleDateString()
+            if (row.original.isOverdue) {
+                return <div className="text-rose-600 dark:text-rose-400 font-medium">{formatted} (Overdue)</div>
+            }
+
+            return <div className="text-muted-foreground">{formatted}</div>
         },
     },
     {

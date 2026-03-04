@@ -129,6 +129,8 @@ _Last updated: 2026-03-04_
 - Added UI slices for Bill of Materials and Stock Movements, updating sidebar routing
 - **Phase 1A: Customer Entity** — schema, DAL, actions, page, table, create/edit dialogs, sidebar nav, order form customer selector
 - **Phase 1D: Quick Wins** — BOM multi-material dialog, system logs filters, stock movements DataTable with filters, dashboard real growth calc + chart empty state
+- **Phase 1B: Invoice/Payment Lifecycle** — added `InvoiceStatus` flow, `Payment` model, invoice `dueDate` + status-aware DAL/actions/UI, payment recording form, overdue indicators, and unit tests for invoice status transitions
+- **Phase 1C: Supplier + Purchase Order Skeleton** — added `Supplier`, `PurchaseOrder`, `PurchaseOrderItem` models, `PurchaseOrderStatus` enum, PO status transition map (`lib/po-status.ts`), DAL with transactional PO creation, status transitions, delete (DRAFT only), server actions, supplier/PO pages with DataTable + CRUD dialogs, sidebar nav entries
 
 ---
 

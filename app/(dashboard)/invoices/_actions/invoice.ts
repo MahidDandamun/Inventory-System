@@ -2,20 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 import { createInvoice, updateInvoice, deleteInvoice } from "@/lib/dal/invoices"
-import { invoiceSchema } from "@/schemas/invoice"
-import { createNotification } from "@/lib/dal/notifications"
-import { getAllUsers } from "@/lib/dal/users"
+import { recordPayment } from "@/lib/dal/payments"
+import { invoiceSchema, paymentSchema, updateInvoiceSchema } from "@/schemas/invoice"
 import { validatedAction } from "@/lib/actions/safe-action"
 import { z } from "zod"
 
 export async function createInvoiceAction(formData: FormData) {
-    const markAsPaidStr = formData.get("markAsPaid")
-    const orderId = formData.get("orderId")
-
-    return validatedAction(invoiceSchema, {
-        orderId: orderId,
-        markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on",
-    }, async (data) => {
+    return validatedAction(invoiceSchema, formData, async (data) => {
         const invoice = await createInvoice(data)
         revalidatePath("/invoices")
         return invoice
@@ -23,24 +16,27 @@ export async function createInvoiceAction(formData: FormData) {
 }
 
 export async function updateInvoiceAction(id: string, formData: FormData) {
-    const markAsPaidStr = formData.get("markAsPaid")
-
-    return validatedAction(invoiceSchema, {
-        markAsPaid: markAsPaidStr === "true" || markAsPaidStr === "on"
-    }, async (data) => {
+    return validatedAction(updateInvoiceSchema, formData, async (data) => {
         const invoice = await updateInvoice(id, data)
+        revalidatePath("/invoices")
+        revalidatePath(`/invoices/${id}`)
+        return invoice
+    })
+}
 
-        // Notify admins if invoice was just paid
-        if (invoice.paidAt) {
-            const users = await getAllUsers()
-            const admins = users.filter((u) => u.role === "ADMIN")
-            for (const admin of admins) {
-                await createNotification(admin.id, "Invoice Paid", `Invoice #${invoice.invoiceNo} has been marked as paid.`)
-            }
-        }
+export async function recordPaymentAction(formData: FormData) {
+    return validatedAction(paymentSchema, formData, async (data) => {
+        const payment = await recordPayment({
+            invoiceId: data.invoiceId,
+            amount: data.amount,
+            method: data.method,
+            reference: data.reference,
+            paidAt: data.paidAt ?? undefined,
+        })
 
         revalidatePath("/invoices")
-        return invoice
+        revalidatePath(`/invoices/${data.invoiceId}`)
+        return payment
     })
 }
 

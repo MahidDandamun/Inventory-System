@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 
-export function generateDocumentNumber(prefix: "ORD" | "INV") {
+export function generateDocumentNumber(prefix: "ORD" | "INV" | "PO") {
     const randomPart = crypto.randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase()
     return `${prefix}-${Date.now()}-${randomPart}`
 }
