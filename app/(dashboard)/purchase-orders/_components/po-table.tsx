@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { PurchaseOrderListDTO } from "@/lib/dal/purchase-orders"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -56,9 +57,9 @@ export const columns: ColumnDef<PurchaseOrderListDTO>[] = [
         accessorKey: "poNumber",
         header: "PO Number",
         cell: ({ row }) => (
-            <span className="font-mono font-semibold text-primary">
+            <Link href={`/purchase-orders/${row.original.id}`} className="font-mono font-semibold text-primary hover:underline">
                 {row.getValue("poNumber")}
-            </span>
+            </Link>
         ),
     },
     {
