@@ -65,6 +65,26 @@ function mockOrder(id: string, overrides = {}) {
     }
 }
 
+function mockOrderDetail(id: string, overrides = {}) {
+    return {
+        id,
+        orderNo: 'ORD-123-ABCD1234',
+        customerName: 'John Doe',
+        customerId: null,
+        status: 'PENDING' as const,
+        total: new Decimal(100),
+        notes: null,
+        createdAt: new Date('2025-01-01T00:00:00.000Z'),
+        confirmedAt: null,
+        shippedAt: null,
+        deliveredAt: null,
+        cancelledAt: null,
+        _count: { items: 0 },
+        items: [],
+        ...overrides,
+    }
+}
+
 // ── Tests ──
 
 describe('DAL: Orders', () => {
@@ -103,7 +123,7 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.product.findMany).mockResolvedValue([
                 mockProduct('prod-1', 'Widget', 25, 100) as never,
             ])
-            vi.mocked(prisma.order.create).mockResolvedValue({ id: 'order-1' } as never)
+            vi.mocked(prisma.order.create).mockResolvedValue(mockOrderDetail('order-1') as never)
             vi.mocked(prisma.product.update).mockResolvedValue({} as never)
 
             const result = await createOrder({
@@ -111,7 +131,7 @@ describe('DAL: Orders', () => {
                 items: [{ productId: 'prod-1', quantity: 3, unitPrice: 25 }]
             })
 
-            expect(result).toEqual({ id: 'order-1' })
+            expect(result.id).toBe('order-1')
             expect(prisma.$transaction).toHaveBeenCalledOnce()
             expect(prisma.product.update).toHaveBeenCalledWith({
                 where: { id: 'prod-1' },
@@ -132,7 +152,7 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.product.findMany).mockResolvedValue([
                 mockProduct('prod-1', 'Widget', 10, 100) as never,
             ])
-            vi.mocked(prisma.order.create).mockResolvedValue({ id: 'order-1' } as never)
+            vi.mocked(prisma.order.create).mockResolvedValue(mockOrderDetail('order-1') as never)
             vi.mocked(prisma.product.update).mockResolvedValue({} as never)
 
             await createOrder({
@@ -242,7 +262,7 @@ describe('DAL: Orders', () => {
                 mockOrder('ord-1', { status: 'PENDING', items, orderNo: 'ORD-TEST' }) as never
             )
             vi.mocked(prisma.product.update).mockResolvedValue({} as never)
-            vi.mocked(prisma.order.delete).mockResolvedValue({} as never)
+            vi.mocked(prisma.order.delete).mockResolvedValue(mockOrderDetail('ord-1') as never)
 
             await deleteOrder('ord-1')
 
@@ -266,7 +286,9 @@ describe('DAL: Orders', () => {
             vi.mocked(prisma.order.findUnique).mockResolvedValue(
                 mockOrder('ord-1', { status: 'CANCELLED' }) as never
             )
-            vi.mocked(prisma.order.delete).mockResolvedValue({} as never)
+            vi.mocked(prisma.order.delete).mockResolvedValue(
+                mockOrderDetail('ord-1', { status: 'CANCELLED' }) as never
+            )
 
             await deleteOrder('ord-1')
 
