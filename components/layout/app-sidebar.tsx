@@ -24,12 +24,17 @@ import {
     IconUserCircle,
     IconTruckDelivery,
     IconClipboardList,
+    IconClipboardCheck,
+    IconShieldCheck,
 } from "@tabler/icons-react"
 import { ActiveLink } from "./active-link"
 import Image from "next/image"
 
 const adminNavigation = [
     { label: "Dashboard", href: "/dashboard", icon: IconDashboard },
+    { label: "Reports", href: ROUTES.REPORTS, icon: IconClipboardList },
+    { label: "Cycle Counts", href: ROUTES.CYCLE_COUNTS, icon: IconClipboardCheck },
+    { label: "Approvals", href: ROUTES.APPROVALS, icon: IconShieldCheck },
     { label: "Products", href: "/products", icon: IconPackage },
     { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },
@@ -48,6 +53,8 @@ const adminNavigation = [
 
 const userNavigation = [
     { label: "Dashboard", href: "/dashboard", icon: IconDashboard },
+    { label: "Reports", href: ROUTES.REPORTS, icon: IconClipboardList },
+    { label: "Cycle Counts", href: ROUTES.CYCLE_COUNTS, icon: IconClipboardCheck },
     { label: "Products", href: "/products", icon: IconPackage },
     { label: "Warehouse", href: ROUTES.WAREHOUSES, icon: IconBuildingWarehouse },
     { label: "Raw Materials", href: "/raw-materials", icon: IconBoxSeam },

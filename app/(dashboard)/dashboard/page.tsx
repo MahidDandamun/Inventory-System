@@ -1,30 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     IconPackage,
-    IconBuildingWarehouse,
-    IconShoppingCart,
     IconCurrencyDollar,
+    IconTrendingUp,
+    IconShoppingCartDiscount,
 } from "@tabler/icons-react"
-import { getProducts } from "@/lib/dal/products"
-import { getWarehouses } from "@/lib/dal/warehouses"
 import { getOrders } from "@/lib/dal/orders"
 import { getReplenishmentSuggestions } from "@/lib/dal/replenishment"
 import { getSuppliers } from "@/lib/dal/suppliers"
+import { getDashboardMetrics } from "@/lib/dal/reports"
 import { OverviewChart } from "./_components/overview-chart"
 import { ReplenishmentWidget } from "./_components/replenishment-widget"
 
 export const metadata = {
-    title: "Dashboard",
+    title: "Dashboard | Inventory System",
 }
 
 export default async function DashboardPage() {
     // Parallel fetching for performance
-    const [products, warehouses, orders, suggestions, suppliers] = await Promise.all([
-        getProducts(),
-        getWarehouses(),
+    const [orders, suggestions, suppliers, metrics] = await Promise.all([
         getOrders(),
         getReplenishmentSuggestions(),
         getSuppliers(),
+        getDashboardMetrics()
     ])
 
     const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
@@ -77,37 +75,26 @@ export default async function DashboardPage() {
             icon: IconCurrencyDollar,
         },
         {
-            title: "Products",
-            value: products.length.toString(),
-            description: "Active in the catalog",
+            title: "Stock Turns",
+            value: metrics.stockTurns.toFixed(2),
+            description: "Cost vs Avg Inventory",
+            icon: IconTrendingUp,
+        },
+        {
+            title: "Order Fill Rate",
+            value: `${metrics.fillRate.toFixed(1)}%`,
+            description: "Percentage of orders delivered",
+            icon: IconShoppingCartDiscount,
+        },
+        {
+            title: "Top Products Sold",
+            value: metrics.topProducts.reduce((acc, p) => acc + p.quantitySold, 0).toString(),
+            description: "Across top 5 items",
             icon: IconPackage,
-        },
-        {
-            title: "Warehouses",
-            value: warehouses.length.toString(),
-            description: "Operating locations",
-            icon: IconBuildingWarehouse,
-        },
-        {
-            title: "Orders",
-            value: orders.length.toString(),
-            description: "Total orders placed",
-            icon: IconShoppingCart,
         },
     ]
 
-    // Generate chart data: grouped by month from orders
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    const chartData = months.map(m => ({ name: m, total: 0 }))
-
-    // Distribute orders into the chart
-    orders.forEach(order => {
-        const date = new Date(order.createdAt)
-        const monthIndex = date.getMonth()
-        chartData[monthIndex].total += order.total
-    })
-
-    const hasChartData = orders.length > 0
+    const hasChartData = metrics.revenueTrends.some(t => t.total > 0)
 
     return (
         <div className="space-y-6">
@@ -137,20 +124,51 @@ export default async function DashboardPage() {
                 <div className="col-span-4 space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-primary">Overview</CardTitle>
+                            <CardTitle className="text-primary">Revenue Trend</CardTitle>
                         </CardHeader>
                         <CardContent className="pl-2">
                             {hasChartData ? (
-                                <OverviewChart data={chartData} />
+                                <OverviewChart data={metrics.revenueTrends} />
                             ) : (
                                 <div className="flex items-center justify-center h-[350px] text-muted-foreground">
                                     <div className="text-center space-y-2">
-                                        <IconShoppingCart className="h-10 w-10 mx-auto opacity-30" />
-                                        <p className="text-sm">No order data available yet.</p>
+                                        <IconCurrencyDollar className="h-10 w-10 mx-auto opacity-30" />
+                                        <p className="text-sm">No revenue data available yet.</p>
                                         <p className="text-xs">Create your first order to see revenue trends.</p>
                                     </div>
                                 </div>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-primary">Top Products</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {metrics.topProducts.map((p, i) => (
+                                    <div key={p.id} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                                                {i + 1}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium leading-none">{p.name}</p>
+                                                <p className="text-sm text-muted-foreground">{p.quantitySold} units sold</p>
+                                            </div>
+                                        </div>
+                                        <div className="font-medium text-primary">
+                                            ${p.revenue.toFixed(2)}
+                                        </div>
+                                    </div>
+                                ))}
+                                {metrics.topProducts.length === 0 && (
+                                    <div className="text-center text-sm text-muted-foreground py-4">
+                                        No product sales yet.
+                                    </div>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -168,7 +186,7 @@ export default async function DashboardPage() {
                                 {orders.slice(0, 5).map(order => (
                                     <div key={order.id} className="flex items-center">
                                         <div className="ml-4 space-y-1">
-                                            <p className="text-sm font-medium leading-none text-primary">{order.customer}</p>
+                                            <p className="text-sm font-medium leading-none text-primary">{order.customer || "Walk-in"}</p>
                                             <p className="text-sm text-muted-foreground">
                                                 {order.orderNo}
                                             </p>
@@ -191,4 +209,3 @@ export default async function DashboardPage() {
         </div>
     )
 }
-

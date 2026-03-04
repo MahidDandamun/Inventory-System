@@ -22,4 +22,7 @@ export const ROUTES = {
     TRANSFERS: "/transfers",
     SYSTEM_LOGS: "/system-logs",
     SETTINGS: "/settings",
+    REPORTS: "/reports",
+    CYCLE_COUNTS: "/cycle-counts",
+    APPROVALS: "/approvals",
 } as const;

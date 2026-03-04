@@ -9,6 +9,8 @@ export type SystemLogDTO = {
     entity: string
     entityId: string | null
     details: string | null
+    previousData: string | null
+    newData: string | null
     createdAt: Date
     user: { name: string | null, email: string | null } | null
 }
@@ -20,6 +22,8 @@ export function toSystemLogDTO(log: SystemLog & { user?: { name: string | null, 
         entity: log.entity,
         entityId: log.entityId,
         details: log.details,
+        previousData: log.previousData,
+        newData: log.newData,
         createdAt: log.createdAt,
         user: log.user ? { name: log.user.name, email: log.user.email } : null
     }
@@ -29,9 +33,11 @@ export async function createSystemLog(
     userId: string | null | undefined,
     action: string,
     entity: string,
-    entityId?: string,
-    details?: string,
-    tx?: Prisma.TransactionClient
+    entityId?: string | null,
+    details?: string | null,
+    tx?: Prisma.TransactionClient,
+    previousData?: string | null,
+    newData?: string | null
 ): Promise<void> {
     try {
         const db = tx || prisma
@@ -41,7 +47,9 @@ export async function createSystemLog(
                 action,
                 entity,
                 entityId,
-                details
+                details,
+                previousData,
+                newData
             }
         })
     } catch (error) {
