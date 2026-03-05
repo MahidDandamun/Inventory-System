@@ -17,7 +17,7 @@ export async function sendVerificationEmail(email: string, token: string) {
     const confirmLink = `${domain}/verify?token=${token}`
 
     if (!process.env.RESEND_API_KEY) {
-        console.log(`[VERIFICATION EMAIL] Send to ${email}: ${confirmLink}`)
+        console.log(`[VERIFICATION EMAIL] Simulated send to ${email}`)
         return
     }
 
@@ -40,7 +40,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     const resetLink = `${domain}/new-password?token=${token}`
 
     if (!process.env.RESEND_API_KEY) {
-        console.log(`[PASSWORD RESET] Send to ${email}: ${resetLink}`)
+        console.log(`[PASSWORD RESET] Simulated send to ${email}`)
         return
     }
 
@@ -61,7 +61,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
  */
 export async function sendTwoFactorEmail(email: string, token: string) {
     if (!process.env.RESEND_API_KEY) {
-        console.log(`[2FA EMAIL] Send to ${email}: ${token}`)
+        console.log(`[2FA EMAIL] Simulated send to ${email}`)
         return
     }
 
