@@ -22,7 +22,7 @@ export default async function BillOfMaterialsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-primary">Bill of Materials</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight">Bill of Materials</h1>
                     <p className="text-muted-foreground">
                         Manage product compositions and required raw materials.
                     </p>

@@ -29,7 +29,7 @@ import { Label } from "@/components/ui/label"
 import { FormError } from "./form-error"
 import { FormSuccess } from "./form-success"
 import { SocialButtons } from "./social-buttons"
-import Image from "next/image"
+
 
 export function LoginForm() {
     const [isPending, startTransition] = useTransition()
@@ -74,14 +74,11 @@ export function LoginForm() {
 
     return (
         <Card className="border-0 shadow-none bg-transparent ring-0">
-            <CardHeader className="text-center">
-                <div className="flex justify-center pb-2">
-                    <Image src="/logo.png" alt="Logo" width={48} height={48} className="h-12 w-12" />
-                </div>
-                <CardTitle className="text-xl sm:text-2xl">
+            <CardHeader className="text-center space-y-1">
+                <CardTitle className="text-xl font-semibold tracking-tight">
                     {showTwoFactor ? "Two-Factor Authentication" : "Welcome back"}
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                     {showTwoFactor
                         ? "Enter the 6-digit code we sent to your email"
                         : "Sign in to your account to continue"}
@@ -174,7 +171,7 @@ export function LoginForm() {
                         <>
                             {/* Divider */}
                             <div className="relative my-2 text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                                <span className="relative z-10 bg-card px-2 text-muted-foreground">
+                                <span className="relative z-10 bg-transparent px-2 text-muted-foreground">
                                     or continue with
                                 </span>
                             </div>

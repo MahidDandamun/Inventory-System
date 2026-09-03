@@ -29,7 +29,7 @@ export default async function ReportsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-primary">Reports & Export Center</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">Reports & Export Center</h1>
                 <p className="text-muted-foreground">
                     Analyze inventory valuation, dead stock, and revenue trends. Use the export button in each table to download data.
                 </p>
@@ -49,7 +49,7 @@ export default async function ReportsPage() {
                             <CardTitle>Stock Valuation</CardTitle>
                             <CardDescription>
                                 Current inventory value across all active products. Total: {" "}
-                                <span className="font-bold text-primary">
+                                <span className="font-semibold text-foreground">
                                     {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(stockValuation.totalValuation)}
                                 </span>
                             </CardDescription>

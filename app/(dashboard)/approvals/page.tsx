@@ -11,7 +11,7 @@ export default async function ApprovalsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-primary">Governance & Approvals</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">Governance & Approvals</h1>
                 <p className="text-muted-foreground">
                     Review and act upon administrative requests like significant stock variances.
                 </p>

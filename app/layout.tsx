@@ -2,18 +2,18 @@
 // ---
 // Root layout — wraps entire application
 // Providers: SessionProvider, ThemeProvider
-// Font: Public Sans (variable --font-sans)
+// Font: Inter (variable --font-sans)
 // ---
 
 import type { Metadata } from "next"
-import { Public_Sans, Geist_Mono } from "next/font/google"
+import { Inter, Geist_Mono } from "next/font/google"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 import { auth } from "@/auth"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
-const publicSans = Public_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 })
@@ -25,11 +25,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Inventory System",
-    template: "%s | Inventory System",
+    default: "Theiapollo Inventory",
+    template: "%s — Theiapollo",
   },
   description:
-    "Production-grade inventory management system built with Next.js",
+    "Enterprise inventory management — products, orders, invoices, and warehouse operations in one system.",
 }
 
 export default async function RootLayout({
@@ -43,11 +43,11 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${publicSans.variable} ${geistMono.variable} font-sans antialiased`}
+          className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}
         >
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

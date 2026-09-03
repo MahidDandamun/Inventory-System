@@ -55,7 +55,7 @@ export function CycleCountClientWrapper({ cc }: { cc: CycleCountDTO }) {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-primary">{cc.name}</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight">{cc.name}</h1>
                     <p className="text-muted-foreground mt-1 text-sm">
                         Status: <Badge>{cc.status}</Badge> | Scheduled: {new Date(cc.scheduledDate).toLocaleDateString()}
                     </p>

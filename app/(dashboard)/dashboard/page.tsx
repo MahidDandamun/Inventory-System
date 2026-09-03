@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-    IconPackage,
     IconCurrencyDollar,
     IconTrendingUp,
     IconShoppingCartDiscount,
+    IconPackage,
 } from "@tabler/icons-react"
 import { getOrders } from "@/lib/dal/orders"
 import { getReplenishmentSuggestions } from "@/lib/dal/replenishment"
@@ -13,7 +13,7 @@ import { OverviewChart } from "./_components/overview-chart"
 import { ReplenishmentWidget } from "./_components/replenishment-widget"
 
 export const metadata = {
-    title: "Dashboard | Inventory System",
+    title: "Dashboard — Theiapollo",
 }
 
 export default async function DashboardPage() {
@@ -73,46 +73,59 @@ export default async function DashboardPage() {
             value: formattedRevenue,
             description: revenueDescription,
             icon: IconCurrencyDollar,
+            iconBg: "bg-emerald-500/10",
+            iconColor: "text-emerald-600 dark:text-emerald-400",
         },
         {
             title: "Stock Turns",
             value: metrics.stockTurns.toFixed(2),
             description: "Cost vs Avg Inventory",
             icon: IconTrendingUp,
+            iconBg: "bg-blue-500/10",
+            iconColor: "text-blue-600 dark:text-blue-400",
         },
         {
             title: "Order Fill Rate",
             value: `${metrics.fillRate.toFixed(1)}%`,
             description: "Percentage of orders delivered",
             icon: IconShoppingCartDiscount,
+            iconBg: "bg-amber-500/10",
+            iconColor: "text-amber-600 dark:text-amber-400",
         },
         {
             title: "Top Products Sold",
             value: metrics.topProducts.reduce((acc, p) => acc + p.quantitySold, 0).toString(),
             description: "Across top 5 items",
             icon: IconPackage,
+            iconBg: "bg-violet-500/10",
+            iconColor: "text-violet-600 dark:text-violet-400",
         },
     ]
 
     const hasChartData = metrics.revenueTrends.some(t => t.total > 0)
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h1>
+        <div className="space-y-6 animate-fade-in">
+            <div>
+                <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+                <p className="text-sm text-muted-foreground">Overview of your inventory and sales performance.</p>
+            </div>
 
             {/* Stat cards */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
                 {stats.map((stat) => (
                     <Card key={stat.title}>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
                                 {stat.title}
                             </CardTitle>
-                            <stat.icon className="h-5 w-5 text-primary/80" />
+                            <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${stat.iconBg}`}>
+                                <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold tracking-tight text-primary">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <div className="text-2xl font-semibold tracking-tight">{stat.value}</div>
+                            <p className="text-xs text-muted-foreground mt-1">
                                 {stat.description}
                             </p>
                         </CardContent>
@@ -124,7 +137,7 @@ export default async function DashboardPage() {
                 <div className="col-span-4 space-y-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-primary">Revenue Trend</CardTitle>
+                            <CardTitle className="text-base font-medium">Revenue Trend</CardTitle>
                         </CardHeader>
                         <CardContent className="pl-2">
                             {hasChartData ? (
@@ -132,9 +145,11 @@ export default async function DashboardPage() {
                             ) : (
                                 <div className="flex items-center justify-center h-[350px] text-muted-foreground">
                                     <div className="text-center space-y-2">
-                                        <IconCurrencyDollar className="h-10 w-10 mx-auto opacity-30" />
-                                        <p className="text-sm">No revenue data available yet.</p>
-                                        <p className="text-xs">Create your first order to see revenue trends.</p>
+                                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                                            <IconCurrencyDollar className="h-6 w-6 opacity-40" />
+                                        </div>
+                                        <p className="text-sm font-medium">No revenue data yet</p>
+                                        <p className="text-xs text-muted-foreground">Create your first order to see revenue trends.</p>
                                     </div>
                                 </div>
                             )}
@@ -143,28 +158,31 @@ export default async function DashboardPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-primary">Top Products</CardTitle>
+                            <CardTitle className="text-base font-medium">Top Products</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 {metrics.topProducts.map((p, i) => (
                                     <div key={p.id} className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                                                 {i + 1}
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium leading-none">{p.name}</p>
-                                                <p className="text-sm text-muted-foreground">{p.quantitySold} units sold</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{p.quantitySold} units sold</p>
                                             </div>
                                         </div>
-                                        <div className="font-medium text-primary">
+                                        <div className="text-sm font-medium">
                                             ${p.revenue.toFixed(2)}
                                         </div>
                                     </div>
                                 ))}
                                 {metrics.topProducts.length === 0 && (
-                                    <div className="text-center text-sm text-muted-foreground py-4">
+                                    <div className="text-center text-sm text-muted-foreground py-6">
+                                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
+                                            <IconPackage className="h-5 w-5 opacity-40" />
+                                        </div>
                                         No product sales yet.
                                     </div>
                                 )}
@@ -179,25 +197,31 @@ export default async function DashboardPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-primary">Recent Orders</CardTitle>
+                            <CardTitle className="text-base font-medium">Recent Orders</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-8">
+                            <div className="space-y-6">
                                 {orders.slice(0, 5).map(order => (
                                     <div key={order.id} className="flex items-center">
-                                        <div className="ml-4 space-y-1">
-                                            <p className="text-sm font-medium leading-none text-primary">{order.customer || "Walk-in"}</p>
-                                            <p className="text-sm text-muted-foreground">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
+                                            {(order.customer || "W")[0]}
+                                        </div>
+                                        <div className="ml-3 space-y-0.5 min-w-0 flex-1">
+                                            <p className="text-sm font-medium leading-none truncate">{order.customer || "Walk-in"}</p>
+                                            <p className="text-xs text-muted-foreground">
                                                 {order.orderNo}
                                             </p>
                                         </div>
-                                        <div className="ml-auto font-medium">
+                                        <div className="ml-auto text-sm font-medium tabular-nums">
                                             +${order.total.toFixed(2)}
                                         </div>
                                     </div>
                                 ))}
                                 {orders.length === 0 && (
-                                    <div className="text-sm text-muted-foreground text-center py-4">
+                                    <div className="text-center text-sm text-muted-foreground py-6">
+                                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
+                                            <IconPackage className="h-5 w-5 opacity-40" />
+                                        </div>
                                         No orders yet.
                                     </div>
                                 )}

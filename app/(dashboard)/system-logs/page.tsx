@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/auth"
 import { getAllSystemLogs } from "@/lib/dal/system-logs"
 import { columns } from "./_components/columns"
 import { DataTable } from "@/components/ui/data-table"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const metadata: Metadata = {
     title: "System Ledger | Inventory System",
@@ -21,51 +20,46 @@ export default async function SystemLogsPage() {
     const logs = await getAllSystemLogs()
 
     return (
-        <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-            <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight text-primary">System Ledger</h2>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-semibold tracking-tight">System Ledger</h1>
+                    <p className="text-muted-foreground">
+                        A historical ledger of all modifications across the system.
+                    </p>
+                </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-primary">Audit Trail</CardTitle>
-                    <CardDescription>
-                        A historical ledger of all modifications across the system.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <DataTable
-                        searchKey="entity"
-                        columns={columns}
-                        data={logs}
-                        filterColumns={[
-                            {
-                                id: "action",
-                                title: "Action",
-                                options: [
-                                    { label: "Create", value: "CREATE" },
-                                    { label: "Update", value: "UPDATE" },
-                                    { label: "Delete", value: "DELETE" },
-                                ],
-                            },
-                            {
-                                id: "entity",
-                                title: "Entity",
-                                options: [
-                                    { label: "Product", value: "PRODUCT" },
-                                    { label: "Order", value: "ORDER" },
-                                    { label: "Invoice", value: "INVOICE" },
-                                    { label: "Warehouse", value: "WAREHOUSE" },
-                                    { label: "Raw Material", value: "RAW_MATERIAL" },
-                                    { label: "BOM", value: "BOM" },
-                                    { label: "Customer", value: "CUSTOMER" },
-                                    { label: "User", value: "USER" },
-                                ],
-                            },
-                        ]}
-                    />
-                </CardContent>
-            </Card>
+            <DataTable
+                searchKey="entity"
+                columns={columns}
+                data={logs}
+                filterColumns={[
+                    {
+                        id: "action",
+                        title: "Action",
+                        options: [
+                            { label: "Create", value: "CREATE" },
+                            { label: "Update", value: "UPDATE" },
+                            { label: "Delete", value: "DELETE" },
+                        ],
+                    },
+                    {
+                        id: "entity",
+                        title: "Entity",
+                        options: [
+                            { label: "Product", value: "PRODUCT" },
+                            { label: "Order", value: "ORDER" },
+                            { label: "Invoice", value: "INVOICE" },
+                            { label: "Warehouse", value: "WAREHOUSE" },
+                            { label: "Raw Material", value: "RAW_MATERIAL" },
+                            { label: "BOM", value: "BOM" },
+                            { label: "Customer", value: "CUSTOMER" },
+                            { label: "User", value: "USER" },
+                        ],
+                    },
+                ]}
+            />
         </div>
     )
 }

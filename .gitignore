@@ -38,5 +38,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# AI / Agent config
+_agent/
+.agent/
+.agents/
+.gemini/
+.ai/
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+*.swo
+
 # backup (old source before refactor)
 /_backup/

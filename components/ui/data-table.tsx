@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { IconDownload } from "@tabler/icons-react"
+import { IconDownload, IconSearch } from "@tabler/icons-react"
 
 export interface DataTableFilterColumn {
     id: string
@@ -92,16 +92,26 @@ export function DataTable<TData, TValue>({
         document.body.removeChild(link)
     }
 
+    const totalRows = table.getFilteredRowModel().rows.length
+    const pageIndex = table.getState().pagination.pageIndex
+    const pageSize = table.getState().pagination.pageSize
+    const startRow = totalRows === 0 ? 0 : pageIndex * pageSize + 1
+    const endRow = Math.min((pageIndex + 1) * pageSize, totalRows)
+
     return (
-        <div>
-            <div className="flex items-center gap-2 pb-4">
+        <div className="space-y-4">
+            {/* Toolbar: search + filters + export */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 {searchKey && (
-                    <Input
-                        placeholder="Search across all columns..."
-                        value={globalFilter ?? ""}
-                        onChange={(event) => setGlobalFilter(event.target.value)}
-                        className="max-w-sm"
-                    />
+                    <div className="relative max-w-sm flex-1">
+                        <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search..."
+                            value={globalFilter ?? ""}
+                            onChange={(event) => setGlobalFilter(event.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
                 )}
 
                 {filterColumns?.map((filterCol) => {
@@ -120,7 +130,7 @@ export function DataTable<TData, TValue>({
                                 }
                             }}
                         >
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-[160px]">
                                 <SelectValue placeholder={`Filter by ${filterCol.title}`} />
                             </SelectTrigger>
                             <SelectContent>
@@ -134,23 +144,24 @@ export function DataTable<TData, TValue>({
                         </Select>
                     )
                 })}
+
+                <div className="sm:ml-auto">
+                    <Button onClick={exportTableToCSV} variant="outline" size="sm">
+                        <IconDownload className="mr-1.5 h-3.5 w-3.5" />
+                        Export
+                    </Button>
+                </div>
             </div>
 
-            <div className="flex justify-end pb-4">
-                <Button onClick={exportTableToCSV} variant="outline" size="sm">
-                    <IconDownload className="mr-2 h-4 w-4" />
-                    Export CSV
-                </Button>
-            </div>
-
-            <div className="rounded-md border">
+            {/* Table */}
+            <div className="rounded-lg border overflow-hidden">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -169,6 +180,7 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className="hover:bg-muted/30 transition-colors"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
@@ -179,32 +191,46 @@ export function DataTable<TData, TValue>({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                <TableCell colSpan={columns.length} className="h-32 text-center">
+                                    <div className="flex flex-col items-center gap-1">
+                                        <p className="text-sm font-medium text-muted-foreground">No results found</p>
+                                        <p className="text-xs text-muted-foreground/70">Try adjusting your search or filters.</p>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                    {totalRows > 0
+                        ? `Showing ${startRow}–${endRow} of ${totalRows}`
+                        : "No results"}
+                </p>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                        {table.getPageCount() > 0 ? `${pageIndex + 1} / ${table.getPageCount()}` : "—"}
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
             </div>
         </div>
     )

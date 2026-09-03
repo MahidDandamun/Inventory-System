@@ -18,7 +18,7 @@ export default async function TransfersPage() {
             <div className="flex-1 space-y-4 p-8 pt-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-primary">Transfers ({transfers.length})</h1>
+                        <h1 className="text-2xl font-semibold tracking-tight">Transfers ({transfers.length})</h1>
                         <p className="text-muted-foreground">Manage stock transfers between warehouses.</p>
                     </div>
                     <CreateTransferDialog warehouses={warehouses} products={products} />

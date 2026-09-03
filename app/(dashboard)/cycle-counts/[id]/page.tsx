@@ -6,8 +6,9 @@ export const metadata = {
     title: "Cycle Count Detail | Inventory System",
 }
 
-export default async function CycleCountDetailPage({ params }: { params: { id: string } }) {
-    const cc = await getCycleCountById(params.id)
+export default async function CycleCountDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
+    const cc = await getCycleCountById(id)
 
     if (!cc) {
         notFound()

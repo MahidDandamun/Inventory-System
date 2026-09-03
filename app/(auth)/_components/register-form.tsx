@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
 import { IconLoader2, IconEye, IconEyeOff } from "@tabler/icons-react"
 import { toast } from "sonner"
-import Image from "next/image"
+
 import { registerSchema, type RegisterInput } from "@/schemas/auth"
 import { registerAction } from "@/app/(auth)/_actions/register"
 
@@ -62,13 +62,10 @@ export function RegisterForm() {
     }
 
     return (
-        <Card className="border-0 shadow-none sm:border sm:shadow-sm">
-            <CardHeader className="text-center">
-                <div className="flex justify-center pb-2">
-                    <Image src="/logo.png" alt="Logo" width={48} height={48} className="h-12 w-12" />
-                </div>
-                <CardTitle className="text-xl sm:text-2xl">Create an account</CardTitle>
-                <CardDescription>Enter your details to get started</CardDescription>
+        <Card className="border shadow-sm">
+            <CardHeader className="text-center space-y-1">
+                <CardTitle className="text-xl font-semibold tracking-tight">Create an account</CardTitle>
+                <CardDescription className="text-sm">Enter your details to get started</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

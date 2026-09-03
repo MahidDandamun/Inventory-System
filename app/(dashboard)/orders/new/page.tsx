@@ -18,7 +18,7 @@ export default async function NewOrderPage() {
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-primary">Create Order</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">Create Order</h1>
                 <p className="text-muted-foreground">
                     Create a new customer order and itemize products.
                 </p>
