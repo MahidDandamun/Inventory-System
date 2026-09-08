@@ -83,6 +83,18 @@ export const getOrders = cache(async (): Promise<OrderDTO[]> => {
     return orders.map((o) => toOrderDTO(o))
 })
 
+export const getRecentOrders = cache(async (take: number = 5): Promise<OrderDTO[]> => {
+    await requireCurrentUser()
+
+    const orders = await prisma.order.findMany({
+        take,
+        include: { _count: { select: { items: true } }, customerRef: { select: { name: true } } },
+        orderBy: { createdAt: "desc" },
+    })
+
+    return orders.map((o) => toOrderDTO(o))
+})
+
 export async function getOrderById(
     id: string
 ): Promise<OrderDetailDTO | null> {

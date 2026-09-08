@@ -5,7 +5,7 @@ import {
     IconShoppingCartDiscount,
     IconPackage,
 } from "@tabler/icons-react"
-import { getOrders } from "@/lib/dal/orders"
+import { getRecentOrders } from "@/lib/dal/orders"
 import { getReplenishmentSuggestions } from "@/lib/dal/replenishment"
 import { getSuppliers } from "@/lib/dal/suppliers"
 import { getDashboardMetrics } from "@/lib/dal/reports"
@@ -18,36 +18,16 @@ export const metadata = {
 
 export default async function DashboardPage() {
     // Parallel fetching for performance
-    const [orders, suggestions, suppliers, metrics] = await Promise.all([
-        getOrders(),
+    const [recentOrders, suggestions, suppliers, metrics] = await Promise.all([
+        getRecentOrders(5),
         getReplenishmentSuggestions(),
         getSuppliers(),
         getDashboardMetrics()
     ])
 
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
-
-    // Calculate real period-over-period revenue growth
-    const now = new Date()
-    const currentMonth = now.getMonth()
-    const currentYear = now.getFullYear()
-
-    const thisMonthRevenue = orders
-        .filter((o) => {
-            const d = new Date(o.createdAt)
-            return d.getMonth() === currentMonth && d.getFullYear() === currentYear
-        })
-        .reduce((sum, o) => sum + (o.total || 0), 0)
-
-    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
-    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
-
-    const lastMonthRevenue = orders
-        .filter((o) => {
-            const d = new Date(o.createdAt)
-            return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear
-        })
-        .reduce((sum, o) => sum + (o.total || 0), 0)
+    const totalRevenue = metrics.totalRevenue
+    const thisMonthRevenue = metrics.thisMonthRevenue
+    const lastMonthRevenue = metrics.lastMonthRevenue
 
     let revenueDescription: string
     if (lastMonthRevenue === 0 && thisMonthRevenue > 0) {
@@ -201,7 +181,7 @@ export default async function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-6">
-                                {orders.slice(0, 5).map(order => (
+                                {recentOrders.map(order => (
                                     <div key={order.id} className="flex items-center">
                                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
                                             {(order.customer || "W")[0]}
@@ -217,7 +197,7 @@ export default async function DashboardPage() {
                                         </div>
                                     </div>
                                 ))}
-                                {orders.length === 0 && (
+                                {recentOrders.length === 0 && (
                                     <div className="text-center text-sm text-muted-foreground py-6">
                                         <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
                                             <IconPackage className="h-5 w-5 opacity-40" />

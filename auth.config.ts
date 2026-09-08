@@ -7,6 +7,7 @@
 
 import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Facebook from "next-auth/providers/facebook"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
@@ -19,10 +20,29 @@ export default {
         GitHub({
             clientId: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            authorization: {
+                params: { scope: "read:user user:email" },
+            },
+            issuer: "https://github.com/login/oauth",
         }),
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            authorization: {
+                params: {
+                    scope: "openid email profile",
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                },
+            },
+        }),
+        Facebook({
+            clientId: process.env.FACEBOOK_CLIENT_ID,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+            authorization: {
+                params: { scope: "public_profile,email" },
+            },
         }),
         Credentials({
             async authorize(credentials) {

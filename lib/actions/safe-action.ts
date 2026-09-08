@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { handleServerError } from "@/lib/error-handling"
 
 export type ActionState<T> =
     | { success: true; data: T }
@@ -32,9 +33,10 @@ export async function validatedAction<TSchema extends z.ZodType, TResult>(
         return { success: true, data }
     } catch (error: unknown) {
         console.error("Action error:", error)
+        const handled = handleServerError(error)
         return {
             success: false,
-            error: error instanceof Error ? error.message : "An unexpected error occurred."
+            error: handled.error
         }
     }
 }

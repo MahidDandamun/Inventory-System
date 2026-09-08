@@ -196,8 +196,8 @@ export async function completeCycleCount(id: string) {
     await prisma.$transaction(async (tx) => {
         if (itemsWithVariance.length > 0) {
             for (const item of itemsWithVariance) {
-                // Configurable Rule Simulation: absolute variance > 100 requires approval
-                if (Math.abs(item.variance!) > 100) {
+                // Configurable Rule Simulation: absolute variance >= 50 requires approval
+                if (Math.abs(item.variance!) >= 50) {
                     needsApproval = true
                     await requestStockAdjustmentApproval({
                         entity: item.entity,

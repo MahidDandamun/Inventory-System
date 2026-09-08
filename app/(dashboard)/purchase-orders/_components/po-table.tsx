@@ -129,7 +129,7 @@ function ActionMenu({ po }: { po: PurchaseOrderListDTO }) {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
     const allowedStatuses = getAllowedPOStatuses(po.status).filter(
-        (s) => s !== po.status
+        (s) => s !== po.status && s !== "RECEIVED" && s !== "PARTIALLY_RECEIVED"
     )
 
     const handleStatusChange = (newStatus: POStatus) => {
@@ -176,6 +176,13 @@ function ActionMenu({ po }: { po: PurchaseOrderListDTO }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href={`/purchase-orders/${po.id}`}>
+                            <IconArrowRight className="mr-2 h-4 w-4" />
+                            View Details
+                        </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     {allowedStatuses.length > 0 && (
                         <>

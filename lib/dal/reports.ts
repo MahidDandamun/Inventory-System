@@ -44,6 +44,9 @@ export type DashboardMetricsDTO = {
     fillRate: number
     topProducts: { id: string; name: string; quantitySold: number; revenue: number }[]
     revenueTrends: { name: string; total: number }[]
+    totalRevenue: number
+    thisMonthRevenue: number
+    lastMonthRevenue: number
 }
 
 export const getStockValuation = cache(async (): Promise<{ items: StockValuationDTO[], totalValuation: number }> => {
@@ -173,6 +176,24 @@ export const getDashboardMetrics = cache(async (): Promise<DashboardMetricsDTO> 
     const totalRevenue = totalOrdersResult._sum.total?.toNumber() || 0
     const stockTurns = totalValuation > 0 ? totalRevenue / totalValuation : 0
 
+    // Monthly Revenue Stats via DB Aggregations
+    const now = new Date()
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999)
+
+    const thisMonthResult = await prisma.order.aggregate({
+        where: { createdAt: { gte: currentMonthStart }, status: { not: 'CANCELLED' } },
+        _sum: { total: true }
+    })
+    const thisMonthRevenue = thisMonthResult._sum.total?.toNumber() || 0
+
+    const lastMonthResult = await prisma.order.aggregate({
+        where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd }, status: { not: 'CANCELLED' } },
+        _sum: { total: true }
+    })
+    const lastMonthRevenue = lastMonthResult._sum.total?.toNumber() || 0
+
     // 2. Fill Rate
     const fillRateData = await getOrderFillRate()
 
@@ -199,7 +220,6 @@ export const getDashboardMetrics = cache(async (): Promise<DashboardMetricsDTO> 
 
     // 4. Trend Sparklines (Revenue grouped by last 12 months)
     const targetMonths = 12
-    const now = new Date()
     const months = []
     for (let i = targetMonths - 1; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
@@ -236,6 +256,9 @@ export const getDashboardMetrics = cache(async (): Promise<DashboardMetricsDTO> 
         stockTurns,
         fillRate: fillRateData.fillRate,
         topProducts,
-        revenueTrends
+        revenueTrends,
+        totalRevenue,
+        thisMonthRevenue,
+        lastMonthRevenue
     }
 })

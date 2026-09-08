@@ -62,6 +62,21 @@ export async function createBillOfMaterial(data: {
     return toBillOfMaterialDTO(bom)
 }
 
+export async function updateBillOfMaterial(id: string, quantity: number): Promise<BillOfMaterialDTO> {
+    const user = await requireCurrentUser()
+
+    const bom = await prisma.billOfMaterial.update({
+        where: { id },
+        data: { quantity },
+        include: {
+            product: { select: { name: true } },
+            rawMaterial: { select: { name: true } },
+        }
+    })
+    await createSystemLog(user.id, "UPDATE", "BOM", id, `Updated quantity to ${quantity}`)
+    return toBillOfMaterialDTO(bom)
+}
+
 export async function deleteBillOfMaterial(id: string): Promise<BillOfMaterialDTO> {
     const user = await requireCurrentUser()
 

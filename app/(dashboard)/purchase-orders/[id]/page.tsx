@@ -30,9 +30,9 @@ const statusLabelMap: Record<string, string> = {
 export default async function PurchaseOrderDetailPage({
     params,
 }: {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }) {
-    const pId = params.id
+    const { id: pId } = await params
     const po = await getPurchaseOrderById(pId)
     if (!po) notFound()
 

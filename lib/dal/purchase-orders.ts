@@ -157,6 +157,10 @@ export async function updatePurchaseOrderStatus(
         throw new Error(`Cannot transition PO from ${currentStatus} to ${newStatus}`)
     }
 
+    if (newStatus === "RECEIVED" || newStatus === "PARTIALLY_RECEIVED") {
+        throw new Error("You cannot change the status to Received manually. You must use the 'Receive Goods' button inside the Purchase Order to generate a Goods Receipt and update stock automatically.")
+    }
+
     await prisma.purchaseOrder.update({
         where: { id },
         data: { status: newStatus },

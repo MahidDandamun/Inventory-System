@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { createBillOfMaterial, deleteBillOfMaterial } from "@/lib/dal/bill-of-materials"
+import { createBillOfMaterial, deleteBillOfMaterial, updateBillOfMaterial } from "@/lib/dal/bill-of-materials"
 import { billOfMaterialSchema } from "@/schemas/bill-of-material"
 import { handleServerError } from "@/lib/error-handling"
 import { ROUTES } from "@/lib/routes"
@@ -35,6 +35,17 @@ export async function deleteBillOfMaterialAction(id: string) {
         revalidatePath(BOM_ROUTE)
         revalidatePath(`${ROUTES.PRODUCTS}/${item.productId}`)
         return { success: true }
+    } catch (error: unknown) {
+        return handleServerError(error)
+    }
+}
+
+export async function updateBillOfMaterialAction(id: string, quantity: number) {
+    try {
+        const item = await updateBillOfMaterial(id, quantity)
+        revalidatePath(BOM_ROUTE)
+        revalidatePath(`${ROUTES.PRODUCTS}/${item.productId}`)
+        return { success: true, data: item }
     } catch (error: unknown) {
         return handleServerError(error)
     }

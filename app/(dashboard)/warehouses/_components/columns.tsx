@@ -17,7 +17,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react"
+import { IconDots, IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import Link from "next/link"
 import { deleteWarehouseAction } from "../_actions/warehouse"
 import { useState, useTransition } from "react"
@@ -91,8 +91,8 @@ function ActionMenu({ warehouse }: { warehouse: WarehouseDTO }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                         <Link href={`${ROUTES.WAREHOUSES}/${warehouse.id}`} className="cursor-pointer">
-                            <IconEdit className="mr-2 h-4 w-4" />
-                            Edit
+                            <IconEye className="mr-2 h-4 w-4" />
+                            View Details
                         </Link>
                     </DropdownMenuItem>
                     <AlertDialogTrigger asChild>

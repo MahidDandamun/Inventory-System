@@ -138,9 +138,9 @@ export async function AppSidebar() {
     const sections = isAdmin ? adminSections : userSections
 
     return (
-        <aside className="hidden w-60 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex md:flex-col">
+        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex md:flex-col">
             {/* Logo */}
-            <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
+            <div className="flex h-14 shrink-0 items-center gap-3 border-b border-sidebar-border px-5">
                 <Link href="/dashboard" className="flex items-center gap-3">
                     <Image src="/logo.png" alt="Logo" width={28} height={28} className="h-7 w-7" />
                     <div className="flex flex-col justify-center">
