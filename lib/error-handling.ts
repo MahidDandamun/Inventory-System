@@ -10,8 +10,15 @@ export function handleServerError(error: unknown) {
         }
         return { error: `Database error: ${error.message}` }
     }
+    
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+        return { error: "The database is currently waking up from standby. Please try your request again in a few seconds." }
+    }
 
     if (error instanceof Error) {
+        if (error.message.toLowerCase().includes("timeout")) {
+            return { error: "The database took too long to respond. It may be waking up from standby. Please try again." }
+        }
         return { error: error.message }
     }
 
