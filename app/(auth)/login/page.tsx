@@ -11,7 +11,20 @@ export const metadata: Metadata = {
     description: "Sign in to your Theiapollo Inventory account",
 }
 
-export default function LoginPage() {
+export default async function LoginPage({
+    searchParams
+}: {
+    searchParams: Promise<{ error?: string }>
+}) {
+    const resolvedParams = await searchParams;
+    
+    // Map NextAuth error codes to user-friendly messages
+    const urlError = resolvedParams.error === "OAuthAccountNotLinked"
+        ? "To confirm your identity, sign in with the same account you used originally."
+        : resolvedParams.error === "AccessDenied"
+            ? "Access denied. You do not have permission to log in."
+            : undefined
+
     return (
         <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
             {/* Left Panel */}
@@ -43,7 +56,7 @@ export default function LoginPage() {
             {/* Right Panel */}
             <div className="flex h-full items-center p-4 lg:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
-                    <LoginForm />
+                    <LoginForm urlError={urlError} />
                 </div>
             </div>
         </div>

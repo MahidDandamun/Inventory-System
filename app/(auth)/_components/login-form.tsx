@@ -31,9 +31,9 @@ import { FormSuccess } from "./form-success"
 import { SocialButtons } from "./social-buttons"
 
 
-export function LoginForm() {
+export function LoginForm({ urlError }: { urlError?: string }) {
     const [isPending, startTransition] = useTransition()
-    const [error, setError] = useState<string | undefined>()
+    const [error, setError] = useState<string | undefined>(urlError)
     const [success, setSuccess] = useState<string | undefined>()
     const [showTwoFactor, setShowTwoFactor] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
