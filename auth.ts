@@ -6,9 +6,12 @@
 
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
+import Credentials from "next-auth/providers/credentials"
+import bcrypt from "bcryptjs"
 
 import { prisma } from "@/lib/prisma"
 import authConfig from "@/auth.config"
+import { loginSchema } from "@/schemas/auth"
 
 export const {
     handlers: { GET, POST },
@@ -111,4 +114,23 @@ export const {
     adapter: PrismaAdapter(prisma),
     session: { strategy: "jwt" },
     ...authConfig,
+    providers: [
+        ...authConfig.providers,
+        Credentials({
+            async authorize(credentials) {
+                const parsed = loginSchema.safeParse(credentials)
+                if (!parsed.success) return null
+
+                const { email, password } = parsed.data
+
+                const user = await prisma.user.findUnique({ where: { email } })
+                if (!user || !user.password) return null
+
+                const passwordsMatch = await bcrypt.compare(password, user.password)
+                if (!passwordsMatch) return null
+
+                return user
+            },
+        }),
+    ],
 })

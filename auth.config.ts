@@ -6,14 +6,9 @@
 // ---
 
 import type { NextAuthConfig } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
 import Facebook from "next-auth/providers/facebook"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
-import bcrypt from "bcryptjs"
-
-import { loginSchema } from "@/schemas/auth"
-import { prisma } from "@/lib/prisma"
 
 export default {
     providers: [
@@ -42,22 +37,6 @@ export default {
             clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
             authorization: {
                 params: { scope: "public_profile,email" },
-            },
-        }),
-        Credentials({
-            async authorize(credentials) {
-                const parsed = loginSchema.safeParse(credentials)
-                if (!parsed.success) return null
-
-                const { email, password } = parsed.data
-
-                const user = await prisma.user.findUnique({ where: { email } })
-                if (!user || !user.password) return null
-
-                const passwordsMatch = await bcrypt.compare(password, user.password)
-                if (!passwordsMatch) return null
-
-                return user
             },
         }),
     ],
