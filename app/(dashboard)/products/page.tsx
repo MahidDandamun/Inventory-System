@@ -1,17 +1,38 @@
+import { Suspense } from "react"
 import { getProducts } from "@/lib/dal/products"
 import { DataTable } from "@/components/ui/data-table"
 import { columns } from "./_components/columns"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { IconPlus } from "@tabler/icons-react"
+import { DataTableSkeleton } from "@/components/ui/data-table-skeleton"
 
 export const metadata = {
     title: "Products | Inventory System",
 }
 
-export default async function ProductsPage() {
+async function ProductsTable() {
     const products = await getProducts()
+    return (
+        <DataTable
+            columns={columns}
+            data={products}
+            searchKey="name"
+            filterColumns={[
+                {
+                    id: "status",
+                    title: "Status",
+                    options: [
+                        { label: "Active", value: "ACTIVE" },
+                        { label: "Inactive", value: "INACTIVE" },
+                    ]
+                }
+            ]}
+        />
+    )
+}
 
+export default function ProductsPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -29,21 +50,9 @@ export default async function ProductsPage() {
                 </Button>
             </div>
 
-            <DataTable
-                columns={columns}
-                data={products}
-                searchKey="name"
-                filterColumns={[
-                    {
-                        id: "status",
-                        title: "Status",
-                        options: [
-                            { label: "Active", value: "ACTIVE" },
-                            { label: "Inactive", value: "INACTIVE" },
-                        ]
-                    }
-                ]}
-            />
+            <Suspense fallback={<DataTableSkeleton />}>
+                <ProductsTable />
+            </Suspense>
         </div>
     )
 }
