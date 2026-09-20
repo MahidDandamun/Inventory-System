@@ -208,8 +208,8 @@ export function CreateBomDialog({
                                         </Label>
                                         <Input
                                             type="number"
-                                            step="0.01"
-                                            min="0.01"
+                                            step="any"
+                                            min="0"
                                             placeholder="Amount"
                                             value={row.quantity}
                                             onChange={(e) =>

@@ -30,9 +30,7 @@ export default async function BillOfMaterialsPage() {
                 <CreateBomDialog products={products} rawMaterials={rawMaterials} />
             </div>
 
-            <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
-                <BomList items={boms} />
-            </div>
+            <BomList items={boms} />
         </div>
     )
 }

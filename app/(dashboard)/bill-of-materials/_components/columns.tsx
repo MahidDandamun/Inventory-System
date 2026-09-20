@@ -146,8 +146,8 @@ function MaterialRow({ material }: { material: BillOfMaterialDTO }) {
             <div className="flex items-center gap-2">
                 <Input 
                     type="number"
-                    min="0.01"
-                    step="0.01"
+                    min="0"
+                    step="any"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
                     disabled={isPending}

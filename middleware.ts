@@ -11,6 +11,7 @@ import {
     authRoutes,
     apiAuthPrefix,
     DEFAULT_LOGIN_REDIRECT,
+    adminRoutes,
 } from "@/routes"
 
 const { auth } = NextAuth(authConfig)
@@ -42,6 +43,12 @@ export default auth((req) => {
         return Response.redirect(
             new URL(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`, nextUrl)
         )
+    }
+
+    // Protect admin routes
+    const isAdminRoute = adminRoutes.some(route => nextUrl.pathname.startsWith(route))
+    if (isAdminRoute && req.auth?.user?.role !== "ADMIN") {
+        return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
     }
 })
 

@@ -95,7 +95,7 @@ export const {
             }
 
             const account = await prisma.account.findFirst({
-                where: { userId: user.id },
+                where: { userId: user.id, type: "oauth" },
             })
 
             token.isOAuth = !!account

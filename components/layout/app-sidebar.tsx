@@ -1,12 +1,8 @@
-// components/layout/app-sidebar.tsx
-// ---
-// Main application sidebar with role-based navigation
-// Navigation grouped into labeled sections for enterprise clarity
-// ---
+"use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { ROUTES } from "@/lib/routes"
-import { getCurrentUser } from "@/lib/auth"
 import { cn } from "@/lib/utils"
 import {
     IconDashboard,
@@ -27,6 +23,8 @@ import {
     IconClipboardCheck,
     IconShieldCheck,
     IconChartBar,
+    IconLayoutSidebarLeftCollapse,
+    IconLayoutSidebarLeftExpand,
 } from "@tabler/icons-react"
 import { ActiveLink } from "./active-link"
 import Image from "next/image"
@@ -132,31 +130,43 @@ const userSections: NavSection[] = [
     },
 ]
 
-export async function AppSidebar() {
-    const user = await getCurrentUser()
-    const isAdmin = user?.role === "ADMIN"
+export function AppSidebar({ isAdmin }: { isAdmin: boolean }) {
+    const [isCollapsed, setIsCollapsed] = useState(false)
     const sections = isAdmin ? adminSections : userSections
 
     return (
-        <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex md:flex-col">
+        <aside className={cn(
+            "sticky top-0 hidden h-screen shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex md:flex-col transition-all duration-300 ease-in-out",
+            isCollapsed ? "w-[72px]" : "w-64"
+        )}>
             {/* Logo */}
-            <div className="flex h-14 shrink-0 items-center gap-3 border-b border-sidebar-border px-5">
-                <Link href="/dashboard" className="flex items-center gap-3">
-                    <Image src="/logo.png" alt="Logo" width={28} height={28} className="h-7 w-7" />
-                    <div className="flex flex-col justify-center">
-                        <span className="text-sm font-semibold leading-none tracking-tight text-sidebar-foreground">Theiapollo</span>
-                        <span className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 mt-0.5">Inventory</span>
-                    </div>
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-sidebar-border px-4 gap-2">
+                <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden min-w-0">
+                    <Image src="/logo.png" alt="Logo" width={28} height={28} className="h-7 w-7 shrink-0 brightness-0 invert" />
+                    {!isCollapsed && (
+                        <div className="flex flex-col justify-center min-w-0 pr-2">
+                            <span className="text-sm font-semibold leading-none tracking-tight text-sidebar-foreground truncate">Theiapollo</span>
+                            <span className="text-xs uppercase tracking-widest text-sidebar-foreground/40 mt-0.5 truncate">Inventory</span>
+                        </div>
+                    )}
                 </Link>
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="shrink-0 flex items-center justify-center h-8 w-8 rounded-md text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                >
+                    {isCollapsed ? <IconLayoutSidebarLeftExpand className="h-5 w-5" /> : <IconLayoutSidebarLeftCollapse className="h-5 w-5" />}
+                </button>
             </div>
 
             {/* Navigation */}
             <nav id="sidebar-nav" className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
                 {sections.map((section) => (
                     <div key={section.title}>
-                        <p className="mb-1 px-3 text-[10px] font-medium uppercase tracking-widest text-sidebar-foreground/40">
-                            {section.title}
-                        </p>
+                        {!isCollapsed && (
+                            <p className="mb-1 px-3 text-xs font-medium uppercase tracking-widest text-sidebar-foreground/40">
+                                {section.title}
+                            </p>
+                        )}
                         <div className="space-y-0.5">
                             {section.items.map((item) => (
                                 <ActiveLink
@@ -166,6 +176,7 @@ export async function AppSidebar() {
                                         href: item.href,
                                         icon: <item.icon className="h-4 w-4 shrink-0" />,
                                     }}
+                                    isCollapsed={isCollapsed}
                                 />
                             ))}
                         </div>
@@ -173,17 +184,24 @@ export async function AppSidebar() {
                 ))}
             </nav>
 
-            {/* Role badge at bottom */}
-            <div className="px-4 py-3 border-t border-sidebar-border">
-                <span className={cn(
-                    "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium",
-                    isAdmin
-                        ? "bg-primary/15 text-primary"
-                        : "bg-sidebar-accent text-sidebar-foreground/60"
-                )}>
-                    <span className={cn("h-1.5 w-1.5 rounded-full", isAdmin ? "bg-primary" : "bg-sidebar-foreground/30")} />
-                    {isAdmin ? "Administrator" : "Standard User"}
-                </span>
+            {/* Footer containing role and copyright */}
+            <div className="flex flex-col border-t border-sidebar-border p-3 gap-3">
+                <div className={cn("flex", isCollapsed ? "justify-center" : "justify-start")}>
+                    <span className={cn(
+                        "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium whitespace-nowrap",
+                        isAdmin
+                            ? "bg-primary/15 text-primary"
+                            : "bg-sidebar-accent text-sidebar-foreground/60"
+                    )}>
+                        <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", isAdmin ? "bg-primary" : "bg-sidebar-foreground/30")} />
+                        {!isCollapsed && (isAdmin ? "Administrator" : "Standard User")}
+                    </span>
+                </div>
+                {!isCollapsed && (
+                    <p className="text-center text-xs text-sidebar-foreground/40">
+                        © {new Date().getFullYear()} Theiapollo Inventory System
+                    </p>
+                )}
             </div>
         </aside>
     )

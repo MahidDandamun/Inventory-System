@@ -11,7 +11,7 @@ import {
 
 export function OverviewChart({ data }: { data: { name: string; total: number }[] }) {
     return (
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data}>
                 <XAxis
                     dataKey="name"
@@ -28,7 +28,7 @@ export function OverviewChart({ data }: { data: { name: string; total: number }[
                     tickFormatter={(value) => `$${value}`}
                 />
                 <Tooltip
-                    cursor={{ fill: "hsl(var(--muted)/0.2)" }}
+                    cursor={{ fill: "var(--muted)", opacity: 0.15 }}
                     contentStyle={{ borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--popover)", color: "var(--popover-foreground)" }}
                     itemStyle={{ color: "var(--popover-foreground)" }}
                 />

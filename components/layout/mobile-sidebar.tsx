@@ -162,17 +162,17 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
                         className="flex items-center gap-3"
                         onClick={() => setOpen(false)}
                     >
-                        <Image src="/logo.png" alt="Logo" width={28} height={28} className="h-7 w-7" />
+                        <Image src="/logo.png" alt="Logo" width={28} height={28} className="h-7 w-7 brightness-0 invert" />
                         <div className="flex flex-col justify-center">
                             <span className="text-sm font-semibold leading-none tracking-tight">Theiapollo</span>
-                            <span className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 mt-0.5">Inventory</span>
+                            <span className="text-xs uppercase tracking-widest text-sidebar-foreground/40 mt-0.5">Inventory</span>
                         </div>
                     </Link>
                 </div>
                 <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
                     {sections.map((section) => (
                         <div key={section.title}>
-                            <p className="mb-1 px-3 text-[10px] font-medium uppercase tracking-widest text-sidebar-foreground/40">
+                            <p className="mb-1 px-3 text-xs font-medium uppercase tracking-widest text-sidebar-foreground/40">
                                 {section.title}
                             </p>
                             <div className="space-y-0.5">
@@ -185,7 +185,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
                                             href={item.href}
                                             onClick={() => setOpen(false)}
                                             className={cn(
-                                                "flex items-center gap-3 rounded-md px-3 py-1.5 text-[13px] font-medium transition-all duration-150",
+                                                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150",
                                                 isActive
                                                     ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-2 border-primary"
                                                     : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground border-l-2 border-transparent"

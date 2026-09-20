@@ -32,6 +32,8 @@ export const metadata: Metadata = {
     "Enterprise inventory management — products, orders, invoices, and warehouse operations in one system.",
 }
 
+import { TooltipProvider } from "@/components/ui/tooltip"
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -51,8 +53,10 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
-            <Toaster />
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
           </ThemeProvider>
         </body>
       </html>

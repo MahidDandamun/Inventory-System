@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useTransition, useState } from "react"
 import { IconBell } from "@tabler/icons-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 export function NotificationsBell({ initialNotifications }: { initialNotifications: NotificationDTO[] }) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
+    const [isOpen, setIsOpen] = useState(false)
     const unreadCount = initialNotifications.filter(n => !n.isRead).length
 
     const handleMarkAsRead = (id: string) => {
@@ -31,7 +32,7 @@ export function NotificationsBell({ initialNotifications }: { initialNotificatio
     }
 
     return (
-        <Popover>
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                     <IconBell className="h-5 w-5" />
@@ -53,18 +54,44 @@ export function NotificationsBell({ initialNotifications }: { initialNotificatio
                     {initialNotifications.length === 0 ? (
                         <p className="p-4 text-center text-sm text-muted-foreground">No notifications yet.</p>
                     ) : (
-                        initialNotifications.map(n => (
-                            <div key={n.id} className={`flex flex-col p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer ${!n.isRead ? 'bg-muted/20' : ''}`} onClick={() => !n.isRead && handleMarkAsRead(n.id)}>
-                                <div className="flex items-start justify-between gap-2">
-                                    <p className="font-medium text-sm">{n.title}</p>
-                                    {!n.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500 mt-1.5" />}
+                        initialNotifications.map(n => {
+                            const getRoute = () => {
+                                const t = n.title.toLowerCase()
+                                if (t.includes('material')) return '/raw-materials'
+                                if (t.includes('product')) return '/products'
+                                if (t.includes('purchase order')) return '/purchase-orders'
+                                if (t.includes('order')) return '/orders'
+                                if (t.includes('invoice') || t.includes('payment')) return '/invoices'
+                                if (t.includes('approval')) return '/approvals'
+                                if (t.includes('receipt')) return '/goods-receipts'
+                                if (t.includes('cycle count')) return '/cycle-counts'
+                                if (t.includes('supplier')) return '/suppliers'
+                                if (t.includes('warehouse')) return '/warehouses'
+                                if (t.includes('customer')) return '/customers'
+                                return '/dashboard'
+                            }
+
+                            return (
+                                <div 
+                                    key={n.id} 
+                                    className={`flex flex-col p-4 border-b last:border-0 hover:bg-muted/50 transition-colors cursor-pointer ${!n.isRead ? 'bg-muted/20' : ''}`} 
+                                    onClick={() => {
+                                        if (!n.isRead) handleMarkAsRead(n.id)
+                                        setIsOpen(false)
+                                        router.push(getRoute())
+                                    }}
+                                >
+                                    <div className="flex items-start justify-between gap-2">
+                                        <p className="font-medium text-sm">{n.title}</p>
+                                        {!n.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500 mt-1.5" />}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mt-1">{n.message}</p>
+                                    <p className="text-xs text-muted-foreground mt-2">
+                                        {new Date(n.createdAt).toLocaleDateString()}
+                                    </p>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-1">{n.message}</p>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                    {new Date(n.createdAt).toLocaleDateString()}
-                                </p>
-                            </div>
-                        ))
+                            )
+                        })
                     )}
                 </div>
             </PopoverContent>

@@ -58,7 +58,7 @@
   --card-foreground: #18181B;
   --popover: #FFFFFF;
   --popover-foreground: #18181B;
-  --primary: #C2610C;
+  --primary: #059669;
   --primary-foreground: #FFFFFF;
   --secondary: #F4F4F5;
   --secondary-foreground: #18181B;
@@ -72,8 +72,8 @@
   --info: #2563EB;
   --border: #E4E4E7;
   --input: #E4E4E7;
-  --ring: #C2610C;
-  --chart-1: #C2610C;
+  --ring: #059669;
+  --chart-1: #059669;
   --chart-2: #2563EB;
   --chart-3: #16A34A;
   --chart-4: #D97706;
@@ -81,14 +81,14 @@
   --radius: 0.5rem;
 
   /* Sidebar: dark regardless of mode */
-  --sidebar: #18181B;
+  --sidebar: #0D1F1A;
   --sidebar-foreground: #E4E4E7;
-  --sidebar-primary: #C2610C;
+  --sidebar-primary: #059669;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #27272A;
+  --sidebar-accent: #132F28;
   --sidebar-accent-foreground: #FAFAFA;
-  --sidebar-border: #27272A;
-  --sidebar-ring: #C2610C;
+  --sidebar-border: #132F28;
+  --sidebar-ring: #059669;
 }
 
 /* ── Dark Mode ─────────────────────────────────────── */
@@ -99,7 +99,7 @@
   --card-foreground: #FAFAFA;
   --popover: #18181B;
   --popover-foreground: #FAFAFA;
-  --primary: #D97B1F;
+  --primary: #10B981;
   --primary-foreground: #FFFFFF;
   --secondary: #27272A;
   --secondary-foreground: #FAFAFA;
@@ -114,21 +114,21 @@
   --info: #3B82F6;
   --border: #27272A;
   --input: #27272A;
-  --ring: #D97B1F;
-  --chart-1: #D97B1F;
+  --ring: #10B981;
+  --chart-1: #10B981;
   --chart-2: #3B82F6;
   --chart-3: #22C55E;
   --chart-4: #F59E0B;
   --chart-5: #8B5CF6;
 
-  --sidebar: #09090B;
+  --sidebar: #071310;
   --sidebar-foreground: #FAFAFA;
-  --sidebar-primary: #D97B1F;
+  --sidebar-primary: #10B981;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #18181B;
+  --sidebar-accent: #0D221D;
   --sidebar-accent-foreground: #FAFAFA;
-  --sidebar-border: #18181B;
-  --sidebar-ring: #D97B1F;
+  --sidebar-border: #0D221D;
+  --sidebar-ring: #10B981;
 }
 
 /* ── Base Layer ─────────────────────────────────────── */
@@ -139,6 +139,14 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  button,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    cursor: pointer;
   }
 
   /* Text selection */

@@ -30,11 +30,13 @@ import { toast } from "sonner"
 interface ReplenishmentWidgetProps {
     suggestions: ReplenishmentSuggestion[]
     suppliers: SupplierDTO[]
+    className?: string
 }
 
 export function ReplenishmentWidget({
     suggestions,
-    suppliers
+    suppliers,
+    className
 }: ReplenishmentWidgetProps) {
     const router = useRouter()
     const [selectedItem, setSelectedItem] = useState<ReplenishmentSuggestion | null>(null)
@@ -87,7 +89,7 @@ export function ReplenishmentWidget({
     }
 
     return (
-        <Card className="col-span-full xl:col-span-3 h-fit">
+        <Card className={className}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-base font-bold flex items-center gap-2">
                     <IconAlertTriangle className="h-5 w-5 text-yellow-500" />
@@ -97,7 +99,7 @@ export function ReplenishmentWidget({
                     {suggestions.length} items
                 </Badge>
             </CardHeader>
-            <CardContent className="max-h-[400px] overflow-y-auto pr-4">
+            <CardContent className="max-h-[400px] overflow-y-auto pr-4 flex-1">
                 <div className="space-y-4">
                     {suggestions.map((item) => (
                         <div key={item.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border bg-card/50">

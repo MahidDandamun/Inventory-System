@@ -113,102 +113,100 @@ export default async function DashboardPage() {
                 ))}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4 space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base font-medium">Revenue Trend</CardTitle>
-                        </CardHeader>
-                        <CardContent className="pl-2">
-                            {hasChartData ? (
-                                <OverviewChart data={metrics.revenueTrends} />
-                            ) : (
-                                <div className="flex items-center justify-center h-[350px] text-muted-foreground">
-                                    <div className="text-center space-y-2">
-                                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                                            <IconCurrencyDollar className="h-6 w-6 opacity-40" />
+            <div className="grid gap-4 md:grid-cols-7 items-stretch">
+                {/* Row 1: Revenue Trend & Low Stock Alerts */}
+                <Card className="col-span-full md:col-span-4 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="text-base font-medium">Revenue Trend</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pl-2 flex-1 flex flex-col justify-end">
+                        {hasChartData ? (
+                            <OverviewChart data={metrics.revenueTrends} />
+                        ) : (
+                            <div className="flex items-center justify-center h-[280px] text-muted-foreground">
+                                <div className="text-center space-y-2">
+                                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                                        <IconCurrencyDollar className="h-6 w-6 opacity-40" />
+                                    </div>
+                                    <p className="text-sm font-medium">No revenue data yet</p>
+                                    <p className="text-xs text-muted-foreground">Create your first order to see revenue trends.</p>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Replenishment Widget */}
+                <ReplenishmentWidget suggestions={suggestions} suppliers={suppliers} className="col-span-full md:col-span-3 flex flex-col" />
+
+                {/* Row 2: Top Products & Recent Orders */}
+                <Card className="col-span-full md:col-span-4 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="text-base font-medium">Top Products</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                        <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2">
+                            {metrics.topProducts.map((p, i) => (
+                                <div key={p.id} className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+                                            {i + 1}
                                         </div>
-                                        <p className="text-sm font-medium">No revenue data yet</p>
-                                        <p className="text-xs text-muted-foreground">Create your first order to see revenue trends.</p>
+                                        <div>
+                                            <p className="text-sm font-medium leading-none">{p.name}</p>
+                                            <p className="text-xs text-muted-foreground mt-0.5">{p.quantitySold} units sold</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-sm font-medium">
+                                        ${p.revenue.toFixed(2)}
                                     </div>
                                 </div>
+                            ))}
+                            {metrics.topProducts.length === 0 && (
+                                <div className="text-center text-sm text-muted-foreground py-6">
+                                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
+                                        <IconPackage className="h-5 w-5 opacity-40" />
+                                    </div>
+                                    No product sales yet.
+                                </div>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </CardContent>
+                </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base font-medium">Top Products</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {metrics.topProducts.map((p, i) => (
-                                    <div key={p.id} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
-                                                {i + 1}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-medium leading-none">{p.name}</p>
-                                                <p className="text-xs text-muted-foreground mt-0.5">{p.quantitySold} units sold</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-sm font-medium">
-                                            ${p.revenue.toFixed(2)}
-                                        </div>
+                <Card className="col-span-full md:col-span-3 flex flex-col">
+                    <CardHeader>
+                        <CardTitle className="text-base font-medium">Recent Orders</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                        <div className="space-y-6 max-h-[250px] overflow-y-auto pr-2">
+                            {recentOrders.map(order => (
+                                <div key={order.id} className="flex items-center">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
+                                        {(order.customer || "W")[0]}
                                     </div>
-                                ))}
-                                {metrics.topProducts.length === 0 && (
-                                    <div className="text-center text-sm text-muted-foreground py-6">
-                                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
-                                            <IconPackage className="h-5 w-5 opacity-40" />
-                                        </div>
-                                        No product sales yet.
+                                    <div className="ml-3 space-y-0.5 min-w-0 flex-1">
+                                        <p className="text-sm font-medium leading-none truncate">{order.customer || "Walk-in"}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {order.orderNo}
+                                        </p>
                                     </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="col-span-3 space-y-4">
-                    {/* Replenishment Widget */}
-                    <ReplenishmentWidget suggestions={suggestions} suppliers={suppliers} />
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base font-medium">Recent Orders</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                {recentOrders.map(order => (
-                                    <div key={order.id} className="flex items-center">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
-                                            {(order.customer || "W")[0]}
-                                        </div>
-                                        <div className="ml-3 space-y-0.5 min-w-0 flex-1">
-                                            <p className="text-sm font-medium leading-none truncate">{order.customer || "Walk-in"}</p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {order.orderNo}
-                                            </p>
-                                        </div>
-                                        <div className="ml-auto text-sm font-medium tabular-nums">
-                                            +${order.total.toFixed(2)}
-                                        </div>
+                                    <div className="ml-auto text-sm font-medium tabular-nums">
+                                        +${order.total.toFixed(2)}
                                     </div>
-                                ))}
-                                {recentOrders.length === 0 && (
-                                    <div className="text-center text-sm text-muted-foreground py-6">
-                                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
-                                            <IconPackage className="h-5 w-5 opacity-40" />
-                                        </div>
-                                        No orders yet.
+                                </div>
+                            ))}
+                            {recentOrders.length === 0 && (
+                                <div className="text-center text-sm text-muted-foreground py-6">
+                                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-2">
+                                        <IconPackage className="h-5 w-5 opacity-40" />
                                     </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                                    No orders yet.
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )
