@@ -12,7 +12,10 @@ export const metadata = {
 }
 
 async function ProductsTable() {
+    // PERF-INSTRUMENTATION: measure DB/auth latency for product list
+    console.time("[PERF] getProducts()")
     const products = await getProducts()
+    console.timeEnd("[PERF] getProducts()")
     return (
         <DataTable
             columns={columns}

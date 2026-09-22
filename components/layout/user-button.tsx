@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { auth, signOut } from "@/auth"
+import { signOut } from "@/auth"
+import { getCurrentUser } from "@/lib/auth"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,9 +13,9 @@ import { Button } from "@/components/ui/button"
 import { IconUser, IconLogout, IconSettings } from "@tabler/icons-react"
 
 export async function UserButton() {
-    const session = await auth()
+    const user = await getCurrentUser()
 
-    if (!session?.user) return null
+    if (!user) return null
 
     return (
         <DropdownMenu>
@@ -27,8 +28,8 @@ export async function UserButton() {
             <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{session.user.name}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{session.user.email}</p>
+                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

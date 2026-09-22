@@ -77,8 +77,15 @@ export const {
             return session
         },
 
-        async jwt({ token, user: authUser }) {
+        async jwt({ token, user: authUser, trigger }) {
             if (!token.sub) return token
+
+            // If this is a subsequent request and not an explicit update, return the cached token.
+            // This eliminates 2 DB round-trips per navigation.
+            // Note: DB changes to profile/role won't reflect until next sign-in or session.update()
+            if (!authUser && trigger !== "update" && token.role) {
+                return token
+            }
 
             const user = await prisma.user.findUnique({
                 where: { id: token.sub },
