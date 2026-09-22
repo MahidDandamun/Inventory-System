@@ -5,10 +5,10 @@
 // ---
 
 /** Routes accessible without authentication */
-export const publicRoutes = ["/", "/verify"]
+export const publicRoutes = ["/verify"]
 
 /** Auth-related routes — logged-in users get redirected away */
-export const authRoutes = ["/login", "/register", "/reset", "/new-password"]
+export const authRoutes = ["/", "/login", "/register", "/reset", "/new-password"]
 
 /** Prefix for NextAuth API routes — always allowed */
 export const apiAuthPrefix = "/api/auth"

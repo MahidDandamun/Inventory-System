@@ -102,8 +102,10 @@ export const getDeadStock = cache(async (days = 30): Promise<DeadStockDTO[]> => 
 export const getOrderFillRate = cache(async (): Promise<OrderFillRateDTO> => {
     await requireCurrentUser()
 
-    const totalOrders = await prisma.order.count()
-    const deliveredOrders = await prisma.order.count({ where: { status: "DELIVERED" } })
+    const [totalOrders, deliveredOrders] = await Promise.all([
+        prisma.order.count(),
+        prisma.order.count({ where: { status: "DELIVERED" } })
+    ])
 
     return {
         totalOrders,
@@ -166,44 +168,38 @@ export const getRevenueByWarehouse = cache(async (): Promise<RevenueByWarehouseD
 export const getDashboardMetrics = cache(async (): Promise<DashboardMetricsDTO> => {
     await requireCurrentUser()
 
-    // 1. Stock Turns = COGS / Avg Inventory Valuation
-    // For simplicity, let's use Total Revenue (all time) / Current Valuation
-    const { totalValuation } = await getStockValuation()
-    const totalOrdersResult = await prisma.order.aggregate({
-        where: { status: { not: 'CANCELLED' } },
-        _sum: { total: true }
-    })
-    const totalRevenue = totalOrdersResult._sum.total?.toNumber() || 0
-    const stockTurns = totalValuation > 0 ? totalRevenue / totalValuation : 0
-
-    // Monthly Revenue Stats via DB Aggregations
     const now = new Date()
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999)
+    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
 
-    const thisMonthResult = await prisma.order.aggregate({
-        where: { createdAt: { gte: currentMonthStart }, status: { not: 'CANCELLED' } },
-        _sum: { total: true }
-    })
+    // Execute independent queries in parallel
+    const [
+        { totalValuation },
+        totalOrdersResult,
+        thisMonthResult,
+        lastMonthResult,
+        fillRateData,
+        topItems,
+        recentOrders
+    ] = await Promise.all([
+        getStockValuation(),
+        prisma.order.aggregate({ where: { status: { not: 'CANCELLED' } }, _sum: { total: true } }),
+        prisma.order.aggregate({ where: { createdAt: { gte: currentMonthStart }, status: { not: 'CANCELLED' } }, _sum: { total: true } }),
+        prisma.order.aggregate({ where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd }, status: { not: 'CANCELLED' } }, _sum: { total: true } }),
+        getOrderFillRate(),
+        prisma.orderItem.groupBy({ by: ['productId'], _sum: { quantity: true }, orderBy: { _sum: { quantity: 'desc' } }, take: 5 }),
+        prisma.order.findMany({ where: { createdAt: { gte: twelveMonthsAgo }, status: { not: 'CANCELLED' } }, select: { createdAt: true, total: true } })
+    ])
+
+    const totalRevenue = totalOrdersResult._sum.total?.toNumber() || 0
+    const stockTurns = totalValuation > 0 ? totalRevenue / totalValuation : 0
+
     const thisMonthRevenue = thisMonthResult._sum.total?.toNumber() || 0
-
-    const lastMonthResult = await prisma.order.aggregate({
-        where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd }, status: { not: 'CANCELLED' } },
-        _sum: { total: true }
-    })
     const lastMonthRevenue = lastMonthResult._sum.total?.toNumber() || 0
 
-    // 2. Fill Rate
-    const fillRateData = await getOrderFillRate()
-
-    // 3. Top Products
-    const topItems = await prisma.orderItem.groupBy({
-        by: ['productId'],
-        _sum: { quantity: true },
-        orderBy: { _sum: { quantity: 'desc' } },
-        take: 5
-    })
+    // Fetch products based on topItems (requires topItems first)
     const productIds = topItems.map(i => i.productId)
     const products = await prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, name: true, price: true } })
 
@@ -231,16 +227,6 @@ export const getDashboardMetrics = cache(async (): Promise<DashboardMetricsDTO> 
     }
 
     const trendsData = months.map(m => ({ name: m.name, year: m.year, month: m.month, total: 0 }))
-
-    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
-
-    const recentOrders = await prisma.order.findMany({
-        where: {
-            createdAt: { gte: twelveMonthsAgo },
-            status: { not: 'CANCELLED' }
-        },
-        select: { createdAt: true, total: true }
-    })
 
     for (const o of recentOrders) {
         const od = new Date(o.createdAt)
